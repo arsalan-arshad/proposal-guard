@@ -1,15 +1,67 @@
 # Evaluation report
 
-Not legal advice; this report measures a text checker on invented documents. It has two parts: the current rules on held-out set 3 (first), and the earlier rules on held-out set 2 (below, kept as history).
+Not legal advice; this report measures a text checker on invented documents. It has three parts: the current rules on held-out set 4 (first), the round-2 rules on held-out set 3, and the first rules on held-out set 2 (both kept as history).
 
-## Current rules: held-out set 3 (run 2026-11-11)
+## Current rules: held-out set 4 (run 2026-11-11)
+
+**Headline: on a set that no rule was tuned against, 15 of the 29 findings the tool reported were correct (52%), and it found 15 of the 34 findings the labeller expected (44%). It is still a weak tool: it misses more than half of what a careful reader would flag, and about half of what it reports is wrong.**
+
+- One run, rules frozen. Rule code: git commit `db3bde71b8069c956a156c1b2f321c3676bf1948` (branch `structure-fixes`, before the labels were committed; no file under `src/` changed in between). Source hash (first 16 hex of the SHA-256 of all `src/**/*.ts`, sorted path order): `09c8616583acde03`. Raw output: `eval/results/heldout4-2026-11-11.txt` (strict) and `eval/results/heldout4-2026-11-11-lenient.txt`.
+- 20 invented documents and 34 expected findings. The documents were written by one Claude session told not to read the rules, code, spec or any corpus; the labels by a separate Claude session that read only the rule definitions in the spec (not the part that describes the code). **Both are Claude, the family that wrote the rules; this is not independent human labelling, and no person has reviewed a sample of the labels.**
+- Strict matching: a finding counts only if it quotes exactly the labelled sentence (HOST-02: the labelled category; REVISE-04 part (b): the labelled part). The lenient figure (also ignores a leading clause number and trailing punctuation) was defined before this run, from the held-out set 3 experience: **16 of 29 (55%) and 16 of 34 (47%)**.
+- This set was not used for any change. It is now seen.
+
+| Rule | TP | FP | FN | Precision | Recall |
+|---|---|---|---|---|---|
+| SCOPE-01 | 6 | 0 | 6 | 6/6 = 100% | 6/12 = 50% |
+| TIME-03 | 4 | 5 | 6 | 4/9 = 44% | 4/10 = 40% |
+| HOST-02 | 2 | 7 | 2 | 2/9 = 22% | 2/4 = 50% |
+| REVISE-04 | 3 | 2 | 5 | 3/5 = 60% | 3/8 = 38% |
+| All | 15 | 14 | 19 | 15/29 = 52% | 15/34 = 44% |
+
+### Is it better than the round-2 rules?
+
+Round 2 scored 10 of 27 and 10 of 38 on held-out set 3 (below); round 3 scores 15 of 29 and 15 of 34 on this set. **That is not a controlled comparison and should not be read as proof of improvement:** the sets contain different documents and were labelled in different sessions, each has fewer than 40 expected findings (one finding moves a figure by about 3 points), and the label conventions differ slightly (this labeller was told to keep final punctuation). The honest reading is: the structural fixes removed a class of formatting errors, and the rules remain weak on wording.
+
+### Manual review of the 14 strict false positives
+
+| Doc | Rule | Reason | Kind |
+|---|---|---|---|
+| h4-01 (2) | TIME-03 | A well-drafted clause: "has 5 business days to test and either accept ..." and "within those 5 business days ... is treated as accepted". The window and default wording is not in the lists. | real |
+| h4-10 | TIME-03 | "Silence after 6 business days counts as acceptance" is a deemed-acceptance form the rule does not recognise. | real |
+| h4-18 | TIME-03 | "2.2 25% on Client approval ..." keeps the clause number because a digit, not a capital, follows it. Right passage; also a miss. | boundary |
+| h4-19 | TIME-03 | Long key-value lines without punctuation are joined, and "approved" refers to a list of questions, not to client approval. | real |
+| h4-02 | HOST-02 cloud | "you'd handle the hosting plan with your podcast host" states the payer in informal wording. | real |
+| h4-03 | HOST-02 cloud | A "Who pays" table column names the payer by company name, not by a party word. | real |
+| h4-10 (2) | HOST-02 ai, cloud | Payer cells read "Client (model API usage)" and "Client (hosting)"; the qualifier defeats the table-payer check. | real |
+| h4-11 | HOST-02 cloud | "Hosting is billed by the hosting company directly to Cloudberry Bakery" names the payer in a form the rule does not recognise. | real |
+| h4-13 | HOST-02 licences | "Any paid monitoring subscription the Client chooses to add" implies the client pays. Arguable. | real (arguable) |
+| h4-17 | HOST-02 cloud | A radio show "hosted by" a person. | real |
+| h4-08 | REVISE-04 (b) | "Later changes cost 300 GBP each" prices extra work; not recognised. | real |
+| h4-18 | REVISE-04 (b) | "After the third round, changes are charged at 60 USD per hour" prices extra work; not recognised. | real |
+
+Of the 14: 1 is a boundary effect and 13 are real mistakes. Seven are payer or "who pays" wording, three are window or deemed-acceptance wording, two are priced-extra-work wording. These are the same word-list gaps that round 2 and round 3 left open, and they would each be fixed by one more phrase, which is exactly the kind of change that overfits a small set.
+
+### What the 19 misses look like (my reading, not separately tested)
+
+Informal first-person promises ("I'll edit ... make them sound great and polished", "i will do again and again until final"); payment lines phrased by percentage ("50% on approval of the finished store", "remaining after you are happy with the video"); open-ended phrases outside the lists ("whatever else is useful", "ongoing optimisation to keep results strong"); revision words outside the lists ("fine-tune as we go", "adjusted as many times as the client wants", "comments ... until the pages are right"). The labeller also noted that the revision cue list is narrow. Removing `I'll` as a context word in round 3 stopped a false alarm on a title line but also costs recall on first-person promises.
+
+### Injection
+
+Two documents (h4-07, h4-10) contain text addressed to a scanner ("ignore all earlier instructions", a fake system message). The scanner is fixed code with no model; these sentences are ordinary text to it and were not treated as instructions. This is not a measure of robustness for anyone who passes the output to a model.
+
+---
+
+## Round-2 rules: held-out set 3 (run 2026-11-11)
+
+*History: these are the figures for the rules before the structural round 3. The review of this set's mismatches informed round 3, so it must not be used to measure the current rules.*
 
 **Headline: on a set that no rule was tuned against, 10 of the 27 findings the tool reported were correct, and it found 10 of the 38 findings the labeller expected. It is a weak tool.** On the development set the same rules score 60 of 61 and 60 of 70, which shows how far tuning on a small set overstates quality.
 
 - One run, rules frozen. Rule code: git commit `58e41729adccb49feeaf301e28cd58417429c1fe` (branch `rules-round-2`, before the labels were committed; no file under `src/` changed in between). Source hash (first 16 hex of the SHA-256 of all `src/**/*.ts`, sorted path order): `dc77a4ffb4f5f9e3`. Raw output: `eval/results/heldout3-2026-11-11.txt`.
 - 20 invented documents and 38 expected findings. The documents were written by one Claude session that was told not to read the rules, code, spec or any other corpus. The labels were written by a separate Claude session that read only the rule definitions in `RULES_SPEC.md` (the part that does not describe the code) and the documents. **Both are Claude, the same model family that wrote the rules; this is not independent human labelling, and no person has reviewed a sample of the labels.**
 - Strict matching: a finding counts only if it quotes exactly the labelled sentence (HOST-02: the labelled category; REVISE-04 part (b): the labelled part). A finding on the right passage with a different sentence boundary or punctuation counts as one false positive plus one miss.
-- This set was not used for any change. It is now seen: further rule changes need a new held-out set before any new figure is quoted.
+- This set was not used for any change at the time. It is now seen (and informed round 3).
 
 ### Strict results
 

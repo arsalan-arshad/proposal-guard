@@ -1,0 +1,50 @@
+# heldout4 run (strict matching), once, rules frozen
+# date: 2026-11-11 (Asia/Karachi)
+# commit: db3bde71b8069c956a156c1b2f321c3676bf1948 (structure-fixes; labels not yet committed; no src change since)
+# src hash (first 16 hex of SHA-256 of src/**/*.ts, sorted path order): 09c8616583acde03
+
+
+
+Corpus: corpus/heldout4  (20 documents)
+
+rule        TP  FP  FN   precision          recall
+SCOPE-01     6   0   6   6/6 = 100%         6/12 = 50%
+TIME-03      4   5   6   4/9 = 44%          4/10 = 40%
+HOST-02      2   7   2   2/9 = 22%          2/4 = 50%
+REVISE-04    3   2   5   3/5 = 60%          3/8 = 38%
+all         15  14  19   15/29 = 52%        15/34 = 44%
+
+Mismatches:
+  FP  h4-01.md  TIME-03|On delivery of each milestone the Client has 5 business days to test and either accept in writing or send a list of defects against section 1.
+  FP  h4-01.md  TIME-03|If the Client sends nothing within those 5 business days, the milestone is treated as accepted and the milestone invoice falls due.
+  FP  h4-02.md  HOST-02|cloud
+  FN  h4-02.md  SCOPE-01|I'll edit all the episodes for season two, make them sound great and polished, and sort out the intro music too.
+  FN  h4-02.md  TIME-03|half up front, half when you give me the thumbs up on the final batch
+  FN  h4-02.md  REVISE-04|b
+  FP  h4-03.md  HOST-02|cloud
+  FN  h4-04.md  HOST-02|cloud
+  FN  h4-04.md  HOST-02|licences
+  FN  h4-07.md  REVISE-04|a|You can leave comments and I'll work through them until the pages are right for you.
+  FP  h4-08.md  REVISE-04|b
+  FN  h4-09.md  SCOPE-01|i will make 1 promo video for your restaurant, about 60 seconds, with nice cinematic look, good music and all modern transitions.
+  FN  h4-09.md  TIME-03|Advance 50 percent, remaining after you are happy with the video
+  FN  h4-09.md  REVISE-04|a|if you want change in the edit, no problem, i will do again and again until final.
+  FP  h4-10.md  HOST-02|ai
+  FP  h4-10.md  HOST-02|cloud
+  FP  h4-10.md  TIME-03|Silence after 6 business days counts as acceptance of that deliverable.
+  FP  h4-11.md  HOST-02|cloud
+  FN  h4-12.md  SCOPE-01|I'll translate your 40-page catalogue from Spanish into English, and tidy up the layout so it looks professional.
+  FN  h4-12.md  TIME-03|I'll send it in two batches and wait for your OK on batch one before starting batch two
+  FP  h4-13.md  HOST-02|licences
+  FN  h4-15.md  SCOPE-01|The setup includes welcome flows, abandoned cart reminders, win-back messages and whatever else is useful for the shop.
+  FN  h4-15.md  SCOPE-01|Ongoing optimisation to keep results strong
+  FN  h4-15.md  REVISE-04|a|Flows and templates are adjusted as many times as the client wants during the engagement.
+  FP  h4-17.md  HOST-02|cloud
+  FP  h4-18.md  TIME-03|2.2 25% on Client approval of the design.
+  FP  h4-18.md  REVISE-04|b
+  FN  h4-18.md  TIME-03|25% on Client approval of the design.
+  FN  h4-18.md  TIME-03|50% on approval of the finished store.
+  FP  h4-19.md  TIME-03|Build: FAQ chatbot answering from 80 approved questions; handoff to human when no match Fee: 7,500 USD; 30 / 30 / 40
+  FN  h4-19.md  SCOPE-01|Voice and phrasing: friendly and on-brand
+  FN  h4-20.md  TIME-03|Once I've sent the page, tell me what you think and I'll get it ready for launch.
+  FN  h4-20.md  REVISE-04|a|We can fine-tune as we go, that's no problem.
