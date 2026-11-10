@@ -7,6 +7,8 @@ interface LexEntry {
   group: Group;
   severity: Severity;
   re: RegExp;
+  /** Specific acceptance phrases are flagged even without a commitment verb or deliverable noun in the sentence. */
+  noContext?: boolean;
 }
 
 const APOS = "['\\u2019]";
@@ -59,10 +61,11 @@ const LEXICON: LexEntry[] = [
   { group: 'open', severity: 'High', re: /\bany\s+other\b/gi },
   { group: 'open', severity: 'High', re: /\ball\s+necessary\b/gi },
   // Subjective acceptance (High)
-  { group: 'subjective', severity: 'High', re: new RegExp(`\\bto\\s+(?:your|the\\s+client${APOS}?s?)\\s+satisfaction\\b`, 'gi') },
-  { group: 'subjective', severity: 'High', re: /\bto\s+the\s+satisfaction\s+of\b/gi },
+  { group: 'subjective', severity: 'High', noContext: true, re: new RegExp(`\\bto\\s+(?:your|the\\s+client${APOS}?s?)\\s+satisfaction\\b`, 'gi') },
+  { group: 'subjective', severity: 'High', noContext: true, re: /\bto\s+the\s+satisfaction\s+of\b/gi },
+  { group: 'subjective', severity: 'High', noContext: true, re: /\bsatisfactory\s+to\s+(?:you|the\s+client)\b/gi },
   { group: 'subjective', severity: 'High', re: /\bsatisfactory\b/gi },
-  { group: 'subjective', severity: 'High', re: /\bas\s+the\s+client\s+sees\s+fit\b/gi },
+  { group: 'subjective', severity: 'High', noContext: true, re: /\bas\s+the\s+client\s+sees\s+fit\b/gi },
 ];
 
 /** Phrases that look like lexicon terms but are not (names and fixed phrases). */
@@ -70,7 +73,7 @@ const EXCLUSIONS: RegExp[] = [
   /\bfast[- ]follow\b/gi,
   /\bfast[- ]track\b/gi,
   /\bquick\s+(?:start|call|chat)\b/gi,
-  /\bresponsive\s+(?:layout|design)\b/gi,
+  /\bresponsive\s+(?:layout|design|web|mobile|app|application|site|website|ui|interface|pages?|front-?end|template|theme)\b/gi,
   /\bScalable\s+Vector\s+Graphics\b/gi,
   /\bFast(?:API|ify|lane)\b/g,
   /\bQuickBooks\b/g,
@@ -101,7 +104,7 @@ const CONTEXT_RE = new RegExp(
   '\\b(?:will|shall|must|should|deliver(?:s|ed|y|ables?)?|provid(?:e|es|ed|ing)|includ(?:e|es|ed|ing)' +
     '|ensur(?:e|es|ed|ing)|build|builds|built|develop(?:s|ed|ing)?|implement(?:s|ed|ing)?|creat(?:e|es|ed|ing)' +
     '|integrat(?:e|es|ed|ing|ion|ions)|deploy(?:s|ed|ing)?|launch(?:es|ed|ing)?' +
-    '|app|application|website|site|platform|system|API|dashboard|feature|module|backend|frontend|interface|pipeline|service)\\b',
+    '|scope|covers?|app|application|website|site|platform|system|API|dashboard|feature|module|backend|frontend|interface|pipeline|service)\\b',
   'i',
 );
 
@@ -121,11 +124,13 @@ const SUGGESTION: Record<Group, string> = {
 
 const GROUP_ORDER: Group[] = ['subjective', 'open', 'standards', 'quality'];
 
-function resolveTerms(masked: string): Array<Term & { group: Group; severity: Severity }> {
-  const candidates: Array<Term & { group: Group; severity: Severity }> = [];
+type Resolved = Term & { group: Group; severity: Severity; noContext: boolean };
+
+function resolveTerms(masked: string): Resolved[] {
+  const candidates: Resolved[] = [];
   for (const entry of LEXICON) {
     for (const t of findAll(entry.re, masked)) {
-      candidates.push({ ...t, group: entry.group, severity: entry.severity });
+      candidates.push({ ...t, group: entry.group, severity: entry.severity, noContext: entry.noContext === true });
     }
   }
   const excluded: Term[] = EXCLUSIONS.flatMap((re) => findAll(re, masked));
@@ -146,8 +151,8 @@ export function checkScope01(
   const claimedMerged = mergeSpans(claimed);
 
   for (const s of sentences) {
-    if (!has(CONTEXT_RE, s.masked)) continue;
     let terms = resolveTerms(s.masked);
+    if (!has(CONTEXT_RE, s.masked)) terms = terms.filter((t) => t.noContext);
     if (terms.length === 0) continue;
     sawCue = true;
     terms = terms.filter((t) => !overlapsMerged(claimedMerged, { start: s.start + t.start, end: s.start + t.end }));

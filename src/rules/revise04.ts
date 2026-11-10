@@ -38,6 +38,8 @@ const CHANGE_ORDER_RE = new RegExp(
     'billable\\s+change',
     'billed\\s+as\\s+(?:a\\s+)?change',
     'quoted\\s+separately',
+    '(?:billed|charged|quoted)\\s+(?:separately|hourly|extra|at\\s+(?:our|the|an?)\\s+(?:standard\\s+)?(?:hourly\\s+)?rate)',
+    'at\\s+(?:our|the)\\s+(?:standard\\s+)?hourly\\s+rate',
     '(?:extra|additional|further)\\s+(?:rounds?|revisions?|requests?|work)\\s+(?:are|is|will\\s+be)\\s+(?:billed|charged|quoted)',
   ]
     .map((p) => `\\b${p}\\b`)

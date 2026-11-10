@@ -1,0 +1,371 @@
+{
+  "d01.md": {
+    "tags": [
+      "typical"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will redesign your marketing website with a modern look and a seamless user experience."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The new site will be fast and mobile-friendly."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Pages include Home, About, Services, Contact, and so on."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment of the first installment is due when you approve the wireframes."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "The second installment is invoiced after the client signs off on the design."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "domain"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "The price includes revisions until you are completely happy."
+      }
+    ]
+  },
+  "d02.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "d03.md": {
+    "tags": [
+      "trap"
+    ],
+    "expected": []
+  },
+  "d04.md": {
+    "tags": [
+      "injection"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The app will be intuitive and easy to use."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Phase 1 is complete once the client signs off."
+      }
+    ]
+  },
+  "d05.md": {
+    "tags": [
+      "table",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Role-based access, reports, etc."
+      }
+    ],
+    "notes": "An open-ended list in a table cell with no verb or deliverable noun; the context requirement misses it."
+  },
+  "d06.md": {
+    "tags": [
+      "host",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      }
+    ],
+    "notes": "A person reads \"AI usage costs are billed to the client\" as covering the OpenAI API; the payer patterns need an AI cue in that sentence."
+  },
+  "d07.md": {
+    "tags": [
+      "time",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "Milestone payments are released upon the client's acceptance of the work."
+      }
+    ],
+    "notes": "\"10 days to respond\" is a window that no window pattern matches."
+  },
+  "d08.md": {
+    "tags": [
+      "revise",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Design includes unlimited revisions."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Minor changes after launch are free."
+      }
+    ],
+    "notes": "\"billed at our hourly rate\" is a pricing path for extra work but is not in the change-order phrase list."
+  },
+  "d09.md": {
+    "tags": [
+      "scope",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The mobile app will feel premium and polished."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The system will be secure and reliable."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Reports will be easy to read."
+      }
+    ],
+    "notes": "Vague quality words outside the v1 lexicon (\"secure\" and \"reliable\" were left out on purpose)."
+  },
+  "d10.md": {
+    "tags": [
+      "bullets",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Admin tools and more"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Notifications as needed"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      }
+    ],
+    "notes": "Bullets without a verb or deliverable noun miss the context requirement. \"Responsive web app\" is ordinary wording and is not labelled."
+  },
+  "d11.md": {
+    "tags": [
+      "typical",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The portal will be clean, modern and easy to navigate."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I will make sure it works well on all devices."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "You review it, send me feedback, and I make the changes."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Once you approve it I will invoice the balance."
+      }
+    ],
+    "notes": "Informal wording; \"make the changes\" is an unnumbered revision promise that the cue list does not contain."
+  },
+  "d12.md": {
+    "tags": [
+      "pointer",
+      "known-limit"
+    ],
+    "expected": [],
+    "notes": "The hosting sentence points to Section 6; HOST-02 has no pointer test, so it fires."
+  },
+  "d13.md": {
+    "tags": [
+      "negation",
+      "known-limit"
+    ],
+    "expected": [],
+    "notes": "Negation, a pointer worded \"agreed in\", and a quoted client requirement are not understood."
+  },
+  "d14.md": {
+    "tags": [
+      "host",
+      "known-limit"
+    ],
+    "expected": [],
+    "notes": "\"Everything else is our responsibility\" states a payer for all other costs; the payer patterns do not contain \"our responsibility\"."
+  },
+  "d15.md": {
+    "tags": [
+      "time"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "Delivery of Milestone 2 depends on the client's sign-off."
+      }
+    ],
+    "notes": "By the definition, only the same or next sentence counts as a window; the window here is in the previous sentence."
+  },
+  "d16.md": {
+    "tags": [
+      "typical"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The app will be user-friendly and will support class booking, membership payments, and so on."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Each milestone is delivered for client approval."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment for each milestone is due on approval."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We offer revisions as needed during development."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "After launch we provide support for bugs and small tweaks."
+      }
+    ]
+  },
+  "d17.md": {
+    "tags": [
+      "trap"
+    ],
+    "expected": []
+  },
+  "d18.md": {
+    "tags": [
+      "host",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      }
+    ],
+    "notes": "Lower-case brand names and unlisted services are missed by design."
+  },
+  "d19.md": {
+    "tags": [
+      "skip-zone"
+    ],
+    "expected": []
+  },
+  "d20.md": {
+    "tags": [
+      "revise"
+    ],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "b"
+      }
+    ]
+  },
+  "d21.md": {
+    "tags": [
+      "scope"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The scope covers the storefront, checkout, order emails, and other related work."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will also provide any other features you need as the project evolves."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Where appropriate, we will add integrations with third-party tools."
+      }
+    ]
+  },
+  "d22.md": {
+    "tags": [
+      "scope",
+      "revise",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The work is complete when it is satisfactory to the client."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We will revise the logo until the client is fully satisfied."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Final delivery happens to your satisfaction."
+      }
+    ],
+    "notes": "The first sentence has no commitment verb or deliverable noun."
+  },
+  "d23.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "d24.md": {
+    "tags": [
+      "segmentation"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Features include, e.g., login and search, etc."
+      }
+    ]
+  }
+}

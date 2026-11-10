@@ -1,0 +1,331 @@
+{
+  "h01.md": {
+    "tags": [
+      "typical"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Posts are researched and edited to a high standard."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Each post is delivered only after your approval."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Revisions are included."
+      }
+    ]
+  },
+  "h02.md": {
+    "tags": [
+      "typical"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Deliverables: one 90-second video, two 15-second cutdowns, and any other formats needed for social media."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will deliver a polished, cinematic final cut."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "You can request tweaks on the rough cut and we will apply them."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Sign-off on the final cut is required before we release the files."
+      }
+    ]
+  },
+  "h03.md": {
+    "tags": [
+      "host",
+      "revise"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The model will achieve the best possible accuracy."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "ai"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will iterate on the model until the results are satisfactory."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We will iterate on the model until the results are satisfactory."
+      }
+    ]
+  },
+  "h04.md": {
+    "tags": [
+      "injection"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will migrate your store to a scalable platform with seamless checkout."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Unlimited revisions are included in the price."
+      }
+    ]
+  },
+  "h05.md": {
+    "tags": [
+      "table"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "30% on client approval"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "40% when the beta is accepted"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Acceptance of each deliverable must be confirmed in writing by the client."
+      }
+    ]
+  },
+  "h06.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "h07.md": {
+    "tags": [
+      "typical",
+      "informal"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "A brand new website, super fast and easy to use"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Up to 5 pages, plus blog setup and more"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "We'll send the invoice when you're happy with the site"
+      }
+    ]
+  },
+  "h08.md": {
+    "tags": [
+      "typical"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The translation will be accurate and natural-sounding."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment is due 30 days after the client accepts the final translation."
+      }
+    ]
+  },
+  "h09.md": {
+    "tags": [
+      "host"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will set up a production-ready Kubernetes cluster on DigitalOcean with monitoring, logging, backups and similar services."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The cluster will be highly available."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Handover takes place after the client confirms the setup works."
+      }
+    ]
+  },
+  "h10.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "h11.md": {
+    "tags": [
+      "typical",
+      "formatting"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The vendor will deliver an analytics portal with dashboards, exports, alerts, etc."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The portal must be “intuitive” and “lightning fast”."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Each phase is subject to the client’s sign-off."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "The vendor will make reasonable adjustments throughout the engagement at no extra cost."
+      }
+    ]
+  },
+  "h12.md": {
+    "tags": [
+      "clean",
+      "minimal"
+    ],
+    "expected": []
+  },
+  "h13.md": {
+    "tags": [
+      "scope"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We provide ongoing support, including bug fixes, minor enhancements and general assistance."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Response times are fast and issues are resolved quickly."
+      }
+    ]
+  },
+  "h14.md": {
+    "tags": [
+      "host"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The store will be mobile-friendly and optimized for speed."
+      }
+    ]
+  },
+  "h15.md": {
+    "tags": [
+      "time",
+      "revise"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "The final report is delivered after you review and approve the draft."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b"
+      }
+    ]
+  },
+  "h16.md": {
+    "tags": [
+      "typical",
+      "long"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The app will be easy to use and will integrate with your existing tools."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Phase 2 adds reporting, user roles and so on."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We will make the changes needed and then you sign off."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "We will make the changes needed and then you sign off."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "ai"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Fixed price of 18,000 USD, invoiced 50% at start and 50% on sign-off of Phase 2."
+      }
+    ]
+  },
+  "h17.md": {
+    "tags": [
+      "trap"
+    ],
+    "expected": []
+  },
+  "h18.md": {
+    "tags": [
+      "clean",
+      "legal-style"
+    ],
+    "expected": []
+  },
+  "h19.md": {
+    "tags": [
+      "trap",
+      "informal"
+    ],
+    "expected": []
+  },
+  "h20.md": {
+    "tags": [
+      "scope"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The app will be fast and intuitive; we will also provide training videos."
+      }
+    ],
+    "notes": "The first sentence has a measurable criterion, so the rule definition does not flag it even though \"robust\" and \"seamless\" are unmeasured."
+  }
+}

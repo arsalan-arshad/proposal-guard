@@ -1,4 +1,4 @@
-import { dropOverlapping, findAll, has } from '../patterns.js';
+import { dropOverlapping, findAll, has, hasPointer } from '../patterns.js';
 import type { Finding, HostCategory, RuleOutcome, Sentence, Severity, Term } from '../types.js';
 
 interface Category {
@@ -36,6 +36,7 @@ const CATEGORIES: Category[] = [
       /\bAI\s+APIs?\b/g,
       /\bmodel\s+APIs?\b/gi,
       /\b(?:token|inference)\s+(?:costs?|usage|fees)\b/gi,
+      /\bAI\s+(?:usage|costs?|credits)\b/g,
     ],
   },
   {
@@ -100,6 +101,7 @@ const ASSIGNMENT_RE = new RegExp(
     '\\bcharged\\s+(?:directly\\s+)?to\\b',
     '\\bpaid\\s+(?:directly\\s+)?by\\b',
     '\\bresponsible\\s+for\\b',
+    "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
     "\\bat\\s+the\\s+client['\\u2019]?s\\s+expense\\b",
     "\\b(?:client|customer)['\\u2019]?s?\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b",
     '\\bpass(?:ed)?[- ]?through\\b',
@@ -120,6 +122,8 @@ const GENERIC_RE = new RegExp(
     '\\ball\\s+costs\\b',
     '\\bany\\s+(?:fees|costs)\\b',
     '\\bservice\\s+costs?\\b',
+    '\\b(?:everything|anything)\\s+else\\b',
+    '\\ball\\s+other\\s+(?:costs|fees)\\b',
   ].join('|'),
   'i',
 );
@@ -143,7 +147,8 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
       ).sort((a, b) => a.start - b.start);
       if (terms.length > 0) byCategory.set(cat.id, terms);
     }
-    const assigns = has(ASSIGNMENT_RE, s.masked);
+    // A pointer to a named part of the document ("covered in Section 6") counts as a stated payer, as in the shared pointer test.
+    const assigns = has(ASSIGNMENT_RE, s.masked) || hasPointer(s.masked);
     const generic = assigns && has(GENERIC_RE, s.masked);
     return { s, byCategory, assigns, generic };
   });
