@@ -101,7 +101,7 @@ I have tested the server by speaking the protocol over standard input and output
 
 ```bash
 npm run typecheck
-npm test                       # 216 tests at the time of writing
+npm test                       # 231 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
 ```

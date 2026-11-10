@@ -34,6 +34,7 @@ describe('performance on adversarial input', () => {
       '.'.repeat(100000), ' '.repeat(100000), '\n'.repeat(100000), '*'.repeat(100000), '| a '.repeat(30000),
       // dotted chains and e-mail look-alikes used to make the masking patterns quadratic
       'a.'.repeat(50000), 'x.y'.repeat(30000), 'a.@'.repeat(30000), 'a'.repeat(50000) + '.'.repeat(50000),
+      'A. ' + 'a. '.repeat(100000), ' '.repeat(100000) + 'x. ' + 'a. '.repeat(50000), '1.1 '.repeat(50000), '1.1.1.1.1 A '.repeat(30000),
     ];
     for (const s of inputs) {
       expect(timed(() => scan(s))).toBeLessThan(5000);

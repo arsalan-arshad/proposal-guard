@@ -50,6 +50,7 @@ export function checkTime03(sentences: Sentence[]): RuleOutcome {
   let sawCue = false;
 
   sentences.forEach((s, i) => {
+    if (s.heading) return; // a title such as "Milestones and acceptance" is not a clause
     const excluded = EXCLUDED_SENSE.flatMap((re) => findAll(re, s.masked));
     const cues = dropOverlapping(findAll(ACCEPT_CUE_RE, s.masked), excluded);
     if (cues.length === 0 || !has(MILESTONE_RE, s.masked)) return;
