@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { build } from 'esbuild';
 import { describe, expect, it } from 'vitest';
 import { scan } from '../src/index.js';
@@ -41,10 +41,32 @@ describe('demo makes no outside requests and stores nothing', () => {
     expect(html).not.toMatch(/\bon[a-z]+\s*=/i);
   });
 
-  it('page loads only its own script and stylesheet', () => {
+  it('page loads only its own script, stylesheet and bundled images', () => {
     const srcs = [...html.matchAll(/\b(?:src|href)="([^"]+)"/g)].map((m) => m[1] as string);
     const loaded = srcs.filter((s) => !/^https:\/\/(?:github\.com\/arsalan-arshad\/proposal-guard|arsalandev\.studio)$/.test(s));
-    expect(loaded.sort()).toEqual(['app.js', 'style.css']);
+    expect(loaded.sort()).toEqual([
+      'app.js',
+      'assets/banner-1280.jpg',
+      'assets/icon-180.png',
+      'assets/icon-32.png',
+      'assets/icon-64.png',
+      'style.css',
+    ]);
+    for (const s of loaded) expect(s).not.toMatch(/^[a-z]+:|^\/\//i);
+  });
+
+  it('every referenced image exists, is a modest size, and images are only allowed from the page itself', () => {
+    expect(html).toMatch(/img-src 'self'/);
+    for (const m of html.matchAll(/\bsrc="(assets\/[^"]+)"/g)) {
+      expect(statSync(`demo/${m[1]}`).size, m[1]).toBeLessThan(200_000);
+    }
+  });
+
+  it('images have alt text that makes no safety or accuracy claim', () => {
+    const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+    expect(imgs.length).toBeGreaterThan(0);
+    for (const img of imgs) expect(img).toMatch(/\balt="/);
+    expect(html.match(/<img class="hero"[^>]*alt="([^"]*)"/)?.[1] ?? '').not.toMatch(/\b(?:safe|compliant|protected|guarantee|verified|accurate)/i);
   });
 
   it('bundle does not use network, storage or HTML-injection APIs', async () => {

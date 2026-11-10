@@ -3,14 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Proposal Guard demo</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
-  <h1>Proposal Guard</h1>
+  <header class="brand">
+    <img src="assets/icon-64.png" width="48" height="48" alt="">
+    <h1>Proposal Guard</h1>
+  </header>
+  <img class="hero" src="assets/banner-1280.jpg" width="1280" height="640" alt="Proposal Guard banner. An example scan result shows one vague-promise finding, one missing sign-off window finding and one passed cost check, with the line Not legal advice.">
   <p class="lead">Paste a draft proposal or statement of work. Fixed rules list sentences that invite scope creep. Early demo of an open-source project.</p>
 
   <section class="notice">

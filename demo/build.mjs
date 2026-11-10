@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { copyFileSync, mkdirSync, rmSync } from 'node:fs';
+import { cpSync, copyFileSync, mkdirSync, rmSync } from 'node:fs';
 
 rmSync('demo-dist', { recursive: true, force: true });
 mkdirSync('demo-dist', { recursive: true });
@@ -14,3 +14,4 @@ await build({
   logLevel: 'info',
 });
 for (const f of ['index.html', 'style.css']) copyFileSync(`demo/${f}`, `demo-dist/${f}`);
+cpSync('demo/assets', 'demo-dist/assets', { recursive: true });
