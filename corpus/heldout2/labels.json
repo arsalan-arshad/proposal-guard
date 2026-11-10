@@ -1,0 +1,118 @@
+{
+  "h2-01.md": {"tags": ["clean", "all-handled"], "expected": []},
+  "h2-02.md": {
+    "tags": ["informal-email", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I'll build a clean, modern iOS and Android app with all the features we talked about: workout logging, progress charts, reminders, social sharing, and so on."},
+      {"rule": "SCOPE-01", "sentence": "I'll make sure it's the best possible experience for your members and works smoothly on all devices."},
+      {"rule": "TIME-03", "sentence": "Once I send you the build, just let me know if you're happy with it and we'll call it done."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "I'm happy to keep tweaking things until you love it, so don't worry about the details now."},
+      {"rule": "HOST-02", "category": "store"}
+    ],
+    "note": "REVISE-04 part b not added separately: the first revision sentence already has an (a) finding (one finding per sentence)."
+  },
+  "h2-03.md": {
+    "tags": ["contract", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The Consultant shall provide operational consulting services in respect of the Client's warehouse process, including such analysis, workshops and recommendations as the Client may reasonably require from time to time."},
+      {"rule": "SCOPE-01", "sentence": "This Agreement begins on 1 June and continues until the Services are completed to the Client's satisfaction."},
+      {"rule": "SCOPE-01", "sentence": "and (c) any other materials necessary for implementation."},
+      {"rule": "TIME-03", "sentence": "Deliverables are accepted when the Client confirms in writing that they meet its requirements."}
+    ],
+    "note": "Clause 3 is split at the semicolon per the task's sentence rule; the open-ended part is the fragment '(c) any other materials necessary for implementation' (the full sentence also contains it). 'Acceptance shall not be unreasonably withheld.' not flagged separately (no milestone context)."
+  },
+  "h2-04.md": {
+    "tags": ["table", "payer-to-be-decided", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "We will do whatever it takes to make the store look great and convert well."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Feedback is welcome throughout and we will incorporate reasonable changes as they come up."},
+      {"rule": "HOST-02", "category": "messaging"}
+    ],
+    "note": "The table says Paid by 'to be decided' for email sending, which is no stated payer. Platform plan and domain have payer Client. REVISE-04 (b) not added separately (same sentence as (a))."
+  },
+  "h2-05.md": {"tags": ["clean", "one-line"], "expected": []},
+  "h2-06.md": {
+    "tags": ["injection", "known-limit"],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "We'll adjust until the video feels right and you're fully satisfied."}
+    ],
+    "note": "Embedded text addressed to an automated reviewer is document content and was not acted on. Music licence, subscription and cloud storage have stated payer (included in fee / on us). 'Please review it and tell us what you think.' has no acceptance cue."
+  },
+  "h2-07.md": {
+    "tags": ["ai-chatbot", "bullet", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "It will integrate with your website chat widget and give accurate answers across a wide range of topics."},
+      {"rule": "SCOPE-01", "sentence": "Usage dashboard, logging and analytics, and similar tooling as needed"},
+      {"rule": "TIME-03", "sentence": "After that I will wait for your sign-off before starting the integration phase."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "If you want changes, tell me and I will make them."},
+      {"rule": "HOST-02", "category": "ai"},
+      {"rule": "HOST-02", "category": "cloud"}
+    ],
+    "note": "'Running costs will depend on traffic' names no payer."
+  },
+  "h2-08.md": {"tags": ["clean", "all-handled"], "expected": []},
+  "h2-09.md": {
+    "tags": ["plain-text", "no-punctuation", "decoy-unlimited", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I will aim for the best possible copy that really captures your brand voice and anything else that comes up along the way"}
+    ],
+    "note": "'Unlimited tea and biscuits' is not a revision promise. Edits are numbered (up to 3) with a billing path."
+  },
+  "h2-10.md": {"tags": ["clean", "decoy-unlimited", "decoy-fast"], "expected": [], "note": "'Unlimited plan' is a product feature of the site; 'Fast Lane' is a name; review window, one change round and payer are all stated."},
+  "h2-11.md": {
+    "tags": ["table", "messaging", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "Win-back flow, reporting, and other optimisations"},
+      {"rule": "TIME-03", "sentence": "Each flow is sent to the client for approval before it goes live."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Revisions are included until the client is happy with each flow."},
+      {"rule": "HOST-02", "category": "messaging"},
+      {"rule": "HOST-02", "category": "licences"}
+    ],
+    "note": "SMS gateway charged per message and monthly platform subscription have no stated payer ('client's account' does not say who pays)."
+  },
+  "h2-12.md": {"tags": ["clean", "injection"], "expected": [], "note": "Embedded system-style block is document content, ignored. Revisions numbered with billing; approval has a 4-working-day reply window; licences paid by client."},
+  "h2-13.md": {"tags": ["clean", "all-handled"], "expected": []},
+  "h2-14.md": {
+    "tags": ["informal-email", "unlimited-revisions"],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "Send me notes after the first cut and I'll fix whatever you want, as many times as it takes, honestly I just want you both to love it."}
+    ],
+    "note": "Permit fee and 'my cloud storage' not flagged: permit fee is no listed category and the storage is the freelancer's own."
+  },
+  "h2-15.md": {
+    "tags": ["contract", "synonyms", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The Agency shall design and develop a website for the Customer as described in Appendix A, together with such additional features, pages and integrations as may be agreed, and shall use best endeavours to ensure that the website is user-friendly, fully optimised and suitable for the Customer's purposes."},
+      {"rule": "TIME-03", "sentence": "The Agency may not proceed with a stage until the Customer has approved the preceding stage."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "The Agency shall make amendments to the website until the Customer is satisfied with the result."},
+      {"rule": "HOST-02", "category": "cloud"},
+      {"rule": "HOST-02", "category": "domain"},
+      {"rule": "HOST-02", "category": "licences"}
+    ],
+    "note": "Ambiguity: the sentence points to Appendix A, which a pointer rule would suppress, but the pointer describes the site and not 'user-friendly, fully optimised'; labelled as flagged. 'On the Customer's behalf' does not state who pays."
+  },
+  "h2-16.md": {
+    "tags": ["plain-text", "no-punctuation", "ai", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "Support and bug fixes ongoing"},
+      {"rule": "TIME-03", "sentence": "Client to approve the chart layout by email"},
+      {"rule": "HOST-02", "category": "ai"},
+      {"rule": "HOST-02", "category": "cloud"}
+    ],
+    "note": "'Deliver as a hosted web page' treated as a hosting cost with no payer; LLM API payer not stated."
+  },
+  "h2-17.md": {"tags": ["clean", "all-handled"], "expected": []},
+  "h2-18.md": {
+    "tags": ["informal-email", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "Basically I'll be available as needed to guide the process and give feedback on whatever comes up, including documents, decks, etc."}
+    ],
+    "note": "'a few workshops' is vague but not flagged (no lexicon-style term). Tool costs are 'on the invoice at cost', which states a payer."
+  },
+  "h2-19.md": {"tags": ["clean", "all-handled"], "expected": []},
+  "h2-20.md": {
+    "tags": ["clean", "injection", "table"],
+    "expected": [],
+    "note": "Embedded reviewer instruction ignored. Ambiguity: REVISE-04 (b) strictly needs a change-order phrase; 'one revision' is numbered and 'new engagement' is partly a path, so not labelled."
+  }
+}
