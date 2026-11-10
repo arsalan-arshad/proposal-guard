@@ -12,8 +12,9 @@ const FILE_EXT =
   'pdf|docx?|xlsx?|pptx?|csv|md|txt|json|ya?ml|png|jpe?g|gif|svg|zip|html?|css|jsx?|tsx?|py|sql|sh';
 
 const URL_RE = /\b(?:https?:\/\/|www\.)[^\s<>"'`)\]]*[^\s<>"'`)\].,;:!?]/gi;
-const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g;
-const FILE_RE = new RegExp(`\\b[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*\\.(?:${FILE_EXT})\\b`, 'gi');
+const EMAIL_RE = /(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g;
+// At most 16 dotted segments before the extension: unbounded repetition made long dotted chains quadratic.
+const FILE_RE = new RegExp(`\\b[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+){0,16}\\.(?:${FILE_EXT})\\b`, 'gi');
 const INLINE_CODE_RE = /`[^`\n]+`/g;
 
 function blank(s: string, re: RegExp): string {
@@ -129,7 +130,7 @@ function splitBlock(masked: string, block: Range): Range[] {
   const segment = masked.slice(block.start, block.end);
   const ranges: Range[] = [];
   let from = 0;
-  const re = /[.!?]+["'’”)\]]*(?=\s)/g;
+  const re = /(?<![.!?])[.!?]+["'’”)\]]*(?=\s)/g; // lookbehind: start only at the beginning of a punctuation run (avoids quadratic retries)
   let m: RegExpExecArray | null;
   while ((m = re.exec(segment)) !== null) {
     const end = m.index + m[0].length;
