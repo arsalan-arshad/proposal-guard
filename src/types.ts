@@ -51,6 +51,8 @@ export interface Sentence {
   index: number;
   /** Index of the block (paragraph, bullet, heading or table cell) the sentence belongs to. */
   block: number;
+  /** Table cells only: the line (row) of the table the sentence sits on. Sentences in one row share it. */
+  row?: number;
   /** Original text of the sentence. */
   text: string;
   /** Same length as `text`; code, URLs and file names are replaced by spaces. Rules match on this. */

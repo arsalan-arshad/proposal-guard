@@ -10,6 +10,8 @@ const REVISION_CUE_RES: RegExp[] = [
   /\biterations?\b/gi,
   /\bedits\b/gi,
   /\btweaks\b/gi,
+  /\bamendments?\b/gi,
+  /\b(?:want|need|request|require)s?\s+(?:any\s+)?(?:changes|tweaks|edits|adjustments|amendments)\b/gi,
 ];
 
 /** Version-history and scope-change senses that are not a promise of free revisions. */
@@ -22,7 +24,11 @@ const GIT_RE = /\b(?:git|version\s+history|revision\s+history)\b/i;
 
 const UNLIMITED_RES: RegExp[] = [
   /\bunlimited\s+(?:[A-Za-z-]+\s+){0,2}(?:revisions?|iterations?|rounds?|changes|edits|tweaks|rework)\b/gi,
-  /\buntil\s+(?:you\s+are|you['’]re|the\s+client\s+is)\s+(?:completely\s+|fully\s+|totally\s+)?(?:happy|satisfied|pleased)\b/gi,
+  /\buntil\b[^.]{0,40}?\b(?:you\s+are|you['’]re|the\s+(?:client|customer)\s+is)\s+(?:completely\s+|fully\s+|totally\s+)?(?:happy|satisfied|pleased)\b/gi,
+  /\buntil\s+you\s+love\b/gi,
+  /\buntil\b[^.]{0,30}\b(?:feels|looks|is)\s+right\b/gi,
+  /\bas\s+many\s+times\s+as\s+(?:it\s+takes|needed|required|necessary|you\s+(?:like|want|need))\b/gi,
+  /\bkeep\s+(?:tweaking|adjusting|revising|changing|refining|fixing|polishing)\b/gi,
   /\bas\s+many\s+(?:revisions?|rounds?|iterations?|changes|edits)\s+as\s+(?:needed|required|necessary)\b/gi,
 ];
 
@@ -38,6 +44,8 @@ const CHANGE_ORDER_RE = new RegExp(
     'billable\\s+change',
     'billed\\s+as\\s+(?:a\\s+)?change',
     'quoted\\s+separately',
+    '(?:additional|extra|further|beyond|after\\s+that)\\b[^.]{0,60}?\\b(?:cost|costs|billed|charged|priced|quoted)',
+    '(?:treated|handled|scoped)\\s+as\\s+(?:a\\s+)?new\\s+(?:project|engagement|request|scope)',
     '(?:billed|charged|quoted)\\s+(?:separately|hourly|extra|at\\s+(?:our|the|an?)\\s+(?:standard\\s+)?(?:hourly\\s+)?rate)',
     'at\\s+(?:our|the)\\s+(?:standard\\s+)?hourly\\s+rate',
     '(?:extra|additional|further)\\s+(?:rounds?|revisions?|requests?|work)\\s+(?:are|is|will\\s+be)\\s+(?:billed|charged|quoted)',
@@ -123,11 +131,11 @@ export function checkRevise04(sentences: Sentence[]): RuleOutcome {
     if (has(CHANGE_ORDER_RE, s.masked)) changeOrderPath = true;
 
     const cues = revisionCues(s.masked);
-    if (cues.length === 0) continue;
+    const unlimited = has(GIT_RE, s.masked) ? [] : UNLIMITED_RES.flatMap((re) => findAll(re, s.masked));
+    if (cues.length === 0 && unlimited.length === 0) continue;
     sawCue = true;
     if (hasPointer(s.masked)) continue;
 
-    const unlimited = UNLIMITED_RES.flatMap((re) => findAll(re, s.masked));
     const committed = unlimited.length > 0 || has(COMMITMENT_RE, s.masked);
     if (!committed) continue;
 

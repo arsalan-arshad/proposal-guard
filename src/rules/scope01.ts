@@ -44,22 +44,34 @@ const LEXICON: LexEntry[] = [
   { group: 'quality', severity: 'Medium', re: /\benterprise[- ]grade\b/gi },
   { group: 'quality', severity: 'Medium', re: /\bproduction[- ]ready\b/gi },
   { group: 'quality', severity: 'Medium', re: /\bhigh[- ]quality\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\bbest\s+possible\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\bhigh(?:est)?\s+standards?\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\bpolished\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\b(?:fully\s+)?optimi[sz]ed\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\bwide\s+range\s+of\b/gi },
   // Unreferenced standards (Medium)
   { group: 'standards', severity: 'Medium', re: /\b(?:industry\s+)?best\s+practices?\b/gi },
   { group: 'standards', severity: 'Medium', re: /\bindustry[- ]standards?\b/gi },
   // Open-ended scope (High)
   { group: 'open', severity: 'High', re: /\betc\./gi },
   { group: 'open', severity: 'High', re: /\band\s+so\s+on\b/gi },
-  { group: 'open', severity: 'High', re: /\band\s+more\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\band\s+more\b/gi },
   { group: 'open', severity: 'High', re: /\band\s+the\s+like\b/gi },
   { group: 'open', severity: 'High', re: /\band\s+similar\b/gi },
-  { group: 'open', severity: 'High', re: /\band\s+other(?:\s+related)?(?=\s+[A-Za-z])/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\band\s+other(?:\s+related)?(?=\s+[A-Za-z])/gi },
   { group: 'open', severity: 'High', re: /\bincluding\s+but\s+not\s+limited\s+to\b/gi },
   { group: 'open', severity: 'High', re: /\bas\s+(?:needed|necessary)\b/gi },
   { group: 'open', severity: 'High', re: /\bas\s+required\b(?!\s+by\b)/gi },
   { group: 'open', severity: 'High', re: /\bwhere\s+appropriate\b/gi },
   { group: 'open', severity: 'High', re: /\bany\s+other\b/gi },
   { group: 'open', severity: 'High', re: /\ball\s+necessary\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\bwhatever\s+it\s+takes\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\banything\s+else\b/gi },
+  { group: 'open', severity: 'High', re: /\bany\s+additional\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\bas\s+(?:the\s+\w+\s+)?may\s+(?:reasonably\s+)?(?:be\s+)?(?:required|agreed|needed|necessary|require)\b/gi },
+  { group: 'open', severity: 'High', re: /\bfrom\s+time\s+to\s+time\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\bongoing\s+(?:support|maintenance|updates|bug\s+fixes|improvements)\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\b(?:support|maintenance|updates|bug\s+fixes)\s+ongoing\b/gi },
   // Subjective acceptance (High)
   { group: 'subjective', severity: 'High', noContext: true, re: new RegExp(`\\bto\\s+(?:your|the\\s+client${APOS}?s?)\\s+satisfaction\\b`, 'gi') },
   { group: 'subjective', severity: 'High', noContext: true, re: /\bto\s+the\s+satisfaction\s+of\b/gi },
@@ -77,6 +89,8 @@ const EXCLUSIONS: RegExp[] = [
   /\bScalable\s+Vector\s+Graphics\b/gi,
   /\bFast(?:API|ify|lane)\b/g,
   /\bQuickBooks\b/g,
+  // A capitalised cue word followed by another capitalised word, after a lower-case word, is a name ("to Fast Lane Couriers").
+  /(?<=[a-z,]\s)(?:Fast|Quick|Instant|Smooth|Robust|Responsive|Seamless)\s+[A-Z][a-z]+/g,
 ];
 
 /** A measurable criterion or a named standard silences the sentence. */
@@ -101,7 +115,7 @@ const METRIC_RE = new RegExp(
 
 /** Deliverable context: a commitment verb or a deliverable noun. */
 const CONTEXT_RE = new RegExp(
-  '\\b(?:will|shall|must|should|deliver(?:s|ed|y|ables?)?|provid(?:e|es|ed|ing)|includ(?:e|es|ed|ing)' +
+  '\\b(?:will|shall|must|should|(?:I|we|you)[\'\\u2019]ll|make\\s+sure|works?\\s+(?:well|smoothly|seamlessly|on|across|with)|experience|deliver(?:s|ed|y|ables?)?|provid(?:e|es|ed|ing)|includ(?:e|es|ed|ing)' +
     '|ensur(?:e|es|ed|ing)|build|builds|built|develop(?:s|ed|ing)?|implement(?:s|ed|ing)?|creat(?:e|es|ed|ing)' +
     '|integrat(?:e|es|ed|ing|ion|ions)|deploy(?:s|ed|ing)?|launch(?:es|ed|ing)?' +
     '|scope|covers?|app|application|website|site|platform|system|API|dashboard|feature|module|backend|frontend|interface|pipeline|service)\\b',

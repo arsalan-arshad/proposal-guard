@@ -101,7 +101,7 @@ I have tested the server by speaking the protocol over standard input and output
 
 ```bash
 npm run typecheck
-npm test                       # 175 tests at the time of writing
+npm test                       # 216 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
 ```
@@ -110,7 +110,7 @@ The test suite includes the rule examples from the spec, segmenter tests, prompt
 
 ### Evaluation (read before trusting the tool)
 
-The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md):
+The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md). **These figures describe the rules as they were on 2026-11-10 (commit `1c40efb`). The rules were changed afterwards in a second tuning round (on the development set only), so the figures below are out of date for the current rules and a new held-out run is needed before any figure is quoted for them.**
 
 | Rule | Reported findings that were correct | Expected findings that were found |
 |---|---|---|

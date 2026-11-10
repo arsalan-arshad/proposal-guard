@@ -4,6 +4,8 @@ Date: 2026-11-10 (Asia/Karachi). Not legal advice; this report measures a text c
 
 ## Read this first
 
+- **Status after publication:** the rules were changed in a second tuning round after this run (`RULES_SPEC.md` items 32 to 40 in the project's private notes; summarised in the repository history). The figures below describe the rules at commit `1c40efb` only. This set is now contaminated for the new rules, because its mismatch list informed the changes; do not use it again to measure them.
+
 - One run, on a set that no rule was tuned against, with the rules frozen. Rule code: git commit `1c40efb9dfac3b1cf28666395d76faccf41d1677` (the run was made before the documents and labels were committed; no file under `src/` changed in between). Source hash (first 16 hex characters of the SHA-256 of all `src/**/*.ts`, sorted path order): `9a942cca073a0d6f`.
 - **The documents and the labels were both written by Claude, in two separate sessions.** The document writer was told not to read the rules, code or spec. The labeller read only `RULES_SPEC.md` and the documents. This is not independent human labelling and the model family is the one that wrote the rules. The owner has not yet reviewed a sample of the labels.
 - 20 documents and 37 expected findings. One document moves a percentage by several points. Documents are invented; they are not real proposals.

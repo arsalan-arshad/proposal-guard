@@ -2,7 +2,7 @@ import { NUM, dropOverlapping, findAll, has, hasPointer } from '../patterns.js';
 import type { Finding, RuleOutcome, Sentence, Severity } from '../types.js';
 
 const ACCEPT_CUE_RE =
-  /\b(?:approv(?:al|e|es|ed|ing)|accept(?:s|ed|ance|ing)?|sign(?:s|ed)?[- ]off|sign(?:s|ed)?\s+off|client\s+review|review\s+by\s+the\s+client)\b/gi;
+  /\b(?:approv(?:al|e|es|ed|ing)|accept(?:s|ed|ance|ing)?|sign(?:s|ed)?[- ]off|sign(?:s|ed)?\s+off|client\s+review|review\s+by\s+the\s+client|confirm(?:s|ed)?\s+in\s+writing|call\s+it\s+done)\b/gi;
 
 /** Senses of "accept"/"approval" that are not about the client approving work. */
 const EXCLUDED_SENSE: RegExp[] = [
@@ -15,7 +15,7 @@ const EXCLUDED_SENSE: RegExp[] = [
 ];
 
 const MILESTONE_RE =
-  /\b(?:milestones?|deliverables?|deliver(?:y|ed|s)?|phases?|stages?|payments?|invoic\w*|releas\w*|handover|completion|final)\b/i;
+  /\b(?:milestones?|deliverables?|deliver(?:y|ed|s)?|phases?|stages?|payments?|invoic\w*|releas\w*|handover|completion|final|builds?|drafts?|layouts?|designs?|wireframes?|mock-?ups?|proofs?|versions?|flows?|prototypes?|go(?:es)?\s+live|launch\w*)\b/i;
 
 const PAYMENT_RE = /\b(?:payments?|invoic\w*|paid|released|funds?)\b/i;
 
