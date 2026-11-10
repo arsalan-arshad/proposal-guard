@@ -110,10 +110,19 @@ The test suite includes the rule examples from the spec, segmenter tests, prompt
 
 ### Evaluation (read before trusting the tool)
 
-The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md). **These figures describe the rules as they were on 2026-11-10 (commit `1c40efb`). The rules were changed afterwards in a second tuning round (on the development set only), so the figures below are out of date for the current rules and a new held-out run is needed before any figure is quoted for them.**
+The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 3, 2026-11-11, strict matching):
 
 | Rule | Reported findings that were correct | Expected findings that were found |
 |---|---|---|
+| SCOPE-01 | 2 of 9 | 2 of 14 |
+| TIME-03 | 1 of 3 | 1 of 6 |
+| HOST-02 | 3 of 10 | 3 of 5 |
+| REVISE-04 | 4 of 5 | 4 of 13 |
+| All | 10 of 27 | 10 of 38 |
+
+**This is a weak result.** About 6 of the 17 reported errors are formatting effects (clause numbers, punctuation); a looser matching mode that ignores those reads 15 of 27 and 15 of 38, which is also in the report. On the development set the same rules score far higher (60 of 61 and 60 of 70) because they were tuned on it; do not read that as quality. Caveats: 20 invented documents; documents and labels were both written by Claude in separate sessions, which is not independent human labelling; one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason, and the results of the earlier rules on held-out set 2 are kept there as history.
+
+---|---|---|
 | SCOPE-01 | 3 of 5 | 3 of 13 |
 | TIME-03 | 2 of 4 | 2 of 6 |
 | HOST-02 | 7 of 10 | 7 of 11 |

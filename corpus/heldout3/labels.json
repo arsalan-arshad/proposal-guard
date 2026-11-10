@@ -1,0 +1,104 @@
+{
+  "h3-01.md": {"tags": ["clean", "negative"], "expected": []},
+  "h3-02.md": {
+    "tags": ["informal-email", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "here's what I'm thinking for the Fastlane Courier app, basically a modern, intuitive and delightful experience for your drivers and customers"},
+      {"rule": "SCOPE-01", "sentence": "I'll make it feel premium and super smooth, and I'll add whatever features make sense as we go"},
+      {"rule": "REVISE-04", "part": "a", "sentence": "I'm happy to keep tweaking until you love it, that's just how I work"},
+      {"rule": "REVISE-04", "part": "b", "sentence": "I'm happy to keep tweaking until you love it, that's just how I work"},
+      {"rule": "HOST-02", "category": "api"}
+    ],
+    "note": "Maps and push notifications are paid third-party services with no payer; 'see about the bills later' is not a payer. 'tweaking' is not in the cue list but is plainly revisions. Part b anchored on the same sentence as part a (spec ambiguous on whether both fire)."
+  },
+  "h3-03.md": {"tags": ["clean", "negative", "structured-quote"], "expected": []},
+  "h3-04.md": {
+    "tags": ["contract", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The Consultant shall provide ongoing support for the Client's analytics platform and shall make improvements as needed to ensure optimal performance."},
+      {"rule": "SCOPE-01", "sentence": "The Consultant shall assist with other data-related tasks as may be requested from time to time."},
+      {"rule": "SCOPE-01", "sentence": "The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction."},
+      {"rule": "TIME-03", "sentence": "The Client shall approve the findings report before the second instalment becomes payable."},
+      {"rule": "TIME-03", "sentence": "Final sign-off by the Client's data lead is required before the engagement closes."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction."},
+      {"rule": "HOST-02", "category": "cloud"}
+    ],
+    "note": "4.1 is unlimited, unpriced changes; spec says plain 'changes' alone is not a revision cue, labelled by intent. 'other data-related tasks' is open-ended scope not in the lexicon. Cloud warehouse cost 'as the parties agree' is no stated payer."
+  },
+  "h3-05.md": {"tags": ["clean", "negative", "table"], "expected": []},
+  "h3-06.md": {
+    "tags": ["injection", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The bot will be accurate, helpful and engaging, and will handle all customer questions."},
+      {"rule": "SCOPE-01", "sentence": "Ongoing prompt tuning and other improvements"},
+      {"rule": "TIME-03", "sentence": "Client will confirm the bot is working once the build is finished."},
+      {"rule": "HOST-02", "category": "ai"},
+      {"rule": "HOST-02", "category": "cloud"}
+    ],
+    "note": "Document contains an instruction addressed to a scanner; ignored. TIME-03 is an acceptance step with no cue word and no window."
+  },
+  "h3-07.md": {"tags": ["clean", "negative", "bullets"], "expected": []},
+  "h3-08.md": {
+    "tags": ["clean", "negative", "false-friend"],
+    "expected": [],
+    "note": "'Unlimited Sips' is a product name. 'One responsive landing page' is a layout sense of responsive, not flagged."
+  },
+  "h3-09.md": {"tags": ["clean", "negative"], "expected": [], "note": "Fix-it-within-7-days is a bounded correction window; not treated as unnumbered revisions."},
+  "h3-10.md": {
+    "tags": ["contract"],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "The Facilitator will make adjustments to the content until the Client is satisfied."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "The Facilitator will make adjustments to the content until the Client is satisfied."}
+    ],
+    "note": "Item 6 (client will say if workshop was acceptable) not labelled: payment is due on the day and does not depend on it. Part b same sentence as part a."
+  },
+  "h3-11.md": {"tags": ["clean", "negative", "injection"], "expected": [], "note": "Trailing 'system notice' is document content, ignored."},
+  "h3-12.md": {
+    "tags": ["informal", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I'll write copy that's compelling, on-brand and persuasive across your new website"},
+      {"rule": "SCOPE-01", "sentence": "The tone will be warm but professional, and I'll polish it until it's perfect"},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Revisions: as many as it takes"},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Revisions: as many as it takes"}
+    ],
+    "note": "Subjective quality words are not in the lexicon; labelled by intent. Part b same sentence as part a."
+  },
+  "h3-13.md": {"tags": ["clean", "negative", "contract"], "expected": []},
+  "h3-14.md": {
+    "tags": ["informal-email", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "Rebuild the 6 pages on WordPress with a clean, modern look"},
+      {"rule": "REVISE-04", "part": "a", "sentence": "We can go back and forth as often as you like, I'm not counting"},
+      {"rule": "REVISE-04", "part": "b", "sentence": "We can go back and forth as often as you like, I'm not counting"},
+      {"rule": "HOST-02", "category": "messaging"}
+    ],
+    "note": "'clean' and 'modern' are candidate words outside v1 lexicon. 'Fast Track' is a name. Part b same sentence as part a."
+  },
+  "h3-15.md": {"tags": ["clean", "negative", "table"], "expected": [], "note": "Phase 3 'none, final payment due on delivery' is a deliberate no-sign-off, not an approval gate."},
+  "h3-16.md": {
+    "tags": ["terms", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "We will craft a comprehensive and cohesive visual identity, including all the assets the brand might need going forward"},
+      {"rule": "SCOPE-01", "sentence": "Stock photography and typefaces are included where required."},
+      {"rule": "TIME-03", "sentence": "Payment is due once the Client approves the final designs."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Client may request unlimited rounds of changes until fully happy."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Client may request unlimited rounds of changes until fully happy."}
+    ],
+    "note": "Stock photography and typefaces 'included' treated as a stated payer (included), so no HOST-02. Part b same sentence as part a."
+  },
+  "h3-17.md": {"tags": ["clean", "negative", "false-friend"], "expected": [], "note": "'Smooth Ride' is a product name."},
+  "h3-18.md": {
+    "tags": ["informal-email", "known-limit"],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I'll tidy the categories and make the product pages look good and load quickly"},
+      {"rule": "SCOPE-01", "sentence": "I'll also take care of anything that comes up with the catalogue afterwards"},
+      {"rule": "TIME-03", "sentence": "Payment is split, half now and half when you say it's done"},
+      {"rule": "TIME-03", "sentence": "Honestly just tell me when you're happy and we'll call it done"},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Revisions, sure, a couple of passes, and if it turns into a lot more we'll chat about it"},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Revisions, sure, a couple of passes, and if it turns into a lot more we'll chat about it"}
+    ],
+    "note": "'a couple of' is not a number under the number test. Hosting upgrade 'between you and them' read as client pays, so not flagged. 'we'll chat' is not a change-order path."
+  },
+  "h3-19.md": {"tags": ["clean", "negative"], "expected": []},
+  "h3-20.md": {"tags": ["clean", "negative"], "expected": []}
+}
