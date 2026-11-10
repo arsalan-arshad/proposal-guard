@@ -43,7 +43,7 @@ describe('demo makes no outside requests and stores nothing', () => {
 
   it('page loads only its own script, stylesheet and bundled images', () => {
     const srcs = [...html.matchAll(/\b(?:src|href)="([^"]+)"/g)].map((m) => m[1] as string);
-    const loaded = srcs.filter((s) => !/^https:\/\/(?:github\.com\/arsalan-arshad\/proposal-guard|arsalandev\.studio)$/.test(s));
+    const loaded = srcs.filter((s) => !/^https:\/\/(?:github\.com\/arsalan-arshad\/proposal-guard(?:\/blob\/main\/docs\/EVALUATION\.md)?|arsalandev\.studio)$/.test(s));
     expect(loaded.sort()).toEqual([
       'app.js',
       'assets/banner-1280.jpg',
@@ -75,5 +75,25 @@ describe('demo makes no outside requests and stores nothing', () => {
     for (const banned of ['fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket', 'EventSource', 'localStorage', 'sessionStorage', 'indexedDB', 'document.cookie', 'innerHTML', 'outerHTML', 'insertAdjacentHTML', 'document.write', 'eval(', 'new Function']) {
       expect(code.includes(banned), banned).toBe(false);
     }
+  });
+});
+
+describe('quoted evaluation figures match the report', () => {
+  const html = readFileSync('demo/index.html', 'utf8');
+  const report = readFileSync('docs/EVALUATION.md', 'utf8');
+  const readme = readFileSync('README.md', 'utf8');
+
+  it('the demo page quotes the same headline figures as docs/EVALUATION.md', () => {
+    const m = /(\d+) of the (\d+) findings it reported were correct, and it found (\d+) of the (\d+) findings/.exec(html);
+    expect(m).not.toBeNull();
+    const [, tp, reported, found, expected] = m as RegExpExecArray;
+    expect(tp).toBe(found);
+    expect(report).toContain(`${tp} of the ${reported} findings the tool reported were correct`);
+    expect(report).toContain(`it found ${found} of the ${expected} findings the labeller expected`);
+  });
+
+  it('the README table total matches the same figures', () => {
+    const m = /(\d+) of the (\d+) findings it reported were correct, and it found (\d+) of the (\d+) findings/.exec(html) as RegExpExecArray;
+    expect(readme).toContain(`| All | ${m[1]} of ${m[2]} | ${m[3]} of ${m[4]} |`);
   });
 });
