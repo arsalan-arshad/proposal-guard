@@ -26,6 +26,7 @@ const WINDOW_RE = new RegExp(
   [
     `\\bwithin\\s+(?:the\\s+)?(?:next\\s+)?${NUM}\\s*(?:\\(\\d+\\)\\s*)?${TIME_UNIT}\\b`,
     `\\b${NUM}\\s+${TIME_UNIT}\\s+(?:after|of|from)\\s+(?:the\\s+)?(?:delivery|receipt|submission|notice|review)\\b`,
+    `\\b${NUM}\\s+${TIME_UNIT}\\s+to\\s+(?:respond|review|approve|accept|reply|give|provide|sign)\\b`,
     `\\b(?:review|approval|acceptance)\\s+(?:period|window)\\s+(?:of|is)\\s+${NUM}\\b`,
     `\\b${NUM}[- ](?:business[- ]|working[- ])?(?:day|hour|week)\\s+(?:review|approval|acceptance)\\b`,
   ].join('|'),

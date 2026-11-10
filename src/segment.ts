@@ -148,7 +148,6 @@ function splitBlock(masked: string, block: Range): Range[] {
         if (ABBREVIATIONS.has(word)) continue;
         if (word === 'no' && /[0-9]/.test(next)) continue;
         if (word === 'etc' && !/[A-Z]/.test(next) && next !== '') continue;
-        if (word.length === 1 && m[0] === '.') continue; // initials such as "J. Smith"
       }
     }
     ranges.push({ start: block.start + from, end: block.start + end });

@@ -106,8 +106,8 @@ export function hasNumber(s: string): boolean {
  * suppresses a rule for that sentence. It trusts that the referenced text exists.
  */
 export const POINTER_RE = new RegExp(
-  '\\b(?:as\\s+(?:defined|set\\s+out|described|specified|detailed|outlined|listed)\\s+in' +
-    '|(?:is|are)?\\s*(?:defined|set\\s+out|described|specified|detailed|outlined|listed)\\s+in' +
+  '\\b(?:as\\s+(?:defined|set\\s+out|described|specified|detailed|outlined|listed|covered|addressed|handled|stated|agreed)\\s+in' +
+    '|(?:(?:is|are|be|been)\\s+)?(?:defined|set\\s+out|described|specified|detailed|outlined|listed|covered|addressed|handled|stated|agreed)\\s+in' +
     '|per|according\\s+to|see|follows?|under|in\\s+accordance\\s+with|governed\\s+by)' +
     '\\s+(?:the\\s+)?(?:appendix|appendices|schedule|exhibit|section|annex)\\b',
   'i',
