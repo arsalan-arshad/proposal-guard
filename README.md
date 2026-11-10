@@ -1,9 +1,10 @@
 # Proposal Guard — a rule-based scope-creep checker for proposals and SOWs
 
-> **Open-source (MIT)** | A small showcase project by [Arsalan Arshad](https://arsalandev.studio) | Early stage: not published to npm, no hosted demo yet
+> **Open-source (MIT)** | A small showcase project by [Arsalan Arshad](https://arsalandev.studio) | Early stage: not published to npm. Live demo: https://proposal-guard-production.up.railway.app/
 
 [![CI](https://github.com/arsalan-arshad/proposal-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/arsalan-arshad/proposal-guard/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Hosted on Railway](https://img.shields.io/badge/demo-hosted%20on%20Railway-6d3fe0)](https://proposal-guard-production.up.railway.app/)
 
 ---
 
@@ -28,6 +29,7 @@ Freelancers often send a proposal or statement of work with wording that quietly
 - **Library** (`src/scan.ts`): `scan(text)` returns findings, a per-rule status (`findings`, `passed` or `not applicable`) and the short disclaimer. Input is capped at 500,000 characters.
 - **Command line** (`src/cli.ts`): `scan <file|->` with plain-text or `--json` output, `list-rules`, `explain <RULE-ID>`. Exit codes: 0 scanned with no findings, 1 findings present, 2 usage or input error. Accepts `.md` and `.txt` files or standard input.
 - **Local MCP server** (`src/mcp.ts`): stdio, read-only, three tools (`scan_proposal`, `list_rules`, `explain_finding`). No file paths, no network, no shell. Quoted sentences come back inside a labelled result with a notice that they are untrusted data.
+- **Browser demo** (`demo/`): the same scanner in a static page. It makes no network requests (a content-security policy forbids them), stores nothing and writes your text to the page with `textContent` only. `npm run build:demo` writes it to `demo-dist/`. Live at https://proposal-guard-production.up.railway.app/ (see section 7).
 - **Evaluation tooling** (`eval/run.ts`, `corpus/`): synthetic labelled documents and a runner that prints per-rule true positives, false positives and misses with counts.
 
 What it does **not** do: rewrite your document, send anything anywhere, read Word or PDF files, check legality or enforceability, or understand meaning beyond its word lists.
@@ -144,7 +146,9 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 
 ## 7. Production Deployment
 
-There is none. The package is marked `"private": true` and is not published to npm. There is no hosted demo and no release workflow. A browser-only demo is planned (see the roadmap) but does not exist yet.
+- **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
+- **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
+- **Not published:** the package is marked `"private": true` and is not on npm; there is no release workflow.
 
 ---
 
@@ -158,7 +162,7 @@ There is none. The package is marked `"private": true` and is not published to n
 - [ ] Human review of a sample of the labels
 - [ ] A fresh held-out set labelled by a person who has not seen the rules
 - [ ] Better coverage of informal wording, table cells and lines without punctuation
-- [ ] Browser-only demo
+- [x] Browser-only demo (hosted on Railway)
 - [ ] Optional bring-your-own-key model that only suggests wording (not started)
 - [ ] npm package (decision pending)
 
