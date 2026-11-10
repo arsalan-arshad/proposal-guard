@@ -53,6 +53,8 @@ export interface Sentence {
   block: number;
   /** Table cells only: the line (row) of the table the sentence sits on. Sentences in one row share it. */
   row?: number;
+  /** True when the sentence is a markdown heading (a title, not a clause). */
+  heading?: boolean;
   /** Original text of the sentence. */
   text: string;
   /** Same length as `text`; code, URLs and file names are replaced by spaces. Rules match on this. */

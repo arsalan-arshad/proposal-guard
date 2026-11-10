@@ -113,9 +113,11 @@ const METRIC_RE = new RegExp(
   'i',
 );
 
+const CHANGE_ORDER_SENTENCE_RE = /\bchange[- ]orders?\b/i;
+
 /** Deliverable context: a commitment verb or a deliverable noun. */
 const CONTEXT_RE = new RegExp(
-  '\\b(?:will|shall|must|should|(?:I|we|you)[\'\\u2019]ll|make\\s+sure|works?\\s+(?:well|smoothly|seamlessly|on|across|with)|experience|deliver(?:s|ed|y|ables?)?|provid(?:e|es|ed|ing)|includ(?:e|es|ed|ing)' +
+  '\\b(?:will|shall|must|should|make\\s+sure|works?\\s+(?:well|smoothly|seamlessly|on|across|with)|experience|deliver(?:s|ed|y|ables?)?|provid(?:e|es|ed|ing)|includ(?:e|es|ed|ing)' +
     '|ensur(?:e|es|ed|ing)|build|builds|built|develop(?:s|ed|ing)?|implement(?:s|ed|ing)?|creat(?:e|es|ed|ing)' +
     '|integrat(?:e|es|ed|ing|ion|ions)|deploy(?:s|ed|ing)?|launch(?:es|ed|ing)?' +
     '|scope|covers?|app|application|website|site|platform|system|API|dashboard|feature|module|backend|frontend|interface|pipeline|service)\\b',
@@ -171,7 +173,8 @@ export function checkScope01(
     sawCue = true;
     terms = terms.filter((t) => !overlapsMerged(claimedMerged, { start: s.start + t.start, end: s.start + t.end }));
     if (terms.length === 0) continue;
-    if (has(METRIC_RE, s.masked) || hasPointer(s.masked)) continue;
+    // A sentence that sets up a written change order is closing the scope, not opening it.
+    if (has(METRIC_RE, s.masked) || hasPointer(s.masked) || has(CHANGE_ORDER_SENTENCE_RE, s.masked)) continue;
 
     const severity: Severity = terms.some((t) => t.severity === 'High') ? 'High' : 'Medium';
     const groups = GROUP_ORDER.filter((g) => terms.some((t) => t.group === g));

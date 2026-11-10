@@ -647,5 +647,78 @@
         "sentence": "Payment is due when the client approves the final release."
       }
     ]
+  },
+  "d46.md": {
+    "tags": [
+      "numbered",
+      "round3"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall provide ongoing support for the analytics platform."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "The Client shall approve the report before the second payment is released."
+      }
+    ]
+  },
+  "d47.md": {
+    "tags": [
+      "informal",
+      "lowercase",
+      "round3"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "here is what i have in mind, a modern and intuitive experience for your drivers."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "tell me when the build looks right and we'll call it done."
+      }
+    ]
+  },
+  "d48.md": {
+    "tags": [
+      "heading",
+      "trap",
+      "round3"
+    ],
+    "expected": []
+  },
+  "d49.md": {
+    "tags": [
+      "revise",
+      "trap",
+      "round3"
+    ],
+    "expected": []
+  },
+  "d50.md": {
+    "tags": [
+      "scope",
+      "trap",
+      "round3"
+    ],
+    "expected": []
+  },
+  "d51.md": {
+    "tags": [
+      "scope",
+      "trap",
+      "round3"
+    ],
+    "expected": []
+  },
+  "d52.md": {
+    "tags": [
+      "host",
+      "trap",
+      "round3"
+    ],
+    "expected": []
   }
 }

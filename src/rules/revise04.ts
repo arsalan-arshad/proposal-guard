@@ -32,6 +32,10 @@ const UNLIMITED_RES: RegExp[] = [
   /\bas\s+many\s+(?:revisions?|rounds?|iterations?|changes|edits)\s+as\s+(?:needed|required|necessary)\b/gi,
 ];
 
+/** A stated limit in words or digits that sits too far from the cue word for the five-word number test. */
+const LIMIT_RE =
+  /\b(?:up\s+to|a\s+maximum\s+of|maximum\s+of|at\s+most|limited\s+to|capped\s+at)\s+(?:\w+\s+)?\d|\b\d+\s+(?:in\s+total|total)\b/i;
+
 const COMMITMENT_RE =
   /\b(?:includ(?:e|es|ed|ing)|offer(?:s|ed|ing)?|provid(?:e|es|ed|ing)|allow(?:s|ed|ing)?|will|free|unlimited|as\s+many|deliver(?:s|ed)?)\b/i;
 
@@ -140,7 +144,7 @@ export function checkRevise04(sentences: Sentence[]): RuleOutcome {
     if (!committed) continue;
 
     const words = tokenize(s.masked);
-    const unnumbered = cues.filter((c) => !numberNear(s.masked, words, c));
+    const unnumbered = has(LIMIT_RE, s.masked) ? [] : cues.filter((c) => !numberNear(s.masked, words, c));
     if (unlimited.length > 0 || unnumbered.length > 0) {
       const severity: Severity = unlimited.length > 0 ? 'High' : 'Medium';
       const terms = [...(unlimited.length > 0 ? cues : unnumbered), ...unlimited].sort((a, b) => a.start - b.start);

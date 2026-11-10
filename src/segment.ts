@@ -63,9 +63,12 @@ interface Range {
   end: number;
   /** Table cells: the index of the line (row) they sit on. */
   row?: number;
+  /** The block is a markdown heading. */
+  heading?: boolean;
 }
 
-const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)])\s+/;
+// Also multi-level clause numbers ("1.1 The ..."), only when a capital letter follows, so "1.5 million users" stays text.
+const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)]|\d{1,3}(?:\.\d{1,3})+(?=\s+[A-Z(\[]))\s+/;
 const HEADING_RE = /^(\s{0,3})#{1,6}\s+/;
 const TABLE_SEP_CELL_RE = /^\s*:?-{2,}:?\s*$/;
 
@@ -112,7 +115,7 @@ function findBlocks(masked: string): Range[] {
     if (heading) {
       flush();
       prevLine = '';
-      blocks.push({ start: lineStart + heading[0].length, end: lineEnd });
+      blocks.push({ start: lineStart + heading[0].length, end: lineEnd, heading: true });
       continue;
     }
 
@@ -153,7 +156,9 @@ function splitBlock(masked: string, block: Range): Range[] {
     let k = end;
     while (k < segment.length && /\s/.test(segment[k] as string)) k++;
     const next = k < segment.length ? (segment[k] as string) : '';
-    const startsSentence = next === '' || /[A-Z0-9"'“‘([]/.test(next);
+    // A writer who starts sentences in lower case (chat style) also continues them in lower case.
+    const current = segment.slice(from).trimStart()[0] ?? '';
+    const startsSentence = next === '' || /[A-Z0-9"'“‘([]/.test(next) || (/[a-z]/.test(current) && /[a-z]/.test(next));
     if (!startsSentence) continue;
 
     if (m[0].startsWith('.')) {
@@ -191,6 +196,7 @@ export function segment(text: string): Sentence[] {
         index: sentences.length,
         block: blockIndex,
         ...(block.row !== undefined ? { row: block.row } : {}),
+        ...(block.heading ? { heading: true } : {}),
         text: text.slice(s, e),
         masked: maskedPart,
         start: s,

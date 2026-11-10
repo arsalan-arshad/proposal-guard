@@ -101,6 +101,8 @@ const EXCLUSIONS: RegExp[] = [
   /\bdomain[- ](?:driven|model|models|knowledge|expert\w*|specific|logic)\b/gi,
   /\bopen[- ]source\s+(?:software\s+)?licen[cs]es?\b/gi,
   /\bcloud[- ]native\b/gi,
+  /\bexisting\s+subscriptions?\b/gi,
+  /\bsubscriptions?\s+(?:for|to)\s+(?:its|their|his|her)\s+own\s+\w+/gi,
   // "will not hold any paid subscriptions" says there is no such cost on that side.
   /\b(?:will|shall|does|do|did)\s+not\s+(?:hold|pay\s+for|purchase|buy|carry|incur)\s+(?:any\s+)?(?:paid\s+)?(?:\w+\s+){0,2}?(?:subscriptions?|licen[cs]es?|accounts?)\b/gi,
   /\b(?:buy|buys|purchase|purchases|sell|sells|offer|offers)\s+(?:an?\s+|the\s+)?(?:\w+\s+)?subscriptions?\b/gi,
