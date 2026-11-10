@@ -23,12 +23,14 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p demo",
     "test": "vitest run",
-    "eval": "tsx eval/run.ts"
+    "eval": "tsx eval/run.ts",
+    "build:demo": "node demo/build.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "esbuild": "0.28.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "^5.1.0"
