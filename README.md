@@ -110,10 +110,19 @@ The test suite includes the rule examples from the spec, segmenter tests, prompt
 
 ### Evaluation (read before trusting the tool)
 
-The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 3, 2026-11-11, strict matching):
+The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 4, 2026-11-11, strict matching):
 
 | Rule | Reported findings that were correct | Expected findings that were found |
 |---|---|---|
+| SCOPE-01 | 6 of 6 | 6 of 12 |
+| TIME-03 | 4 of 9 | 4 of 10 |
+| HOST-02 | 2 of 9 | 2 of 4 |
+| REVISE-04 | 3 of 5 | 3 of 8 |
+| All | 15 of 29 | 15 of 34 |
+
+**This is a weak result.** About half of what the tool reports is wrong, and it misses more than half of what a careful reader would flag. HOST-02 is the worst: 7 of its 9 reports were wrong. Earlier fresh sets gave 14 of 25 and 14 of 37 (first rules) and 10 of 27 and 10 of 38 (round 2); the sets differ, so these are not a controlled comparison and do not prove improvement. On the development set the same rules score far higher because they were tuned on it; do not read that as quality. Caveats: 20 invented documents; documents and labels were both written by Claude in separate sessions, which is not independent human labelling; one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
+
+---|---|---|
 | SCOPE-01 | 2 of 9 | 2 of 14 |
 | TIME-03 | 1 of 3 | 1 of 6 |
 | HOST-02 | 3 of 10 | 3 of 5 |
