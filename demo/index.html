@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Proposal Guard demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Proposal Guard</h1>
+  <p class="lead">Paste a draft proposal or statement of work. Fixed rules list sentences that invite scope creep. Early demo of an open-source project.</p>
+
+  <section class="notice">
+    <p><strong>What leaves your device: nothing.</strong> The check runs in this page. The page makes no network requests (its content-security policy forbids them), stores nothing, and has no analytics. Close the tab and the text is gone.</p>
+    <p><strong>Not legal advice.</strong> Proposal Guard is a text checker, not a lawyer or a law firm. It matches fixed rules against the wording of your draft and suggests blanks to fill in. It does not assess legality, enforceability, jurisdiction, liability, intellectual property, tax or payment terms. A document with no findings is not thereby a good or safe document. Findings and suggestions are prompts for you to think about, not advice to sign or not to sign. Have a qualified professional review any contract that matters.</p>
+    <p>It flags some listed patterns and misses much else. English only. No model is used.</p>
+  </section>
+
+  <label for="input">Your draft (use invented text if you are just trying it out)</label>
+  <textarea id="input" rows="12" spellcheck="false" autocomplete="off"></textarea>
+  <div class="row">
+    <button id="scan" type="button">Scan</button>
+    <button id="sample" type="button">Load sample</button>
+    <button id="clear" type="button">Clear</button>
+  </div>
+  <p id="error" role="alert"></p>
+
+  <section id="result" hidden>
+    <h2>Your text, with flagged sentences marked</h2>
+    <pre id="doc"></pre>
+    <h2>Findings</h2>
+    <div id="findings"></div>
+    <h2>Rule status</h2>
+    <ul id="status"></ul>
+  </section>
+
+  <h2>Rules</h2>
+  <ul id="rules"></ul>
+  <p id="short-disclaimer" class="small"></p>
+  <p class="small">Open source (MIT): <a href="https://github.com/arsalan-arshad/proposal-guard" rel="noopener noreferrer">github.com/arsalan-arshad/proposal-guard</a>. A project by <a href="https://arsalandev.studio" rel="noopener noreferrer">arsalandev.studio</a>.</p>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
