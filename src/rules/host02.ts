@@ -92,6 +92,7 @@ const EXCLUSIONS: RegExp[] = [
   /\bdomain[- ](?:driven|model|models|knowledge|expert\w*|specific|logic)\b/gi,
   /\bopen[- ]source\s+(?:software\s+)?licen[cs]es?\b/gi,
   /\bcloud[- ]native\b/gi,
+  /\b(?:buy|buys|purchase|purchases|sell|sells|offer|offers)\s+(?:an?\s+|the\s+)?(?:\w+\s+)?subscriptions?\b/gi,
 ];
 
 /** Words that assign a cost to a party. Either party counts; the rule only needs a payer to be stated. */
@@ -99,7 +100,14 @@ const ASSIGNMENT_RE = new RegExp(
   [
     '\\bbilled\\s+(?:directly\\s+)?to\\b',
     '\\bcharged\\s+(?:directly\\s+)?to\\b',
-    '\\bpaid\\s+(?:directly\\s+)?by\\b',
+    '\\bpaid\\s+(?:for\\s+)?(?:directly\\s+)?by\\b',
+    '\\bborne\\s+by\\b',
+    '\\bbears?\\s+(?:the\\s+)?(?:cost|costs|fees|charges)\\b',
+    "\\bat\\s+(?:the\\s+)?(?:client|customer)['\\u2019]?s?\\s+(?:own\\s+)?(?:cost|expense)\\b",
+    "\\bon\\s+(?:the\\s+)?(?:client|customer)['\\u2019]?s\\s+(?:card|account)\\b",
+    '\\binvoiced\\s+directly\\s+to\\b',
+    '\\b(?:client|customer)\\s+(?:shall|must|agrees\\s+to)\\s+(?:pay|cover|bear|provide|reimburse)\\b',
+    '\\b(?:client|customer)\\b[^.;]{0,60}\\b(?:pays?|paying|bears?|reimburses?)\\b',
     '\\bresponsible\\s+for\\b',
     "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
     "\\bat\\s+the\\s+client['\\u2019]?s\\s+expense\\b",

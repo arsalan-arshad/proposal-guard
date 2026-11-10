@@ -367,5 +367,57 @@
         "sentence": "Features include, e.g., login and search, etc."
       }
     ]
+  },
+  "d25.md": {
+    "tags": [
+      "host",
+      "legal-style"
+    ],
+    "expected": []
+  },
+  "d26.md": {
+    "tags": [
+      "host"
+    ],
+    "expected": []
+  },
+  "d27.md": {
+    "tags": [
+      "host",
+      "trap"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      }
+    ],
+    "notes": "A subscription sold inside the client's own product is not a cost to the project."
+  },
+  "d28.md": {
+    "tags": [
+      "host",
+      "trap"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "ai"
+      }
+    ],
+    "notes": "A payer-like word in a sentence that has no AI cue must not cover the AI category."
+  },
+  "d29.md": {
+    "tags": [
+      "host",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      }
+    ],
+    "notes": "\"The client pays\" refers to the fee, not to hosting; a payer word in the same sentence as a cue is taken as a stated payer."
   }
 }

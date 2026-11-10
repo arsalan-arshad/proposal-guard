@@ -60,3 +60,28 @@ describe('SCOPE-01 tuning', () => {
     expect(ids('We do not promise a fast app; targets will be agreed in Appendix B.', 'SCOPE-01')).toBe(0);
   });
 });
+
+describe('HOST-02 payer wording, second round (development corpus d25 to d29)', () => {
+  it.each([
+    ['Hosting, domain and SMS fees shall be borne by Client.', 'Hosted on AWS. '],
+    ['The client holds the AWS and Twilio accounts and pays their fees directly.', ''],
+    ["Mapbox fees are charged to Client's card.", 'We use Mapbox. '],
+    ['Email delivery through Mailgun is paid for by the customer.', ''],
+    ['All hosting costs are at the client’s expense.', 'Hosted on Vercel. '],
+  ])('states a payer: %s', (sentence, lead) => {
+    expect(ids(lead + sentence, 'HOST-02')).toBe(0);
+  });
+
+  it('a payer-like word in a sentence with no cue does not cover the category', () => {
+    expect(ids('We use the OpenAI API for summaries. The client is happy to cover lunch. Support is provided by us.', 'HOST-02')).toBe(1);
+  });
+
+  it('a subscription sold inside the client’s own product is not a project cost', () => {
+    expect(ids('Users can buy a premium subscription inside the app.', 'HOST-02')).toBe(0);
+    expect(ids('Search is powered by an Algolia subscription.', 'HOST-02')).toBe(1);
+  });
+
+  it('known limit: "the client pays" about the fee is taken as a stated payer for a cue in the same sentence', () => {
+    expect(ids('The client pays on delivery; we deploy on Vercel.', 'HOST-02')).toBe(0);
+  });
+});
