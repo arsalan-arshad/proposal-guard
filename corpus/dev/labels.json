@@ -419,5 +419,233 @@
       }
     ],
     "notes": "\"The client pays\" refers to the fee, not to hosting; a payer word in the same sentence as a cue is taken as a stated payer."
+  },
+  "d30.md": {
+    "tags": [
+      "informal",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll make sure the booking flow is the best possible experience and works smoothly on every phone."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Once I send the first build, tell me if you're happy and we'll call it done."
+      },
+      {
+        "rule": "REVISE-04",
+        "sentence": "I'm glad to keep refining things until you love how it looks.",
+        "part": "a"
+      }
+    ]
+  },
+  "d31.md": {
+    "tags": [
+      "legal",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "This Agreement starts on 4 March and continues until the Services are completed to the Client's satisfaction."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "The Deliverables are accepted once the Client confirms in writing that they conform to the Specification."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall provide data migration services together with such additional tasks and reports as the Client may reasonably require from time to time."
+      }
+    ]
+  },
+  "d32.md": {
+    "tags": [
+      "plain-lines",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "Client to approve the wireframes by email"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Support and bug fixes ongoing"
+      }
+    ]
+  },
+  "d33.md": {
+    "tags": [
+      "revise",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d34.md": {
+    "tags": [
+      "revise",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d35.md": {
+    "tags": [
+      "revise",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d36.md": {
+    "tags": [
+      "revise",
+      "informal",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "sentence": "Send me your notes on the draft and I'll fix whatever you want, as many times as it takes.",
+        "part": "a"
+      },
+      {
+        "rule": "REVISE-04",
+        "sentence": "If you want changes after delivery, tell me and I will make them.",
+        "part": "a"
+      },
+      {
+        "rule": "REVISE-04",
+        "sentence": "We will adjust the layout until the customer is fully satisfied.",
+        "part": "a"
+      }
+    ]
+  },
+  "d37.md": {
+    "tags": [
+      "scope",
+      "open",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The site will include a blog, a gallery, and anything else that comes up along the way."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will do whatever it takes to get the shop live on time."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Welcome email, weekly reporting, and other optimisations"
+      }
+    ]
+  },
+  "d38.md": {
+    "tags": [
+      "scope",
+      "quality",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The assistant will give accurate answers across a wide range of topics."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Copy is written to a high standard and the build is fully optimised."
+      }
+    ]
+  },
+  "d39.md": {
+    "tags": [
+      "scope",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d40.md": {
+    "tags": [
+      "host",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d41.md": {
+    "tags": [
+      "host",
+      "table",
+      "trap",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d42.md": {
+    "tags": [
+      "host",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "HOST-02",
+        "category": "ai"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "licences"
+      }
+    ]
+  },
+  "d43.md": {
+    "tags": [
+      "time",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "Each newsletter draft is sent to the client for approval before it goes live."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Final payment is released once the client signs off the build."
+      }
+    ]
+  },
+  "d44.md": {
+    "tags": [
+      "clean",
+      "round2"
+    ],
+    "expected": []
+  },
+  "d45.md": {
+    "tags": [
+      "time",
+      "markdown",
+      "round2"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment is due when the client approves the final release."
+      }
+    ]
   }
 }

@@ -61,6 +61,8 @@ const ABBREVIATIONS = new Set([
 interface Range {
   start: number;
   end: number;
+  /** Table cells: the index of the line (row) they sit on. */
+  row?: number;
 }
 
 const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)])\s+/;
@@ -77,24 +79,29 @@ function findBlocks(masked: string): Range[] {
   };
 
   let offset = 0;
+  let prevLine = '';
+  let lineNo = -1;
   for (const line of masked.split('\n')) {
+    lineNo++;
     const lineStart = offset;
     const lineEnd = offset + line.length;
     offset = lineEnd + 1;
 
     if (line.trim() === '') {
       flush();
+      prevLine = '';
       continue;
     }
 
     if (line.trimStart().startsWith('|')) {
       flush();
+      prevLine = '';
       let cellStart = lineStart;
       const cells = line.split('|');
       for (const cell of cells) {
         const cellEnd = cellStart + cell.length;
         if (cell.trim() !== '' && !TABLE_SEP_CELL_RE.test(cell)) {
-          blocks.push({ start: cellStart, end: cellEnd });
+          blocks.push({ start: cellStart, end: cellEnd, row: lineNo });
         }
         cellStart = cellEnd + 1;
       }
@@ -104,6 +111,7 @@ function findBlocks(masked: string): Range[] {
     const heading = HEADING_RE.exec(line);
     if (heading) {
       flush();
+      prevLine = '';
       blocks.push({ start: lineStart + heading[0].length, end: lineEnd });
       continue;
     }
@@ -111,15 +119,22 @@ function findBlocks(masked: string): Range[] {
     const bullet = BULLET_RE.exec(line);
     if (bullet) {
       flush();
+      prevLine = line;
       current = { start: lineStart + bullet[0].length, end: lineEnd };
       continue;
     }
 
-    if (current) {
+    // A short line with no closing punctuation, followed by a line that starts with a capital or digit, is a
+    // list-like line (plain-text address block, term sheet), not a wrapped sentence. Wrapped prose lines are longer.
+    const prev = prevLine.trim();
+    const listLike = prev !== '' && prev.length <= 50 && !/[.!?:;,\-\u2013\u2014]$/.test(prev) && /^\s*[A-Z0-9]/.test(line);
+    if (current && !listLike) {
       current.end = lineEnd;
     } else {
+      flush();
       current = { start: lineStart, end: lineEnd };
     }
+    prevLine = line;
   }
   flush();
   return blocks;
@@ -130,7 +145,7 @@ function splitBlock(masked: string, block: Range): Range[] {
   const segment = masked.slice(block.start, block.end);
   const ranges: Range[] = [];
   let from = 0;
-  const re = /(?<![.!?])[.!?]+["'’”)\]]*(?=\s)/g; // lookbehind: start only at the beginning of a punctuation run (avoids quadratic retries)
+  const re = /(?<![.!?])[.!?]+["'’”)\]*_]*(?=\s)/g; // lookbehind: start only at the beginning of a punctuation run (avoids quadratic retries)
   let m: RegExpExecArray | null;
   while ((m = re.exec(segment)) !== null) {
     const end = m.index + m[0].length;
@@ -175,6 +190,7 @@ export function segment(text: string): Sentence[] {
       sentences.push({
         index: sentences.length,
         block: blockIndex,
+        ...(block.row !== undefined ? { row: block.row } : {}),
         text: text.slice(s, e),
         masked: maskedPart,
         start: s,
