@@ -1,0 +1,51 @@
+# heldout2 run, once, rules frozen
+# date: 2026-11-10 (Asia/Karachi)
+# commit: 1c40efb9dfac3b1cf28666395d76faccf41d1677 (labels not yet committed; no src change since)
+# src hash (first 16 hex of SHA-256 of src/**/*.ts, sorted path order): 9a942cca073a0d6f
+
+
+
+Corpus: corpus/heldout2  (20 documents)
+
+rule        TP  FP  FN   precision          recall
+SCOPE-01     3   2  10   3/5 = 60%          3/13 = 23%
+TIME-03      2   2   4   2/4 = 50%          2/6 = 33%
+HOST-02      7   3   4   7/10 = 70%         7/11 = 64%
+REVISE-04    2   4   5   2/6 = 33%          2/7 = 29%
+all         14  11  23   14/25 = 56%        14/37 = 38%
+
+Mismatches:
+  FN  h2-02.md  SCOPE-01|I'll make sure it's the best possible experience for your members and works smoothly on all devices.
+  FN  h2-02.md  TIME-03|Once I send you the build, just let me know if you're happy with it and we'll call it done.
+  FN  h2-02.md  REVISE-04|a|I'm happy to keep tweaking things until you love it, so don't worry about the details now.
+  FP  h2-03.md  SCOPE-01|Term.** This Agreement begins on 1 June and continues until the Services are completed to the Client's satisfaction.
+  FP  h2-03.md  TIME-03|Acceptance.** Deliverables are accepted when the Client confirms in writing that they meet its requirements.
+  FN  h2-03.md  SCOPE-01|The Consultant shall provide operational consulting services in respect of the Client's warehouse process, including such analysis, workshops and recommendations as the Client may reasonably require from time to time.
+  FN  h2-03.md  SCOPE-01|This Agreement begins on 1 June and continues until the Services are completed to the Client's satisfaction.
+  FN  h2-03.md  SCOPE-01|and (c) any other materials necessary for implementation.
+  FN  h2-03.md  TIME-03|Deliverables are accepted when the Client confirms in writing that they meet its requirements.
+  FN  h2-04.md  SCOPE-01|We will do whatever it takes to make the store look great and convert well.
+  FN  h2-04.md  HOST-02|messaging
+  FN  h2-06.md  REVISE-04|a|We'll adjust until the video feels right and you're fully satisfied.
+  FN  h2-07.md  SCOPE-01|It will integrate with your website chat widget and give accurate answers across a wide range of topics.
+  FN  h2-07.md  REVISE-04|a|If you want changes, tell me and I will make them.
+  FN  h2-07.md  HOST-02|cloud
+  FP  h2-08.md  HOST-02|licences
+  FP  h2-09.md  REVISE-04|b
+  FN  h2-09.md  SCOPE-01|I will aim for the best possible copy that really captures your brand voice and anything else that comes up along the way
+  FP  h2-10.md  SCOPE-01|Booking Platform for Fast Lane Cycling Club
+  FP  h2-10.md  HOST-02|cloud
+  FN  h2-11.md  SCOPE-01|Win-back flow, reporting, and other optimisations
+  FN  h2-11.md  TIME-03|Each flow is sent to the client for approval before it goes live.
+  FP  h2-12.md  REVISE-04|b
+  FN  h2-14.md  REVISE-04|a|Send me notes after the first cut and I'll fix whatever you want, as many times as it takes, honestly I just want you both to love it.
+  FN  h2-15.md  SCOPE-01|The Agency shall design and develop a website for the Customer as described in Appendix A, together with such additional features, pages and integrations as may be agreed, and shall use best endeavours to ensure that the website is user-friendly, fully optimised and suitable for the Customer's purposes.
+  FN  h2-15.md  REVISE-04|a|The Agency shall make amendments to the website until the Customer is satisfied with the result.
+  FN  h2-15.md  HOST-02|licences
+  FP  h2-16.md  TIME-03|Client sends the CSV files by Friday Client to approve the chart layout by email I will then build the final version Support and bug fixes ongoing Price 2,100
+  FN  h2-16.md  SCOPE-01|Support and bug fixes ongoing
+  FN  h2-16.md  TIME-03|Client to approve the chart layout by email
+  FN  h2-16.md  HOST-02|cloud
+  FP  h2-17.md  REVISE-04|b
+  FP  h2-20.md  HOST-02|licences
+  FP  h2-20.md  REVISE-04|b
