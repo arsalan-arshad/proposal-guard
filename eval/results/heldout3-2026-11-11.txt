@@ -1,0 +1,62 @@
+# heldout3 run, once, rules frozen
+# date: 2026-11-11 (Asia/Karachi)
+# commit: 58e41729adccb49feeaf301e28cd58417429c1fe (rules-round-2; labels not yet committed; no src change since)
+# src hash (first 16 hex of SHA-256 of src/**/*.ts, sorted path order): dc77a4ffb4f5f9e3
+
+
+
+Corpus: corpus/heldout3  (20 documents)
+
+rule        TP  FP  FN   precision          recall
+SCOPE-01     2   7  12   2/9 = 22%          2/14 = 14%
+TIME-03      1   2   5   1/3 = 33%          1/6 = 17%
+HOST-02      3   7   2   3/10 = 30%         3/5 = 60%
+REVISE-04    4   1   9   4/5 = 80%          4/13 = 31%
+all         10  17  28   10/27 = 37%        10/38 = 26%
+
+Mismatches:
+  FP  h3-02.md  SCOPE-01|thanks for the call yesterday. here's what I'm thinking for the Fastlane Courier app, basically a modern, intuitive and delightful experience for your drivers and customers.
+  FN  h3-02.md  SCOPE-01|here's what I'm thinking for the Fastlane Courier app, basically a modern, intuitive and delightful experience for your drivers and customers
+  FN  h3-02.md  REVISE-04|b
+  FN  h3-02.md  HOST-02|api
+  FP  h3-03.md  HOST-02|licences
+  FP  h3-04.md  SCOPE-01|1.1 The Consultant shall provide ongoing support for the Client's analytics platform and shall make improvements as needed to ensure optimal performance.
+  FP  h3-04.md  SCOPE-01|1.2 The Consultant shall assist with other data-related tasks as may be requested from time to time.
+  FP  h3-04.md  TIME-03|2.2 Final sign-off by the Client's data lead is required before the engagement closes.
+  FP  h3-04.md  SCOPE-01|4.1 The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction.
+  FN  h3-04.md  SCOPE-01|The Consultant shall provide ongoing support for the Client's analytics platform and shall make improvements as needed to ensure optimal performance.
+  FN  h3-04.md  SCOPE-01|The Consultant shall assist with other data-related tasks as may be requested from time to time.
+  FN  h3-04.md  SCOPE-01|The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction.
+  FN  h3-04.md  TIME-03|The Client shall approve the findings report before the second instalment becomes payable.
+  FN  h3-04.md  TIME-03|Final sign-off by the Client's data lead is required before the engagement closes.
+  FN  h3-04.md  REVISE-04|a|The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction.
+  FN  h3-04.md  HOST-02|cloud
+  FP  h3-05.md  REVISE-04|a|Small text or colour edits after animation starts are free up to 3 in total.
+  FN  h3-06.md  SCOPE-01|The bot will be accurate, helpful and engaging, and will handle all customer questions.
+  FN  h3-06.md  TIME-03|Client will confirm the bot is working once the build is finished.
+  FP  h3-08.md  HOST-02|licences
+  FN  h3-10.md  REVISE-04|b
+  FP  h3-11.md  SCOPE-01|Quick overview of what I'll do, and what it'll cost.
+  FP  h3-11.md  HOST-02|licences
+  FN  h3-12.md  SCOPE-01|I'll write copy that's compelling, on-brand and persuasive across your new website
+  FN  h3-12.md  SCOPE-01|The tone will be warm but professional, and I'll polish it until it's perfect
+  FN  h3-12.md  REVISE-04|b
+  FP  h3-13.md  TIME-03|Milestones and acceptance
+  FP  h3-13.md  HOST-02|store
+  FP  h3-13.md  SCOPE-01|4.2 Any other change shall be set out in a written change order stating the additional hours, fee and effect on the schedule, and no work on it begins until the Client signs it.
+  FN  h3-14.md  SCOPE-01|Rebuild the 6 pages on WordPress with a clean, modern look
+  FN  h3-14.md  REVISE-04|a|We can go back and forth as often as you like, I'm not counting
+  FN  h3-14.md  REVISE-04|b
+  FN  h3-16.md  SCOPE-01|We will craft a comprehensive and cohesive visual identity, including all the assets the brand might need going forward
+  FN  h3-16.md  SCOPE-01|Stock photography and typefaces are included where required.
+  FN  h3-16.md  REVISE-04|b
+  FP  h3-17.md  HOST-02|licences
+  FP  h3-18.md  SCOPE-01|I'll tidy the categories and make the product pages look good and load quickly.
+  FP  h3-18.md  HOST-02|cloud
+  FN  h3-18.md  SCOPE-01|I'll tidy the categories and make the product pages look good and load quickly
+  FN  h3-18.md  SCOPE-01|I'll also take care of anything that comes up with the catalogue afterwards
+  FN  h3-18.md  TIME-03|Payment is split, half now and half when you say it's done
+  FN  h3-18.md  TIME-03|Honestly just tell me when you're happy and we'll call it done
+  FN  h3-18.md  REVISE-04|a|Revisions, sure, a couple of passes, and if it turns into a lot more we'll chat about it
+  FN  h3-18.md  REVISE-04|b
+  FP  h3-20.md  HOST-02|cloud

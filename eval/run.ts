@@ -27,7 +27,12 @@ interface DocLabels {
   notes?: string;
 }
 
-const norm = (s: string): string => s.replace(/\s+/g, ' ').trim();
+const strictNorm = (s: string): string => s.replace(/\s+/g, ' ').trim();
+/** Secondary, looser comparison: also ignores a leading clause number ("1.1 ") and trailing sentence punctuation. */
+const lenientNorm = (s: string): string =>
+  strictNorm(s).replace(/^(?:\*\*[^*]*\*\*\s*)?\d+(?:\.\d+)*[.)]?\s+/, '').replace(/[.!?]+["'’”)\]*_]*$/, '');
+const lenient = process.argv.includes('--lenient');
+const norm = lenient ? lenientNorm : strictNorm;
 
 function keyOfLabel(l: Label): string {
   if (l.rule === 'HOST-02') return `HOST-02|${l.category}`;
@@ -92,7 +97,7 @@ for (const file of files) {
 }
 
 const ratio = (n: number, d: number): string => (d === 0 ? 'n/a (0 cases)' : `${n}/${d} = ${((100 * n) / d).toFixed(0)}%`);
-console.log(`Corpus: ${dir}  (${files.length} documents)\n`);
+console.log(`Corpus: ${dir}  (${files.length} documents)${lenient ? '  [LENIENT matching: ignores clause numbers and trailing punctuation; secondary figure]' : ''}\n`);
 console.log('rule        TP  FP  FN   precision          recall');
 let tp = 0, fp = 0, fn = 0;
 for (const r of RULE_IDS) {

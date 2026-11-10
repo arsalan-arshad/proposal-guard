@@ -1,4 +1,74 @@
-# Evaluation report: held-out set 2
+# Evaluation report
+
+Not legal advice; this report measures a text checker on invented documents. It has two parts: the current rules on held-out set 3 (first), and the earlier rules on held-out set 2 (below, kept as history).
+
+## Current rules: held-out set 3 (run 2026-11-11)
+
+**Headline: on a set that no rule was tuned against, 10 of the 27 findings the tool reported were correct, and it found 10 of the 38 findings the labeller expected. It is a weak tool.** On the development set the same rules score 60 of 61 and 60 of 70, which shows how far tuning on a small set overstates quality.
+
+- One run, rules frozen. Rule code: git commit `58e41729adccb49feeaf301e28cd58417429c1fe` (branch `rules-round-2`, before the labels were committed; no file under `src/` changed in between). Source hash (first 16 hex of the SHA-256 of all `src/**/*.ts`, sorted path order): `dc77a4ffb4f5f9e3`. Raw output: `eval/results/heldout3-2026-11-11.txt`.
+- 20 invented documents and 38 expected findings. The documents were written by one Claude session that was told not to read the rules, code, spec or any other corpus. The labels were written by a separate Claude session that read only the rule definitions in `RULES_SPEC.md` (the part that does not describe the code) and the documents. **Both are Claude, the same model family that wrote the rules; this is not independent human labelling, and no person has reviewed a sample of the labels.**
+- Strict matching: a finding counts only if it quotes exactly the labelled sentence (HOST-02: the labelled category; REVISE-04 part (b): the labelled part). A finding on the right passage with a different sentence boundary or punctuation counts as one false positive plus one miss.
+- This set was not used for any change. It is now seen: further rule changes need a new held-out set before any new figure is quoted.
+
+### Strict results
+
+| Rule | TP | FP | FN | Precision | Recall |
+|---|---|---|---|---|---|
+| SCOPE-01 | 2 | 7 | 12 | 2/9 = 22% | 2/14 = 14% |
+| TIME-03 | 1 | 2 | 5 | 1/3 = 33% | 1/6 = 17% |
+| HOST-02 | 3 | 7 | 2 | 3/10 = 30% | 3/5 = 60% |
+| REVISE-04 | 4 | 1 | 9 | 4/5 = 80% | 4/13 = 31% |
+| All | 10 | 17 | 28 | 10/27 = 37% | 10/38 = 26% |
+
+### Secondary figure (defined after the strict results were seen)
+
+`npm run eval -- corpus/heldout3 --lenient` also ignores a leading clause number ("1.1 ") and trailing sentence punctuation. I added this option after seeing the strict mismatch list, because several mismatches were formatting only. Treat it as an upper-bound reading, not the headline: **15 of 27 reported correct (56%), 15 of 38 found (39%)**. SCOPE-01 6/9 and 6/14, TIME-03 2/3 and 2/6, HOST-02 3/10 and 3/5, REVISE-04 4/5 and 4/13. Output: `eval/results/heldout3-2026-11-11-lenient.txt`.
+
+### Manual review of the 17 strict false positives
+
+| Doc | Rule | Reason | Kind |
+|---|---|---|---|
+| h3-02 | SCOPE-01 | Informal lower-case sentences after a full stop are not split, so the quote starts with the previous sentence. Also a miss. | boundary |
+| h3-04 (4 findings) | SCOPE-01 x3, TIME-03 | Numbered clauses ("1.1 The Consultant ...") keep their number in the quote. Right passages. Also misses. | boundary |
+| h3-18 | SCOPE-01 | The label omits the final full stop. Right passage. Also a miss. | label format |
+| h3-03 | HOST-02 licences | "client buys any commercial font licence it wants" states the payer; "buys" is not recognised. | real |
+| h3-05 | REVISE-04 (a) | "free up to 3 in total": the number is too far from the cue word. | real |
+| h3-08 | HOST-02 licences | "the chain's existing subscription system" is not a cost to the contractor. | real |
+| h3-11 | SCOPE-01 | "Quick overview of what I'll do" (a short title line) read as a promise. | real |
+| h3-11 | HOST-02 licences | "billed by the providers to Pelham & Rudd" names a payer; the wording is not recognised. | real |
+| h3-13 | TIME-03 | A heading ("Milestones and acceptance") was treated as an approval clause. | real |
+| h3-13 | HOST-02 store | "shall hold the ... accounts and bear their annual fees" names a payer; "bear their" is not recognised. | real |
+| h3-13 | SCOPE-01 | A change-order clause ("Any other change shall be set out in a written change order ...") was flagged for "any other". | real |
+| h3-17 | HOST-02 licences | A subscription the client sells to its own customers ("runs a ... rental subscription"); only "buy/sell/offer" wording is excluded. | real |
+| h3-18 | HOST-02 cloud | "The hosting upgrade your host wants you to buy, that's between you and them" is informal payer wording. | real (arguable) |
+| h3-20 | HOST-02 cloud | "hosted by Farah Dhillon" is a person who hosts a podcast, not hosting. | real |
+
+Of the 17: 6 are formatting or boundary effects on the right passage, and 11 are real mistakes by the rules.
+
+### What the 28 misses look like (my reading, not separately tested)
+
+- **Informal first-person wording** ("I'll write copy that's compelling", "tell me when you're happy and we'll call it done", "go back and forth as often as you like").
+- **Open phrases and quality words outside the lists** ("comprehensive and cohesive", "clean, modern look", "accurate, helpful and engaging", "might need going forward").
+- **Approvals without the expected nouns** ("Client will confirm the bot is working", "when you say it's done").
+- **REVISE-04 part (b):** 6 of the 9 REVISE-04 misses are part (b) labels. The labeller wrote part (b) for documents that promise unnumbered revisions and name no price for extra work; the code only raises part (b) when revisions are numbered. The spec is ambiguous here and the two readings disagree. This is a definition problem as much as a rule problem.
+- A missed cloud or API cost category in a few documents (wording not in the lists).
+
+### What this says about the earlier tuning round
+
+The second tuning round (dev set only, 16 new dev documents) raised the dev scores to 60 of 61 and 60 of 70, but the fresh set shows 10 of 27 and 10 of 38. The tuning mostly fitted the wording of the documents it was tuned on, and two of its changes (HOST-02 cue words and the list-line splitting) also produced false positives on new text. The honest summary is that word lists written by one author do not generalise to other authors' phrasing. Improving this needs either a much larger and more varied set of examples or a different method; adding more patterns against a small set will keep overfitting.
+
+## Known limits
+
+English only; fixed word lists; findings depend on sentence boundaries (clause numbers, informal lower-case text and short unpunctuated lines are weak spots); misses informal and unusual wording; false positives from payer wording the lists lack, from product subscriptions and names, and from headings; document-level checks (HOST-02, REVISE-04 part (b)) cannot read meaning across sections. "No findings" never means a document is safe. No comparison with any other tool and no model baseline was run.
+
+## What would make this stronger
+
+A human labeller who has not seen the rules; a larger and more varied set; a sample of real (consented, redacted) documents; a new held-out set after any rule change. None of these has been done.
+
+---
+
+# Earlier rules: held-out set 2 (run 2026-11-10)
 
 Date: 2026-11-10 (Asia/Karachi). Not legal advice; this report measures a text checker on invented documents.
 
