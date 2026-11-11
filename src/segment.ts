@@ -67,8 +67,9 @@ interface Range {
   heading?: boolean;
 }
 
-// Also multi-level clause numbers ("1.1 The ..."), only when a capital letter follows, so "1.5 million users" stays text.
-const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)]|\d{1,3}(?:\.\d{1,3})+(?=\s+[A-Z(\[]))\s+/;
+// Also multi-level clause numbers ("1.1 The ...", "2.2 25% on ..."), only when a capital letter or a percentage follows, so "1.5 million users" stays text.
+const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)]|\d{1,3}(?:\.\d{1,3})+(?=\s+(?:[A-Z(\[]|\d+\s*%)))\s+/;
+const KEY_VALUE_RE = /^\s*[A-Z][A-Za-z\/& -]{1,24}:\s+\S/;
 const HEADING_RE = /^(\s{0,3})#{1,6}\s+/;
 const TABLE_SEP_CELL_RE = /^\s*:?-{2,}:?\s*$/;
 
@@ -130,7 +131,9 @@ function findBlocks(masked: string): Range[] {
     // A short line with no closing punctuation, followed by a line that starts with a capital or digit, is a
     // list-like line (plain-text address block, term sheet), not a wrapped sentence. Wrapped prose lines are longer.
     const prev = prevLine.trim();
-    const listLike = prev !== '' && prev.length <= 50 && !/[.!?:;,\-\u2013\u2014]$/.test(prev) && /^\s*[A-Z0-9]/.test(line);
+    // A "Key: value" line after another line is its own item (term sheets), whatever the length of the previous line.
+    const keyValue = prev !== '' && KEY_VALUE_RE.test(line);
+    const listLike = keyValue || (prev !== '' && prev.length <= 50 && !/[.!?:;,\-\u2013\u2014]$/.test(prev) && /^\s*[A-Z0-9]/.test(line));
     if (current && !listLike) {
       current.end = lineEnd;
     } else {

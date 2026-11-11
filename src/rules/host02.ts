@@ -101,6 +101,8 @@ const EXCLUSIONS: RegExp[] = [
   /\bdomain[- ](?:driven|model|models|knowledge|expert\w*|specific|logic)\b/gi,
   /\bopen[- ]source\s+(?:software\s+)?licen[cs]es?\b/gi,
   /\bcloud[- ]native\b/gi,
+  // A show or event "hosted by Jane Doe" is a person, not a hosting service.
+  /\bhosted\s+by\s+[A-Z][a-z]+\s+[A-Z][a-z]+/g,
   /\bexisting\s+subscriptions?\b/gi,
   /\bsubscriptions?\s+(?:for|to)\s+(?:its|their|his|her)\s+own\s+\w+/gi,
   // "will not hold any paid subscriptions" says there is no such cost on that side.
@@ -123,6 +125,14 @@ const ASSIGNMENT_RE = new RegExp(
     '\\b(?:client|customer)\\b[^.;]{0,60}\\b(?:pays?|paying|bears?|reimburses?)\\b',
     '\\bresponsible\\s+for\\b',
     '\\b(?:you|they)\\s+(?:own\\s+and\\s+)?(?:pay|cover|bear)(?:\\s+for)?\\b',
+    // Any party that pays, covers, bears or reimburses, or a cost that is "paid for".
+    "\\b(?:you|your|they|their|I|we|my|our|owner|company)['\\u2019]?(?:d|ll)?\\b[^.;]{0,80}?\\b(?:pays?|paid|paying|bears?|covers?|reimburse[sd]?)\\b",
+    '\\bpa(?:y|ys|id|ying)\\s+for\\b',
+    // Client-side buying, holding or handling the service.
+    "\\b(?:you|your|client|customer|they)['\\u2019]?(?:d|ll)?\\b[^.;]{0,80}?\\b(?:buys?|bought|purchases?|holds?|owns?|handles?|chooses|elects)\\b",
+    '\\bbilled\\s+(?:\\w+\\s+){0,6}?to\\b',
+    "\\b(?:that|it)['\\u2019]?s\\s+on\\s+(?:me|you|us|them)\\b",
+    '\\bbetween\\s+you\\s+and\\b',
     "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b",
     '\\b(?:your|their)\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b',
     "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
@@ -153,7 +163,9 @@ const GENERIC_RE = new RegExp(
 );
 
 const PAYER_CELL_RE =
-  /^\s*(?:the\s+)?(?:client|customer|you|us|me|agency|provider|freelancer|contractor|studio|included(?:\s+in\s+(?:the\s+)?(?:fee|price|retainer))?)\s*$/i;
+  /^\s*(?:the\s+)?(?:client|customer|you|us|me|agency|provider|freelancer|contractor|studio|included(?:\s+in\s+(?:the\s+)?(?:fee|price|retainer))?)(?:\s*\([^)]*\))?\s*$/i;
+/** A table column header that says who pays: every data row of that table then states a payer. */
+const PAYER_HEADER_RE = /\b(?:who\s+pays|paid\s+by|payer|billed\s+to|cost\s+owner|responsible|pays)\b/i;
 
 const WHY = 'Usage-based services can cost more than expected, and with no stated payer the cost can land on you.';
 
@@ -166,6 +178,12 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
   // Per sentence: category cues (minus excluded senses) and whether it states a payer.
   // A table cell that names a party ("Client", "Included") states the payer for the other cells of its row.
   const payerRows = new Set(sentences.filter((s) => s.row !== undefined && PAYER_CELL_RE.test(s.masked)).map((s) => s.row as number));
+  const tableRows = new Set(sentences.filter((s) => s.row !== undefined).map((s) => s.row as number));
+  for (const header of sentences.filter((s) => s.row !== undefined && PAYER_HEADER_RE.test(s.masked))) {
+    let r = (header.row as number) + 1;
+    if (!tableRows.has(r)) r++; // the separator line (|---|---|) has no cells
+    for (; tableRows.has(r); r++) payerRows.add(r);
+  }
   const perSentence = sentences.map((s) => {
     const excluded = EXCLUSIONS.flatMap((re) => findAll(re, s.masked));
     const byCategory = new Map<HostCategory, Term[]>();

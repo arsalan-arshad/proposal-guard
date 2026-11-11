@@ -49,12 +49,12 @@ const LEXICON: LexEntry[] = [
   { group: 'quality', severity: 'Medium', re: /\bpolished\b/gi },
   { group: 'quality', severity: 'Medium', re: /\b(?:fully\s+)?optimi[sz]ed\b/gi },
   { group: 'quality', severity: 'Medium', re: /\bwide\s+range\s+of\b/gi },
+  { group: 'quality', severity: 'Medium', re: /\bhighly\s+available\b/gi },
   // Unreferenced standards (Medium)
   { group: 'standards', severity: 'Medium', re: /\b(?:industry\s+)?best\s+practices?\b/gi },
   { group: 'standards', severity: 'Medium', re: /\bindustry[- ]standards?\b/gi },
   // Open-ended scope (High)
   { group: 'open', severity: 'High', re: /\betc\./gi },
-  { group: 'open', severity: 'High', re: /\band\s+so\s+on\b/gi },
   { group: 'open', severity: 'High', noContext: true, re: /\band\s+more\b/gi },
   { group: 'open', severity: 'High', re: /\band\s+the\s+like\b/gi },
   { group: 'open', severity: 'High', re: /\band\s+similar\b/gi },
@@ -67,6 +67,14 @@ const LEXICON: LexEntry[] = [
   { group: 'open', severity: 'High', re: /\ball\s+necessary\b/gi },
   { group: 'open', severity: 'High', noContext: true, re: /\bwhatever\s+it\s+takes\b/gi },
   { group: 'open', severity: 'High', noContext: true, re: /\banything\s+else\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\bwhatever\s+(?:else|features?|is|makes?)\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\banything\s+(?:that\s+)?comes\s+up\b/gi },
+  { group: 'open', severity: 'High', re: /\bas\s+we\s+go\b/gi },
+  { group: 'open', severity: 'High', re: /\bgoing\s+forward\b/gi },
+  { group: 'open', severity: 'High', re: /\b(?:might|may)\s+need\b/gi },
+  { group: 'open', severity: 'High', re: /\bwhere\s+(?:required|needed|necessary)\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\band\s+so\s+on\b/gi },
+  { group: 'open', severity: 'High', noContext: true, re: /\bongoing\s+optimi[sz]ation\b/gi },
   { group: 'open', severity: 'High', re: /\bany\s+additional\b/gi },
   { group: 'open', severity: 'High', noContext: true, re: /\bas\s+(?:the\s+\w+\s+)?may\s+(?:reasonably\s+)?(?:be\s+)?(?:required|agreed|needed|necessary|require)\b/gi },
   { group: 'open', severity: 'High', re: /\bfrom\s+time\s+to\s+time\b/gi },
@@ -79,6 +87,28 @@ const LEXICON: LexEntry[] = [
   { group: 'subjective', severity: 'High', re: /\bsatisfactory\b/gi },
   { group: 'subjective', severity: 'High', noContext: true, re: /\bas\s+the\s+client\s+sees\s+fit\b/gi },
 ];
+
+
+/**
+ * Soft quality adjectives. On their own they are too common to flag ("secure payment", "professional services"), so
+ * a soft adjective counts only when it follows a predicate frame ("will be secure", "looks professional", "sounds
+ * great") or when the sentence has at least two quality terms ("accurate, helpful and engaging").
+ */
+const SOFT_RE =
+  /\b(?:secure|reliable|accurate|clean|modern|professional|great|nice|good|perfect|premium|delightful|engaging|compelling|persuasive|cohesive|comprehensive|friendly|on-brand|natural-sounding|helpful|warm|attractive|beautiful|stunning|amazing|easy)\b/gi;
+/** Adjectives that describe a thing, so "will be secure" is a promise about the deliverable. Others can describe a person ("will be professional"). */
+const THING_ADJ_RE = /^(?:secure|reliable|accurate|clean|modern|premium|perfect|comprehensive|cohesive|attractive|beautiful|stunning|natural-sounding|easy)$/i;
+const APPEARANCE_FRAME_RE = /\b(?:look|looks|feel|feels|sound|sounds|read|reads|come\s+out|so\s+(?:it|that))\s+(?:\w+ly\s+|really\s+|very\s+|super\s+)?$/i;
+const BE_FRAME_RE = /\b(?:be|is|are)\s+(?:\w+ly\s+|really\s+|very\s+|super\s+)?$/i;
+
+/** A promise frame directly before the adjective: "looks/sounds/feels ..." for any soft adjective, "will be ..." only for adjectives about things; never a wish ("would be great"). */
+function hasPromiseFrame(before: string, adjective: string): boolean {
+  const wish = (idx: number): boolean => /\b(?:would|could|might|may|can)\s*$/i.test(before.slice(0, idx));
+  const look = APPEARANCE_FRAME_RE.exec(before);
+  if (look !== null && !wish(look.index)) return true;
+  const be = BE_FRAME_RE.exec(before);
+  return be !== null && THING_ADJ_RE.test(adjective) && !wish(be.index);
+}
 
 /** Phrases that look like lexicon terms but are not (names and fixed phrases). */
 const EXCLUSIONS: RegExp[] = [
@@ -113,6 +143,7 @@ const METRIC_RE = new RegExp(
   'i',
 );
 
+const FIRST_PERSON_RE = /\b(?:I|we|you)['\u2019]ll\b/i;
 const CHANGE_ORDER_SENTENCE_RE = /\bchange[- ]orders?\b/i;
 
 /** Deliverable context: a commitment verb or a deliverable noun. */
@@ -151,7 +182,12 @@ function resolveTerms(masked: string): Resolved[] {
   }
   const excluded: Term[] = EXCLUSIONS.flatMap((re) => findAll(re, masked));
   // Drop excluded names and phrases, then keep leftmost-longest non-overlapping matches.
-  return leftmostLongest(dropOverlapping(candidates, excluded));
+  const regular = leftmostLongest(dropOverlapping(candidates, excluded));
+  const softCandidates = dropOverlapping(dropOverlapping(findAll(SOFT_RE, masked), excluded), regular);
+  const soft: Resolved[] = softCandidates
+    .filter((t) => regular.length + softCandidates.length >= 2 || hasPromiseFrame(masked.slice(Math.max(0, t.start - 30), t.start), masked.slice(t.start, t.end)))
+    .map((t) => ({ ...t, group: 'quality' as Group, severity: 'Medium' as Severity, noContext: false }));
+  return [...regular, ...soft].sort((a, b) => a.start - b.start);
 }
 
 /**
@@ -168,7 +204,13 @@ export function checkScope01(
 
   for (const s of sentences) {
     let terms = resolveTerms(s.masked);
-    if (!has(CONTEXT_RE, s.masked)) terms = terms.filter((t) => t.noContext);
+    if (!has(CONTEXT_RE, s.masked)) {
+      // "I'll make it feel premium": a first-person promise is context for the terms after it, not before it
+      // ("Quick overview of what I'll do" is a title, not a promise).
+      const promise = FIRST_PERSON_RE.exec(s.masked);
+      const after = promise ? terms.filter((t) => t.start > promise.index) : [];
+      terms = after.length > 0 ? after.concat(terms.filter((t) => t.noContext && !after.includes(t))) : terms.filter((t) => t.noContext);
+    }
     if (terms.length === 0) continue;
     sawCue = true;
     terms = terms.filter((t) => !overlapsMerged(claimedMerged, { start: s.start + t.start, end: s.start + t.end }));

@@ -28,3 +28,11 @@ npm run eval -- corpus/heldout
 ```
 
 Prompt-injection strings inside some documents (for example "ignore all previous instructions") are test data. The scanner is fixed code and does not read them as instructions.
+
+## Label files
+
+- `labels.json`: the first labeller's labels for every folder.
+- `heldout2`, `heldout3`, `heldout4` also have `labels.b.json` (an independent second labeller, blind to the first, working only from the rule definitions), and files made from the two: `labels.consensus.json` (both marked it), `labels.union.json` (either did) and `labels.adjudicated.json` (consensus plus REVISE-04 part (b) items; the spec text settles that definition, so the two readings are not both valid). Run `npm run agree -- corpus/heldout4` for agreement and every disagreement.
+- Both labellers are Claude sessions, not people. Agreement across the three sets is 208 of 230 judgements (90%); the figure shows the labels are consistent, not that they are right.
+- `npm run eval -- corpus/heldout4 --consensus` scores against the adjudicated labels (part (b) is left out for folders labelled before the part (b) definition was settled: `dev` and `heldout`).
+

@@ -74,12 +74,13 @@ describe('per-rule status', () => {
 describe('precedence', () => {
   it('REVISE-04 claims "as needed" in "as many iterations as needed", so SCOPE-01 stays silent', () => {
     const r = scan('We will provide as many iterations as needed.');
-    expect(r.findings.map((f) => f.ruleId)).toEqual(['REVISE-04']);
+    expect(r.findings.filter((f) => f.ruleId === 'SCOPE-01')).toHaveLength(0);
+    expect(r.findings.filter((f) => f.ruleId === 'REVISE-04').map((f) => f.part)).toEqual(['a', 'b']);
   });
 
   it('SCOPE-01 still reports other terms in a sentence REVISE-04 flagged', () => {
     const r = scan('We will deliver a seamless app with unlimited revisions.');
-    expect(r.findings.map((f) => f.ruleId).sort()).toEqual(['REVISE-04', 'SCOPE-01']);
+    expect(r.findings.map((f) => f.ruleId).sort()).toEqual(['REVISE-04', 'REVISE-04', 'SCOPE-01']);
   });
 });
 

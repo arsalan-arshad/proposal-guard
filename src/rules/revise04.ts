@@ -11,6 +11,10 @@ const REVISION_CUE_RES: RegExp[] = [
   /\bedits\b/gi,
   /\btweaks\b/gi,
   /\bamendments?\b/gi,
+  /\bfine[- ]tun(?:e|ing)\b/gi,
+  /\bmake\s+(?:the\s+)?changes\b/gi,
+  /\biterate\b/gi,
+  /\bback\s+and\s+forth\b/gi,
   /\b(?:want|need|request|require)s?\s+(?:any\s+)?(?:changes|tweaks|edits|adjustments|amendments)\b/gi,
 ];
 
@@ -27,7 +31,14 @@ const UNLIMITED_RES: RegExp[] = [
   /\buntil\b[^.]{0,40}?\b(?:you\s+are|you['’]re|the\s+(?:client|customer)\s+is)\s+(?:completely\s+|fully\s+|totally\s+)?(?:happy|satisfied|pleased)\b/gi,
   /\buntil\s+you\s+love\b/gi,
   /\buntil\b[^.]{0,30}\b(?:feels|looks|is)\s+right\b/gi,
-  /\bas\s+many\s+times\s+as\s+(?:it\s+takes|needed|required|necessary|you\s+(?:like|want|need))\b/gi,
+  /\bas\s+many\s+times\s+as\s+(?:it\s+takes|needed|required|necessary|(?:you|the\s+(?:client|customer))\s+(?:like|likes|want|wants|need|needs))\b/gi,
+  /\bagain\s+and\s+again\b/gi,
+  /\bas\s+often\s+as\s+(?:you|the\s+(?:client|customer))\s+(?:like|likes|want|wants|need|needs)\b/gi,
+  /\bback\s+and\s+forth\b/gi,
+  /\buntil\s+(?:it['\u2019]?s\s+|everything\s+is\s+)?(?:final|perfect)\b/gi,
+  /\buntil\b[^.]{0,30}\bright\s+for\s+you\b/gi,
+  /\biterate\b[^.]{0,60}\buntil\b/gi,
+  /\buntil\s+(?:the\s+)?results?\s+are\s+satisfactory\b/gi,
   /\bkeep\s+(?:tweaking|adjusting|revising|changing|refining|fixing|polishing)\b/gi,
   /\bas\s+many\s+(?:revisions?|rounds?|iterations?|changes|edits)\s+as\s+(?:needed|required|necessary)\b/gi,
 ];
@@ -37,7 +48,7 @@ const LIMIT_RE =
   /\b(?:up\s+to|a\s+maximum\s+of|maximum\s+of|at\s+most|limited\s+to|capped\s+at)\s+(?:\w+\s+)?\d|\b\d+\s+(?:in\s+total|total)\b/i;
 
 const COMMITMENT_RE =
-  /\b(?:includ(?:e|es|ed|ing)|offer(?:s|ed|ing)?|provid(?:e|es|ed|ing)|allow(?:s|ed|ing)?|will|free|unlimited|as\s+many|deliver(?:s|ed)?)\b/i;
+  /\b(?:includ(?:e|es|ed|ing)|offer(?:s|ed|ing)?|provid(?:e|es|ed|ing)|allow(?:s|ed|ing)?|will|free|unlimited|as\s+many|deliver(?:s|ed)?|(?:we|I|you)\s+can|(?:happy|glad)\s+to|no\s+problem)\b/i;
 
 const CHANGE_ORDER_RE = new RegExp(
   [
@@ -48,7 +59,7 @@ const CHANGE_ORDER_RE = new RegExp(
     'billable\\s+change',
     'billed\\s+as\\s+(?:a\\s+)?change',
     'quoted\\s+separately',
-    '(?:additional|extra|further|beyond|after\\s+that)\\b[^.]{0,60}?\\b(?:cost|costs|billed|charged|priced|quoted)',
+    '(?:additional|extra|further|beyond|later|more|after\\b[^.]{0,30}?)\\b[^.]{0,60}?\\b(?:cost|costs|billed|charged|priced|quoted)',
     '(?:treated|handled|scoped)\\s+as\\s+(?:a\\s+)?new\\s+(?:project|engagement|request|scope)',
     '(?:billed|charged|quoted)\\s+(?:separately|hourly|extra|at\\s+(?:our|the|an?)\\s+(?:standard\\s+)?(?:hourly\\s+)?rate)',
     'at\\s+(?:our|the)\\s+(?:standard\\s+)?hourly\\s+rate',
@@ -127,7 +138,8 @@ function toTerms(s: Sentence, terms: Term[]): Term[] {
 /** REVISE-04: unnumbered or unlimited revisions (a), or revisions with no change-order path (b). */
 export function checkRevise04(sentences: Sentence[]): RuleOutcome {
   const findings: Finding[] = [];
-  const eligibleWithoutA: Sentence[] = [];
+  // Every sentence that promises revisions (cue plus commitment): part (b) is anchored on the first one.
+  const committedSentences: Sentence[] = [];
   let sawCue = false;
   let changeOrderPath = false;
 
@@ -159,13 +171,12 @@ export function checkRevise04(sentences: Sentence[]): RuleOutcome {
         why: WHY_A,
         suggestion: SUGGESTION_A,
       });
-    } else {
-      eligibleWithoutA.push(s);
     }
+    committedSentences.push(s);
   }
 
-  // Part (b): revisions are promised somewhere, with a number, but nothing prices extra requests.
-  const anchor = eligibleWithoutA[0];
+  // Part (b): revisions are promised somewhere (numbered or not) but nothing prices extra requests.
+  const anchor = committedSentences[0];
   if (anchor && !changeOrderPath) {
     findings.push({
       ruleId: 'REVISE-04',
