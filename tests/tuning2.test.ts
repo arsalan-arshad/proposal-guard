@@ -85,7 +85,7 @@ describe('REVISE-04 additions', () => {
     'We will adjust the layout until the customer is fully satisfied.',
     'The Agency shall make amendments to the website until the Customer is satisfied.',
   ])('flags (a): %s', (text) => {
-    expect(count(text, 'REVISE-04')).toBe(1);
+    expect(scan(text).findings.filter((f) => f.ruleId === 'REVISE-04' && f.part === 'a')).toHaveLength(1);
   });
 
   it.each([

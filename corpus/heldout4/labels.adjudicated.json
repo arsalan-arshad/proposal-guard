@@ -1,0 +1,318 @@
+{
+  "h4-01.md": {
+    "tags": [
+      "clean",
+      "formal"
+    ],
+    "expected": []
+  },
+  "h4-02.md": {
+    "tags": [
+      "informal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll edit all the episodes for season two, make them sound great and polished, and sort out the intro music too."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "half up front, half when you give me the thumbs up on the final batch"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "I'm happy to keep tweaking until you love it, no stress"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "I'm happy to keep tweaking until you love it, no stress"
+      }
+    ]
+  },
+  "h4-03.md": {
+    "tags": [
+      "clean",
+      "trap-names"
+    ],
+    "expected": []
+  },
+  "h4-04.md": {
+    "tags": [
+      "formal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall provide ongoing support for the Client's data platform, including improvements as needed, performance tuning, and general advice on best practices."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall make reasonable efforts to deliver a robust, scalable and user-friendly solution."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Additional services may be requested by the Client from time to time and shall be performed by the Consultant."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Cloud warehouse compute, third-party connectors and any licences required for the Services shall be procured as necessary for the proper performance of this Agreement."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Deliverables are subject to approval by the Client's project lead."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment of each instalment is conditional upon such approval."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "licences"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "The Consultant shall implement amendments requested by the Client until the Client is satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "The Consultant shall implement amendments requested by the Client until the Client is satisfied."
+      }
+    ]
+  },
+  "h4-05.md": {
+    "tags": [
+      "clean",
+      "informal"
+    ],
+    "expected": []
+  },
+  "h4-06.md": {
+    "tags": [
+      "clean",
+      "trap-words"
+    ],
+    "expected": []
+  },
+  "h4-07.md": {
+    "tags": [
+      "informal",
+      "adversarial"
+    ],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "50% to start, the rest once you've signed off the final text."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "You can leave comments and I'll work through them until the pages are right for you."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "You can leave comments and I'll work through them until the pages are right for you."
+      }
+    ]
+  },
+  "h4-08.md": {
+    "tags": [
+      "clean",
+      "formal"
+    ],
+    "expected": []
+  },
+  "h4-09.md": {
+    "tags": [
+      "informal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "i will make 1 promo video for your restaurant, about 60 seconds, with nice cinematic look, good music and all modern transitions."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Advance 50 percent, remaining after you are happy with the video"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "if you want change in the edit, no problem, i will do again and again until final."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "if you want change in the edit, no problem, i will do again and again until final."
+      }
+    ]
+  },
+  "h4-10.md": {
+    "tags": [
+      "clean",
+      "adversarial"
+    ],
+    "expected": []
+  },
+  "h4-11.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "h4-12.md": {
+    "tags": [
+      "informal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll translate your 40-page catalogue from Spanish into English, and tidy up the layout so it looks professional."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "I'll send it in two batches and wait for your OK on batch one before starting batch two"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "If you want to change wording afterwards, just tell me, we can do as many rounds as needed."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "If you want to change wording afterwards, just tell me, we can do as many rounds as needed."
+      }
+    ]
+  },
+  "h4-13.md": {
+    "tags": [
+      "clean",
+      "formal"
+    ],
+    "expected": []
+  },
+  "h4-14.md": {
+    "tags": [
+      "clean",
+      "informal"
+    ],
+    "expected": []
+  },
+  "h4-15.md": {
+    "tags": [
+      "formal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will set up a complete, best-in-class e-mail marketing system that grows with the business and engages customers across the full lifecycle."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The setup includes welcome flows, abandoned cart reminders, win-back messages and whatever else is useful for the shop."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Ongoing optimisation to keep results strong"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Each flow goes live once approved by the client."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "licences"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Flows and templates are adjusted as many times as the client wants during the engagement."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Flows and templates are adjusted as many times as the client wants during the engagement."
+      }
+    ]
+  },
+  "h4-16.md": {
+    "tags": [
+      "clean"
+    ],
+    "expected": []
+  },
+  "h4-17.md": {
+    "tags": [
+      "clean",
+      "trap-words"
+    ],
+    "expected": []
+  },
+  "h4-18.md": {
+    "tags": [
+      "formal"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Developer will make the site look attractive and modern, with a smooth experience on all devices."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "25% on Client approval of the design."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "50% on approval of the finished store."
+      }
+    ]
+  },
+  "h4-19.md": {
+    "tags": [
+      "terse",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Voice and phrasing: friendly and on-brand"
+      }
+    ]
+  },
+  "h4-20.md": {
+    "tags": [
+      "informal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We can fine-tune as we go, that's no problem."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "We can fine-tune as we go, that's no problem."
+      }
+    ]
+  }
+}

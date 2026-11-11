@@ -30,7 +30,10 @@ export function scan(text: string, options: ScanOptions = {}): ScanResult {
   const revise = checkRevise04(sentences);
   const claimed = revise.findings.flatMap((f) => f.terms);
   const scope = checkScope01(sentences, claimed);
-  const time = checkTime03(sentences);
+  const time = checkTime03(
+    sentences,
+    new Set(revise.findings.filter((f) => f.part === 'a').map((f) => f.start)),
+  );
   const host = checkHost02(sentences);
 
   const order: RuleId[] = ['SCOPE-01', 'TIME-03', 'HOST-02', 'REVISE-04'];

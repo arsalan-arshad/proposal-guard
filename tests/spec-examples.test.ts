@@ -133,9 +133,18 @@ describe('REVISE-04 positives', () => {
   ];
   it.each(cases)('%s is flagged (part %s, %s)', (_id, text, part, severity) => {
     const f = only(text, 'REVISE-04');
-    expect(f).toHaveLength(1);
-    expect(f[0]?.part).toBe(part);
-    expect(f[0]?.severity).toBe(severity);
+    // Part (b) is document level and independent of part (a): none of these examples names a change-order path, so
+    // each also gets exactly one part (b) finding (RULES_SPEC.md, change 48 reverses the earlier "one finding per sentence" refinement).
+    const a = f.filter((x) => x.part === 'a');
+    const b = f.filter((x) => x.part === 'b');
+    expect(b).toHaveLength(1);
+    expect(b[0]?.severity).toBe('Medium');
+    if (part === 'a') {
+      expect(a).toHaveLength(1);
+      expect(a[0]?.severity).toBe(severity);
+    } else {
+      expect(a).toHaveLength(0);
+    }
   });
 });
 

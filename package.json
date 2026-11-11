@@ -49,6 +49,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p demo",
     "test": "vitest run",
     "eval": "tsx eval/run.ts",
+    "agree": "tsx eval/agree.ts",
     "build:demo": "node demo/build.mjs",
     "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
