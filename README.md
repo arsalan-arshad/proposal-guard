@@ -108,6 +108,15 @@ npm install -g proposal-guard @modelcontextprotocol/server zod
 
 If those two packages are missing, `proposal-guard-mcp` says what to install and exits with code 2. I checked this setup by installing from the npm registry into a clean directory and talking to the server over standard input and output (initialise, list tools, scan); I have not tested it inside a specific MCP client application.
 
+**From GitHub Packages** (same code under a scoped name; GitHub requires a token to install even public packages, per [its documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)). Add to `~/.npmrc`, with a personal access token (classic) that has `read:packages`:
+
+```
+@arsalan-arshad:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_TOKEN
+```
+
+then `npm install @arsalan-arshad/proposal-guard`. The workflow `.github/workflows/publish-github-packages.yml` publishes it when a GitHub Release is published or when it is run by hand; the versions that exist are listed in the repository's Packages sidebar. The npm package above needs no token and is the simpler way to install.
+
 **From a clone** (for development):
 
 ```bash
@@ -179,7 +188,7 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 - **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
 - **Security headers:** `demo/serve.json` (copied into the build) sets a Content-Security-Policy that forbids all connections and inline script, HSTS, `nosniff`, frame denial, `no-referrer`, a restrictive Permissions-Policy and cross-origin isolation headers. On 2026-11-12 the live site was checked and sends all of them on the page, a 404 and static files; the headers rely on the host being Vercel's `serve` package (deduced from its 404 page and response headers, and confirmed by the headers arriving).
 - **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
-- **npm:** `proposal-guard` 0.1.0 is published (https://www.npmjs.com/package/proposal-guard), MIT. On 2026-11-12 I compared the published tarball with a fresh build of `main` at commit `6886d15`: same 35 files, byte-identical `dist`, README and `package.json`. The registry also lists a `0.0.0-stage` placeholder version that is not part of this repository's history. Not set up: npm provenance and a release workflow (releases are published by hand by the repository owner).
+- **npm:** `proposal-guard` 0.1.0 is published (https://www.npmjs.com/package/proposal-guard), MIT. On 2026-11-12 I compared the published tarball with a fresh build of `main` at commit `6886d15`: same 35 files, byte-identical `dist`, README and `package.json`. The registry also lists a `0.0.0-stage` placeholder version that is not part of this repository's history. npm itself is published by hand by the repository owner (no provenance). GitHub Packages is published by the workflow `publish-github-packages.yml` (on a published GitHub Release or a manual run), using the built-in `GITHUB_TOKEN`; it renames the package to `@arsalan-arshad/proposal-guard` on the runner only, builds first, and has `packages: write` for that job only.
 
 ---
 

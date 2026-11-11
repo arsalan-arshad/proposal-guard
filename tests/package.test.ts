@@ -29,7 +29,7 @@ describe('package metadata', () => {
 
   it('every bin entry points into dist and has a source file', () => {
     for (const target of Object.values(pkg['bin'] as Record<string, string>)) {
-      const m = /^\.\/dist\/(.+)\.js$/.exec(target);
+      const m = /^(?:\.\/)?dist\/(.+)\.js$/.exec(target);
       expect(m, target).not.toBeNull();
       expect(() => readFileSync(`src/${(m as RegExpExecArray)[1]}.ts`, 'utf8'), target).not.toThrow();
     }

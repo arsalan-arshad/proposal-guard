@@ -32,8 +32,8 @@
     }
   },
   "bin": {
-    "proposal-guard": "./dist/bin.js",
-    "proposal-guard-mcp": "./dist/mcp-launch.js"
+    "proposal-guard": "dist/bin.js",
+    "proposal-guard-mcp": "dist/mcp-launch.js"
   },
   "files": [
     "dist",
