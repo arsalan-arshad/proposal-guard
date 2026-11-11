@@ -97,3 +97,29 @@ describe('quoted evaluation figures match the report', () => {
     expect(readme).toContain(`| All | ${m[1]} of ${m[2]} | ${m[3]} of ${m[4]} |`);
   });
 });
+
+describe('light theme', () => {
+  const css = readFileSync('demo/style.css', 'utf8');
+
+  it('is light for everyone: no dark-mode override, and the page declares a light colour scheme', () => {
+    expect(css).not.toMatch(/prefers-color-scheme/);
+    expect(css).toMatch(/color-scheme:\s*light/);
+    expect(css).toMatch(/--bg:\s*#fff(?:fff)?\b/i);
+  });
+
+  it('text and accent colours keep at least WCAG AA contrast on the white and card backgrounds', () => {
+    const vars = Object.fromEntries([...css.matchAll(/--([a-z]+):\s*(#[0-9a-f]{6})/gi)].map((m) => [m[1], m[2] as string]));
+    const lum = (hex: string): number => {
+      const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * (c[0] as number) + 0.7152 * (c[1] as number) + 0.0722 * (c[2] as number);
+    };
+    const ratio = (a: string, b: string): number => {
+      const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m) as [number, number];
+      return (x + 0.05) / (y + 0.05);
+    };
+    for (const fg of ['fg', 'muted', 'accent', 'high', 'med']) {
+      for (const bg of ['bg', 'card']) expect(ratio(vars[fg] as string, vars[bg] as string), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(ratio('#ffffff', vars['accent'] as string)).toBeGreaterThanOrEqual(4.5); // white button text on the accent
+  });
+});
