@@ -26,7 +26,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p demo",
     "test": "vitest run",
     "eval": "tsx eval/run.ts",
-    "build:demo": "node demo/build.mjs"
+    "build:demo": "node demo/build.mjs",
+    "agree": "tsx eval/agree.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

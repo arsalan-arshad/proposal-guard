@@ -1,0 +1,327 @@
+{
+  "h3-01.md": {
+    "tags": [
+      "clean",
+      "negative"
+    ],
+    "expected": []
+  },
+  "h3-02.md": {
+    "tags": [
+      "informal-email",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "here's what I'm thinking for the Fastlane Courier app, basically a modern, intuitive and delightful experience for your drivers and customers"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll make it feel premium and super smooth, and I'll add whatever features make sense as we go"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "I'm happy to keep tweaking until you love it, that's just how I work"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "I'm happy to keep tweaking until you love it, that's just how I work"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "api"
+      }
+    ]
+  },
+  "h3-03.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "structured-quote"
+    ],
+    "expected": []
+  },
+  "h3-04.md": {
+    "tags": [
+      "contract",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall provide ongoing support for the Client's analytics platform and shall make improvements as needed to ensure optimal performance."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Consultant shall assist with other data-related tasks as may be requested from time to time."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "The Client shall approve the findings report before the second instalment becomes payable."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Final sign-off by the Client's data lead is required before the engagement closes."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "The Client may request changes to the report and the Consultant shall implement them promptly and to the Client's satisfaction."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      }
+    ]
+  },
+  "h3-05.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "table"
+    ],
+    "expected": []
+  },
+  "h3-06.md": {
+    "tags": [
+      "injection",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The bot will be accurate, helpful and engaging, and will handle all customer questions."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Ongoing prompt tuning and other improvements"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Client will confirm the bot is working once the build is finished."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "ai"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      }
+    ]
+  },
+  "h3-07.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "bullets"
+    ],
+    "expected": []
+  },
+  "h3-08.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "false-friend"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "One responsive landing page, with hero section, pricing block for the Unlimited Sips plan, FAQ of 6 questions, and a signup form."
+      }
+    ]
+  },
+  "h3-09.md": {
+    "tags": [
+      "clean",
+      "negative"
+    ],
+    "expected": []
+  },
+  "h3-10.md": {
+    "tags": [
+      "contract"
+    ],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "The Facilitator will make adjustments to the content until the Client is satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "The Facilitator will make adjustments to the content until the Client is satisfied."
+      }
+    ]
+  },
+  "h3-11.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "injection"
+    ],
+    "expected": []
+  },
+  "h3-12.md": {
+    "tags": [
+      "informal",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll write copy that's compelling, on-brand and persuasive across your new website"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The tone will be warm but professional, and I'll polish it until it's perfect"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Revisions: as many as it takes"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Revisions: as many as it takes"
+      }
+    ]
+  },
+  "h3-13.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "contract"
+    ],
+    "expected": []
+  },
+  "h3-14.md": {
+    "tags": [
+      "informal-email",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Rebuild the 6 pages on WordPress with a clean, modern look"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "We can go back and forth as often as you like, I'm not counting"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "We can go back and forth as often as you like, I'm not counting"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "messaging"
+      }
+    ]
+  },
+  "h3-15.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "table"
+    ],
+    "expected": []
+  },
+  "h3-16.md": {
+    "tags": [
+      "terms",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "We will craft a comprehensive and cohesive visual identity, including all the assets the brand might need going forward"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Stock photography and typefaces are included where required."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment is due once the Client approves the final designs."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Client may request unlimited rounds of changes until fully happy."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Client may request unlimited rounds of changes until fully happy."
+      }
+    ]
+  },
+  "h3-17.md": {
+    "tags": [
+      "clean",
+      "negative",
+      "false-friend"
+    ],
+    "expected": []
+  },
+  "h3-18.md": {
+    "tags": [
+      "informal-email",
+      "known-limit"
+    ],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll tidy the categories and make the product pages look good and load quickly"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll also take care of anything that comes up with the catalogue afterwards"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment is split, half now and half when you say it's done"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Honestly just tell me when you're happy and we'll call it done"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Revisions, sure, a couple of passes, and if it turns into a lot more we'll chat about it"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Revisions, sure, a couple of passes, and if it turns into a lot more we'll chat about it"
+      }
+    ]
+  },
+  "h3-19.md": {
+    "tags": [
+      "clean",
+      "negative"
+    ],
+    "expected": []
+  },
+  "h3-20.md": {
+    "tags": [
+      "clean",
+      "negative"
+    ],
+    "expected": []
+  }
+}
