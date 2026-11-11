@@ -1,16 +1,16 @@
-#!/usr/bin/env node
 import { McpServer } from '@modelcontextprotocol/server';
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
 import { explainFinding, listRules, scanProposal } from './mcp-tools.js';
 import { DEFAULT_MAX_CHARS } from './scan.js';
+import { VERSION } from './version.js';
 
 /**
  * Local, read-only MCP server over stdio. Three tools; none takes a file path,
  * none touches the network, the shell or the disk. stdout carries only the
  * protocol; anything else goes to stderr.
  */
-const server = new McpServer({ name: 'proposal-guard', version: '0.0.0' });
+const server = new McpServer({ name: 'proposal-guard', version: VERSION });
 
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 

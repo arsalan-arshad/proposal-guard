@@ -77,7 +77,7 @@ TypeScript (strict, ESM), Node 20 or newer, tests with Vitest. The scanning core
 
 ## 5. Local Development Quickstart
 
-Prerequisites: Node 20 or newer, npm, git. The package is private and not on npm, so you run it from a clone.
+Prerequisites: Node 20 or newer, npm, git. The package is not on npm yet, so you run it from a clone.
 
 ```bash
 git clone https://github.com/arsalan-arshad/proposal-guard.git
@@ -157,7 +157,7 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 
 - **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
 - **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
-- **Not published:** the package is marked `"private": true` and is not on npm; there is no release workflow.
+- **npm:** the package (`proposal-guard`, version 0.1.0) is prepared for publishing but **is not published yet**, so `npm install proposal-guard` does not work today; run it from a clone as shown above. When it is published, the scanner has no runtime dependencies, and the MCP server needs the optional packages `@modelcontextprotocol/server` and `zod`. There is no release workflow.
 
 ---
 
