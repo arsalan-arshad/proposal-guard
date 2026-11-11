@@ -1,0 +1,73 @@
+# heldout5 run (strict matching, union labels (secondary)), once, rules frozen
+# date: 2026-11-12 (Asia/Karachi)
+# commit: 894cb872e08ec7e6552c7c4ea3b2aaa8b64f70d4 (label-second-pass, PR #19; labels not yet committed; no src change since)
+# src hash (first 16 hex of SHA-256 of src/**/*.ts, sorted path order): 061655e2c79331b6
+# labels: labels.union.json
+
+
+
+Corpus: corpus/heldout5  (24 documents)  [labels: labels.union.json]
+
+rule        TP  FP  FN   precision          recall
+SCOPE-01     5   6   9   5/11 = 45%         5/14 = 36%
+TIME-03      4   5   4   4/9 = 44%          4/8 = 50%
+HOST-02      3  12   3   3/15 = 20%         3/6 = 50%
+REVISE-04    7   2  14   7/9 = 78%          7/21 = 33%
+all         19  25  30   19/44 = 43%        19/49 = 39%
+
+Mismatches:
+  FP  h5-02.md  SCOPE-01|we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it price is 4,800 total, half now and half when you're happy
+  FP  h5-02.md  REVISE-04|a|we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it price is 4,800 total, half now and half when you're happy
+  FP  h5-02.md  SCOPE-01|i'll send you builds as we go and you can tell me what you think whenever you get a chance
+  FN  h5-02.md  SCOPE-01|we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it
+  FN  h5-02.md  REVISE-04|a|we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it
+  FN  h5-02.md  TIME-03|price is 4,800 total, half now and half when you're happy
+  FN  h5-02.md  HOST-02|cloud
+  FP  h5-04.md  SCOPE-01|Quote for Mrs. Okafor: I'll write and edit your 12 product descriptions in a warm, friendly voice.
+  FP  h5-04.md  SCOPE-01|I'll make them sound great and tweak as needed until you're pleased.
+  FP  h5-05.md  REVISE-04|b
+  FP  h5-07.md  HOST-02|licences
+  FN  h5-07.md  SCOPE-01|I will do all what is necessary for the good result and I make corrections when you are not satisfied.
+  FN  h5-07.md  REVISE-04|a|I will do all what is necessary for the good result and I make corrections when you are not satisfied.
+  FN  h5-07.md  REVISE-04|a|You can tell me the corrections any time and I do them without problem.
+  FN  h5-07.md  REVISE-04|b
+  FP  h5-08.md  HOST-02|cloud
+  FP  h5-09.md  HOST-02|licences
+  FP  h5-09.md  HOST-02|cloud
+  FP  h5-11.md  HOST-02|messaging
+  FP  h5-11.md  HOST-02|licences
+  FP  h5-11.md  TIME-03|Payment of the retainer is not conditional on approval.
+  FN  h5-12.md  SCOPE-01|I'll be around for questions by email for a while afterwards, whatever people need.
+  FP  h5-13.md  TIME-03|Pipelines are handed over together; the client's lead engineer signs off after running one real release through them.
+  FN  h5-13.md  TIME-03|the client's lead engineer signs off after running one real release through them.
+  FP  h5-14.md  SCOPE-01|on edits: i'll do changes as we go, just message me, i don't count them.
+  FN  h5-14.md  REVISE-04|a|on edits: i'll do changes as we go, just message me, i don't count them.
+  FN  h5-14.md  REVISE-04|b
+  FN  h5-14.md  TIME-03|you tell me when it looks right and i'll send the final files
+  FP  h5-15.md  TIME-03|If the Owners do not respond within that time, the Drafter will treat the draft as approved and continue.
+  FP  h5-15.md  TIME-03|6.1 1,450 EUR: 40% on signing, 60% on approval of the final drawings.
+  FP  h5-16.md  SCOPE-01|If you want anything else on the day, an album, extra hours, just tell me and we'll work something out.
+  FP  h5-17.md  HOST-02|cloud
+  FP  h5-19.md  HOST-02|messaging
+  FP  h5-20.md  HOST-02|domain
+  FN  h5-20.md  SCOPE-01|Optimise the shop for speed and a great experience
+  FN  h5-20.md  TIME-03|When you have looked it over and are happy, we flip the switch.
+  FN  h5-20.md  REVISE-04|a|Changes after the flip, like new sections or small design edits, I'll help with whenever you need.
+  FN  h5-20.md  REVISE-04|b
+  FN  h5-20.md  SCOPE-01|Plan for moving the Wild Meadow Seeds shop and making it faster.
+  FN  h5-21.md  SCOPE-01|The report will be good and complete and you will be satisfied.
+  FN  h5-21.md  REVISE-04|a|If you have some question or want something add to the report, I do it, there is no limit, because I want a good relationship.
+  FN  h5-21.md  REVISE-04|b
+  FP  h5-22.md  HOST-02|licences
+  FN  h5-22.md  SCOPE-01|i'll sort the music and the lighting and make it look premium and polished
+  FN  h5-22.md  REVISE-04|a|i usually do a couple of passes but if it needs more i'm happy to keep going till it feels right
+  FN  h5-22.md  REVISE-04|b
+  FP  h5-23.md  TIME-03|40% on Acceptance.
+  FP  h5-23.md  HOST-02|api
+  FP  h5-23.md  HOST-02|licences
+  FN  h5-24.md  SCOPE-01|Other nice touches as they come to mind during the build
+  FN  h5-24.md  SCOPE-01|After launch I'll fix issues as they appear and help with updates.
+  FN  h5-24.md  REVISE-04|a|you tell me how they look and I adjust.
+  FN  h5-24.md  REVISE-04|b
+  FN  h5-24.md  HOST-02|api
+  FN  h5-24.md  HOST-02|cloud

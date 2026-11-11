@@ -9,7 +9,8 @@ Everything here is made up. No real proposal, contract, client name, price or pe
 | `heldout/` | 20 | Not used for tuning. Run once per rule version and reported as it came out. |
 | `heldout2/` | 20 | Second held-out set, run once on the rules of 2026-11-10. Now seen (its mismatches informed the second tuning round). |
 | `heldout3/` | 20 | Third held-out set, run once on the round-2 rules. Now seen (its review informed the structural round 3). |
-| `heldout4/` | 20 | Fourth held-out set, run once on the current rules. Now seen. |
+| `heldout4/` | 20 | Fourth held-out set, run once on the round-3 rules. Now seen (second-labelled afterwards and used to tune round 4). |
+| `heldout5/` | 24 | Fifth held-out set, labelled by two independent labellers from the start, run once on the round-4 rules. Now seen. |
 
 Each folder has `docs/*.md` and `labels.json`. A label is a sentence a careful reader applying the rule definition would flag (or, for `HOST-02`, a cost category with no stated payer; for `REVISE-04` part (b), the document-level change-order gap). Labels were written from the rule definition, before running the code. Some labels are deliberately outside what the rules can find (marked `known-limit` in the tags, with a note), so that recall shows real misses.
 
