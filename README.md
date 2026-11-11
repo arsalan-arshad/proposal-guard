@@ -1,4 +1,8 @@
-# Proposal Guard — a rule-based scope-creep checker for proposals and SOWs
+# <img src="https://raw.githubusercontent.com/arsalan-arshad/proposal-guard/main/demo/assets/icon-64.png" alt="" width="40" height="40" align="absmiddle"> Proposal Guard — a rule-based scope-creep checker for proposals and SOWs
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/arsalan-arshad/proposal-guard/main/demo/assets/banner-1280.jpg" alt="Proposal Guard banner. An example scan result shows one vague-promise finding, one missing sign-off window finding and one passed cost check, with the line Not legal advice." width="100%">
+</p>
 
 > **Open-source (MIT)** | A small showcase project by [Arsalan Arshad](https://arsalandev.studio) | Early stage. npm: [`proposal-guard`](https://www.npmjs.com/package/proposal-guard). Live demo: https://proposal-guard-production.up.railway.app/
 
