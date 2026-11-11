@@ -13,5 +13,5 @@ await build({
   legalComments: 'none',
   logLevel: 'info',
 });
-for (const f of ['index.html', 'style.css']) copyFileSync(`demo/${f}`, `demo-dist/${f}`);
+for (const f of ['index.html', 'style.css', 'serve.json']) copyFileSync(`demo/${f}`, `demo-dist/${f}`);
 cpSync('demo/assets', 'demo-dist/assets', { recursive: true });
