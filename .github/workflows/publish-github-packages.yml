@@ -1,0 +1,42 @@
+name: Publish to GitHub Packages
+
+# Publishes the package to GitHub Packages (npm registry) when a GitHub Release is published, or when someone runs
+# the workflow by hand. The package on npmjs.com is published separately, by hand, by the repository owner.
+#
+# GitHub Packages only accepts scoped npm names, so the name is changed to @arsalan-arshad/proposal-guard on the
+# runner only; package.json in the repository keeps the unscoped name. The built-in GITHUB_TOKEN is used: no
+# personal access token and no repository secret is involved.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    # Forks cannot publish to this owner's registry.
+    if: github.repository == 'arsalan-arshad/proposal-guard'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 22
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@arsalan-arshad'
+      - run: npm ci
+      # The commands in "bin" point into dist/. npm checks that those files exist before prepublishOnly runs, and removes
+      # any that are missing, so the build has to happen first on a fresh checkout.
+      - run: npm run build
+      - name: Scope the package name for GitHub Packages (this runner only)
+        run: npm pkg set name=@arsalan-arshad/proposal-guard
+      # prepublishOnly runs the typecheck, the tests and the build before anything is uploaded.
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
