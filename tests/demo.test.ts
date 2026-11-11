@@ -89,7 +89,7 @@ describe('quoted evaluation figures match the report', () => {
     const [, tp, reported, found, expected] = m as RegExpExecArray;
     expect(tp).toBe(found);
     expect(report).toContain(`${tp} of the ${reported} findings the tool reported were correct`);
-    expect(report).toContain(`it found ${found} of the ${expected} findings the labeller expected`);
+    expect(report).toMatch(new RegExp(`it found ${found} of the ${expected} findings the labellers? expected`));
   });
 
   it('the README table total matches the same figures', () => {

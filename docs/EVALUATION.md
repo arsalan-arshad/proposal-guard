@@ -2,7 +2,71 @@
 
 Not legal advice; this report measures a text checker on invented documents. It has three parts: the current rules on held-out set 4 (first), the round-2 rules on held-out set 3, and the first rules on held-out set 2 (both kept as history).
 
-## Current rules: held-out set 4 (run 2026-11-11)
+## Current rules (round 4): held-out set 5 (run 2026-11-12)
+
+**Headline: on a brand-new set that no rule was tuned against, 18 of the 44 findings the tool reported were correct (41%), and it found 18 of the 47 findings the labellers expected (38%). This is lower than the round-3 rules scored on the previous fresh set (52% and 45%), even though round 4 scored far higher on the sets it was tuned on (212 of 220 and 212 of 234). Round 4 overfitted; it did not make the tool better on new documents.**
+
+- One run, rules frozen. Rule code: git commit `894cb872e08ec7e6552c7c4ea3b2aaa8b64f70d4` (PR #19, before the labels were committed; no file under `src/` changed in between). Source hash (first 16 hex of the SHA-256 of all `src/**/*.ts`, sorted path order): `061655e2c79331b6`. Raw output: `eval/results/heldout5-2026-11-12.txt` (strict, headline), `-lenient.txt` and `-union.txt` (secondary).
+- **The headline measure was fixed before the run:** strict matching against the adjudicated labels (both labellers' agreed items plus REVISE-04 part (b) items, whose definition the spec text settles). Lenient matching and the union of both labellers' labels are secondary.
+- 24 invented documents; 47 expected findings (adjudicated). The documents were written by one Claude session told not to read the rules, code, spec or any corpus. **Two further Claude sessions labelled the documents independently from the start**, from the rule definitions only (the part of `RULES_SPEC.md` that does not describe the code), without seeing each other's labels. They agree on 94 of 96 judgements (98%); on REVISE-04 part (b), where earlier labellers had disagreed, they agree on all 21. All three are the model family that wrote the rules, so this is not independent human labelling, and the agreement shows consistency, not correctness. No person has reviewed a sample of the labels.
+- This set was not used for any change. It is now seen.
+
+| Rule | TP | FP | FN | Precision | Recall |
+|---|---|---|---|---|---|
+| SCOPE-01 | 4 | 7 | 8 | 4/11 = 36% | 4/12 = 33% |
+| TIME-03 | 4 | 5 | 4 | 4/9 = 44% | 4/8 = 50% |
+| HOST-02 | 3 | 12 | 3 | 3/15 = 20% | 3/6 = 50% |
+| REVISE-04 | 7 | 2 | 14 | 7/9 = 78% | 7/21 = 33% |
+| All | 18 | 26 | 29 | 18/44 = 41% | 18/47 = 38% |
+
+Secondary views: lenient matching gives the same figures (18 of 44, 18 of 47). Against the union of both labellers' labels (one of them marked two more SCOPE-01 items) it is 19 of 44 and 19 of 49.
+
+### Why the tuning-set numbers were misleading
+
+| Rules | Measured on | Reported correct | Found |
+|---|---|---|---|
+| Round 4 | the five sets it was tuned on (132 documents) | 212 of 220 (96%) | 212 of 234 (91%) |
+| Round 4 | held-out set 5 (fresh) | 18 of 44 (41%) | 18 of 47 (38%) |
+| Round 3 | held-out set 4 (fresh, two labellers) | 15 of 29 (52%) | 15 of 33 (45%) |
+
+The gap between the first two rows is the cost of tuning wording on a small, seen corpus. The third row is on a different set, so the comparison with the second row is not controlled (the sets differ and each has under 50 findings), but it gives no sign that round 4 helped on new text.
+
+### Manual review of the 26 strict false positives
+
+| Kind | Count | Examples |
+|---|---|---|
+| HOST-02: cue inside a heading or title | 4 | "Subscription note", "Email and SMS Automation — Proposal for ...", "Third-party services" |
+| HOST-02: negation | 2 | "No new hosting is needed", "no licence fees arise" |
+| HOST-02: payer stated in a form the rules do not recognise | 5 | "is Delphine's", "which would be on your side", "SmoothRoute's existing cloud account" (possessive pattern allows one word before "account"), "expenses incurred on Client's behalf", "the license that I use is by me" |
+| HOST-02: a task line, not a paid cost | 1 | "DNS change on switch day" |
+| TIME-03: negation | 1 | "Payment of the retainer is not conditional on approval" |
+| TIME-03: deemed-acceptance form not recognised | 1 | "the Drafter will treat the draft as approved" |
+| TIME-03: window or default stated elsewhere in the document | 1 | "40% on Acceptance." (the rule checks the same and next sentence only) |
+| TIME-03: clause number followed by an amount | 1 | "6.1 1,450 EUR: 40% on signing, 60% on approval ..." |
+| REVISE-04 (b): price for extra work in term-sheet form | 1 | "Extra round: 150 EUR flat" |
+| SCOPE-01: phrase from the open-ended family used for something else | 2 | "builds as we go" (about feedback); "i'll do changes as we go" (a revision promise, which REVISE-04 missed) |
+| SCOPE-01: arguable, soft adjectives in a specific description | 2 | "in a warm, friendly voice" (12 descriptions); "sound great and tweak as needed" |
+| SCOPE-01: no deliverable promise | 1 | "If you want anything else on the day ... we'll work something out" |
+| Boundary or label effects on the right passage | 3 | run-on text with no punctuation joined two sentences (twice); a clause split at ";" that the segmenter does not split |
+| Contested label | 1 | "i'll build the whole thing ... with a nice clean look" was marked by one labeller only |
+
+Of the 26: 3 are boundary effects, 1 is contested, 4 are arguable and 18 are real mistakes. HOST-02 is again the worst: 12 of its 15 reports were wrong, and the largest groups (headings, negations, unrecognised payers) are structural and fixable, but fixing them against this now-seen set would repeat the cycle that produced round 4.
+
+### What the 29 misses look like (my reading, not separately tested)
+
+Informal revision and approval wording ("i don't count them", "keep going till it feels right", "I adjust", "tell me when it looks right", "when you are happy"); open-ended phrasings with no list word ("whatever people need", "other nice touches as they come to mind", "fix issues as they appear"); revision cues the list lacks ("corrections", "passes", "refine"); and document-level cost cues the lists lack ("the server"). REVISE-04 recall is lowest (7 of 21) because most informal revision promises use words outside the cue list.
+
+### What this means
+
+Fixing word lists against the documents already seen raises the score on those documents and not on new ones: two fresh sets in a row (round 3 at 52% and 45%, round 4 at 41% and 38%) show a rule set of about half-right reports. I would not tune the lists further. The honest options are to ship the tool as a first-pass checklist with these numbers shown, as the demo page now does, or to move to a different method (a much larger, varied, human-labelled set, or a model used only to suggest candidates that rules then confirm). Neither has been done.
+
+---
+
+## Round-3 rules: held-out set 4 (run 2026-11-11)
+
+*History: figures for the rules after the structural round 3 and before round 4. Held-out set 4 has since been second-labelled; the extra measurement against both labellers is the first paragraph below.*
+
+- **Second labelling (added 2026-11-12):** a second blind labeller re-labelled this set; the two agree on 66 of 75 judgements (88%), and 6 of the 9 disagreements are REVISE-04 part (b). Scored on the same frozen round-3 rules against the consensus labels (items both marked): 15 of 29 reported correct (52%), 15 of 33 found (45%) strict; against the union of both labellers' labels: 15 of 29 and 15 of 42 (36%). The headline below uses the first labeller only.
 
 **Headline: on a set that no rule was tuned against, 15 of the 29 findings the tool reported were correct (52%), and it found 15 of the 34 findings the labeller expected (44%). It is still a weak tool: it misses more than half of what a careful reader would flag, and about half of what it reports is wrong.**
 

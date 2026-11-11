@@ -103,7 +103,7 @@ I have tested the server by speaking the protocol over standard input and output
 
 ```bash
 npm run typecheck
-npm test                       # 231 tests at the time of writing
+npm test                       # 284 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
 ```
@@ -112,10 +112,19 @@ The test suite includes the rule examples from the spec, segmenter tests, prompt
 
 ### Evaluation (read before trusting the tool)
 
-The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 4, 2026-11-11, strict matching):
+The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 5, 2026-11-12, strict matching, labels from two independent labellers):
 
 | Rule | Reported findings that were correct | Expected findings that were found |
 |---|---|---|
+| SCOPE-01 | 4 of 11 | 4 of 12 |
+| TIME-03 | 4 of 9 | 4 of 8 |
+| HOST-02 | 3 of 15 | 3 of 6 |
+| REVISE-04 | 7 of 9 | 7 of 21 |
+| All | 18 of 44 | 18 of 47 |
+
+**This is a weak result.** More than half of what the tool reports is wrong, and it misses most of what a careful reader would flag. HOST-02 is the worst: 12 of its 15 reports were wrong. On the five sets the rules were tuned on they score far higher (212 of 220 reported correct), which only shows how well they fit those documents: the previous fresh set scored 15 of 29 and 15 of 33 on the earlier rules, so tuning more has not helped on new text. Treat the tool as a first-pass checklist, not a verdict. Caveats: 24 invented documents; the documents and both sets of labels were written by Claude in separate sessions (the two labellers agree on 98% of judgements, which shows consistency, not correctness, and is not independent human labelling); one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
+
+---|---|---|
 | SCOPE-01 | 6 of 6 | 6 of 12 |
 | TIME-03 | 4 of 9 | 4 of 10 |
 | HOST-02 | 2 of 9 | 2 of 4 |
@@ -147,6 +156,7 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 ## 7. Production Deployment
 
 - **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
+- **Security headers:** `demo/serve.json` (copied into the build) sets a Content-Security-Policy that forbids all connections and inline script, HSTS, `nosniff`, frame denial, `no-referrer`, a restrictive Permissions-Policy and cross-origin isolation headers. On 2026-11-12 the live site was checked and sends all of them on the page, a 404 and static files; the headers rely on the host being Vercel's `serve` package (deduced from its 404 page and response headers, and confirmed by the headers arriving).
 - **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
 - **npm:** the package (`proposal-guard`, version 0.1.0) is prepared for publishing but **is not published yet**, so `npm install proposal-guard` does not work today; run it from a clone as shown above. When it is published, the scanner has no runtime dependencies, and the MCP server needs the optional packages `@modelcontextprotocol/server` and `zod`. There is no release workflow.
 

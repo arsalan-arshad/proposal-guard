@@ -1,0 +1,319 @@
+{
+  "h5-01.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-02.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "we'll make it feel really modern and user friendly, and i'll keep tweaking until you love it"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "price is 4,800 total, half now and half when you're happy"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "store"
+      }
+    ]
+  },
+  "h5-03.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-04.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "I'll make them sound great and tweak as needed until you're pleased."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "I'll make them sound great and tweak as needed until you're pleased."
+      }
+    ]
+  },
+  "h5-05.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-06.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-07.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I offer to translate your website of 14 pages, around 9,000 words, with high quality and professional."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I will do all what is necessary for the good result and I make corrections when you are not satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "I will do all what is necessary for the good result and I make corrections when you are not satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "You can tell me the corrections any time and I do them without problem."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "I will do all what is necessary for the good result and I make corrections when you are not satisfied."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Payment after you receive the work, you approve and I send the invoice."
+      }
+    ]
+  },
+  "h5-08.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-09.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-10.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-11.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Consultant shall provide ongoing support and guidance to improve Client's operations and online presence, as well as such other assistance as Client may reasonably need from time to time."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Consultant shall use best efforts to deliver a seamless, best-in-class customer experience across all channels."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Client shall approve or reject deliverables in good faith."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Consultant will make revisions to deliverables until Client is satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Consultant will make revisions to deliverables until Client is satisfied."
+      }
+    ]
+  },
+  "h5-12.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll be around for questions by email for a while afterwards, whatever people need."
+      }
+    ]
+  },
+  "h5-13.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "TIME-03",
+        "sentence": "the client's lead engineer signs off after running one real release through them."
+      }
+    ]
+  },
+  "h5-14.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "on edits: i'll do changes as we go, just message me, i don't count them."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "on edits: i'll do changes as we go, just message me, i don't count them."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "you tell me when it looks right and i'll send the final files"
+      }
+    ]
+  },
+  "h5-15.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-16.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-17.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-18.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "I'll keep refining it for as long as it takes to get it right for you."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "I'll keep refining it for as long as it takes to get it right for you."
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "Half up front, half when you say you're happy with the final files."
+      }
+    ]
+  },
+  "h5-19.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-20.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Optimise the shop for speed and a great experience"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "When you have looked it over and are happy, we flip the switch."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "Changes after the flip, like new sections or small design edits, I'll help with whenever you need."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "Changes after the flip, like new sections or small design edits, I'll help with whenever you need."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "licences"
+      }
+    ]
+  },
+  "h5-21.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "The report will be good and complete and you will be satisfied."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "If you have some question or want something add to the report, I do it, there is no limit, because I want a good relationship."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "If you have some question or want something add to the report, I do it, there is no limit, because I want a good relationship."
+      }
+    ]
+  },
+  "h5-22.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "i'll sort the music and the lighting and make it look premium and polished"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "i usually do a couple of passes but if it needs more i'm happy to keep going till it feels right"
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "i usually do a couple of passes but if it needs more i'm happy to keep going till it feels right"
+      },
+      {
+        "rule": "TIME-03",
+        "sentence": "if you're happy just reply \"approved\" and i'll send final files, if i don't hear back i'll nudge you"
+      }
+    ]
+  },
+  "h5-23.md": {
+    "tags": [],
+    "expected": []
+  },
+  "h5-24.md": {
+    "tags": [],
+    "expected": [
+      {
+        "rule": "SCOPE-01",
+        "sentence": "I'll aim to make it intuitive, delightful and fast."
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "Other nice touches as they come to mind during the build"
+      },
+      {
+        "rule": "SCOPE-01",
+        "sentence": "After launch I'll fix issues as they appear and help with updates."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "a",
+        "sentence": "you tell me how they look and I adjust."
+      },
+      {
+        "rule": "REVISE-04",
+        "part": "b",
+        "sentence": "you tell me how they look and I adjust."
+      },
+      {
+        "rule": "HOST-02",
+        "category": "api"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "cloud"
+      },
+      {
+        "rule": "HOST-02",
+        "category": "store"
+      }
+    ]
+  }
+}
