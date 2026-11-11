@@ -61,7 +61,7 @@ const CATEGORIES: Category[] = [
     id: 'domain',
     label: 'domain and certificate',
     severity: 'Medium',
-    cues: [/\bdomain\s+names?\b/gi, /\bdomain\s+registration\b/gi, /\bDNS\b/g, /\bSSL\s+certificates?\b/gi],
+    cues: [/\bdomain\s+names?\b/gi, /\bdomain\s+registration\b/gi, /\bSSL\s+certificates?\b/gi],
   },
   {
     id: 'licences',
@@ -133,7 +133,12 @@ const ASSIGNMENT_RE = new RegExp(
     '\\bbilled\\s+(?:\\w+\\s+){0,6}?to\\b',
     "\\b(?:that|it)['\\u2019]?s\\s+on\\s+(?:me|you|us|them)\\b",
     '\\bbetween\\s+you\\s+and\\b',
-    "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b",
+    // A named party's, "on your side", "on Client's behalf", "is by me": payer stated in a predicate form.
+    "\\b(?:is|are|will\\s+be)\\s+[A-Z][a-z]+['\\u2019]s\\b",
+    '\\bon\\s+(?:your|my|our|their)\\s+side\\b',
+    "\\binvoic\\w*\\b[^.;]{0,80}\\bon\\s+(?:the\\s+)?(?:client|customer)['\\u2019]s\\s+behalf\\b",
+    '\\bis\\s+by\\s+(?:me|you|us|them)\\b',
+    "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+){0,2}account\\b",
     '\\b(?:your|their)\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b',
     "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
     "\\bat\\s+the\\s+client['\\u2019]?s\\s+expense\\b",
@@ -173,6 +178,20 @@ function suggestion(label: string): string {
   return `State who pays for ${label} costs, for example: ${label} costs are billed to the client's account at cost, or are included in the fee of [amount].`;
 }
 
+
+/** "No new hosting is needed", "no licence fees arise", "will not hold any subscriptions": a negated cost is not a cost. */
+function negatedBefore(masked: string, start: number): boolean {
+  return /\b(?:no|not|never|without|nor|n['\u2019]t)\b(?:\s+\w+){0,3}\s+$/i.test(masked.slice(Math.max(0, start - 40), start));
+}
+
+/** A very short line with no sentence punctuation, such as "Third-party services" or "**Hosting**". */
+function isTitleLine(masked: string): boolean {
+  const t = masked.replace(/[*_#`]/g, '').trim();
+  const words = t.split(/\s+/);
+  // At most three words and no preposition: "Third-party services" is a title, "Email delivery through Mailgun" names a service.
+  return t.length > 0 && words.length <= 3 && !/[.,;!?]/.test(t) && /^[A-Z]/.test(t) && !/\b(?:on|through|via|with|by|from|at|in|for|to|using|of)\b/i.test(t);
+}
+
 /** HOST-02: a paid third-party service is named, and nothing says who pays for that kind of cost. */
 export function checkHost02(sentences: Sentence[]): RuleOutcome {
   // Per sentence: category cues (minus excluded senses) and whether it states a payer.
@@ -187,11 +206,17 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
   const perSentence = sentences.map((s) => {
     const excluded = EXCLUSIONS.flatMap((re) => findAll(re, s.masked));
     const byCategory = new Map<HostCategory, Term[]>();
+    // A heading or a short title line ("Third-party services", "Subscription note") names a topic; it does not say the
+    // work uses the service. Table cells are real content and are not skipped.
+    const title = s.heading === true || (s.row === undefined && isTitleLine(s.masked));
     for (const cat of CATEGORIES) {
+      if (title) break;
       const terms = dropOverlapping(
         cat.cues.flatMap((re) => findAll(re, s.masked)),
         excluded,
-      ).sort((a, b) => a.start - b.start);
+      )
+        .filter((t) => !negatedBefore(s.masked, t.start))
+        .sort((a, b) => a.start - b.start);
       if (terms.length > 0) byCategory.set(cat.id, terms);
     }
     // A pointer to a named part of the document ("covered in Section 6") counts as a stated payer, as in the shared pointer test.

@@ -44,7 +44,7 @@ const WINDOW_RE = new RegExp(
 );
 
 const DEEMED_RE =
-  /\b(?:deemed\s+(?:to\s+be\s+)?(?:accepted|approved)|automatically\s+(?:accepted|approved)|considered\s+(?:to\s+be\s+)?(?:accepted|approved)|(?:treated|taken|regarded)\s+as\s+(?:accepted|approved)|(?:silence|no\s+(?:response|reply|answer)|nothing)\b[^.]{0,50}\b(?:acceptance|accepted|approved|approval))\b/i;
+  /\b(?:deemed\s+(?:to\s+be\s+)?(?:accepted|approved)|automatically\s+(?:accepted|approved)|considered\s+(?:to\s+be\s+)?(?:accepted|approved)|(?:treated|taken|regarded)\s+as\s+(?:accepted|approved)|treat(?:s|ed)?\s+(?:the\s+\w+\s+)?as\s+(?:accepted|approved)|(?:silence|no\s+(?:response|reply|answer)|nothing)\b[^.]{0,50}\b(?:acceptance|accepted|approved|approval))\b/i;
 
 const WHY = 'Delivery or payment waits on an approval that has no deadline, so it can be delayed without limit.';
 const SUGGESTION =
@@ -59,17 +59,22 @@ function handled(masked: string): boolean {
 export function checkTime03(sentences: Sentence[], claimed: ReadonlySet<number> = new Set()): RuleOutcome {
   const findings: Finding[] = [];
   let sawCue = false;
+  const documentDefault = sentences.some((x) => has(DEEMED_RE, x.masked));
 
   sentences.forEach((s, i) => {
     if (s.heading) return; // a title such as "Milestones and acceptance" is not a clause
     const excluded = EXCLUDED_SENSE.flatMap((re) => findAll(re, s.masked));
     const cues = dropOverlapping(findAll(ACCEPT_CUE_RE, s.masked), excluded);
     if (cues.length === 0) return;
+    // "not conditional on approval", "no approval is needed": a negated approval is not a gate.
+    if (cues.every((c) => /\b(?:no|not|never|without|n['\u2019]t)\b(?:\s+\w+){0,3}\s+$/i.test(s.masked.slice(Math.max(0, c.start - 40), c.start)))) return;
     // A revision promise ("included until the client is happy with it") is REVISE-04's, not an approval clause; a real
     // sign-off in the same sentence still counts.
     if (claimed.has(s.start) && s.masked && cues.every((c) => /^(?:happy|satisfied|pleased)\s+with$/i.test(s.masked.slice(c.start, c.end)))) return;
     if (!has(MILESTONE_RE, s.masked) && !(has(STRONG_CUE_RE, s.masked) && has(SEQUENCING_RE, s.masked) && has(CLIENT_SIDE_RE, s.masked))) return;
     sawCue = true;
+    // A general deemed-acceptance default anywhere in the document covers every approval in it (the cue counts as handled).
+    if (documentDefault) return;
 
     const next = sentences[i + 1];
     const nextMasked = next && next.block === s.block ? next.masked : '';

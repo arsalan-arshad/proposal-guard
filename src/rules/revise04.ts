@@ -61,6 +61,8 @@ const CHANGE_ORDER_RE = new RegExp(
     'quoted\\s+separately',
     '(?:additional|extra|further|beyond|later|more|after\\b[^.]{0,30}?)\\b[^.]{0,60}?\\b(?:cost|costs|billed|charged|priced|quoted)',
     '(?:treated|handled|scoped)\\s+as\\s+(?:a\\s+)?new\\s+(?:project|engagement|request|scope)',
+    // Term-sheet form: "Extra round: 150 EUR flat".
+    '(?:extra|additional|further)\\s+(?:rounds?|revisions?|edits?|changes|work)\\s*[:\\u2013-]\\s*(?:[$\\u20ac\\u00a3]\\s*)?\\d+',
     '(?:billed|charged|quoted)\\s+(?:separately|hourly|extra|at\\s+(?:our|the|an?)\\s+(?:standard\\s+)?(?:hourly\\s+)?rate)',
     'at\\s+(?:our|the)\\s+(?:standard\\s+)?hourly\\s+rate',
     '(?:extra|additional|further)\\s+(?:rounds?|revisions?|requests?|work)\\s+(?:are|is|will\\s+be)\\s+(?:billed|charged|quoted)',

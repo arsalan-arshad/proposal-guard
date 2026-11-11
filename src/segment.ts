@@ -68,7 +68,7 @@ interface Range {
 }
 
 // Also multi-level clause numbers ("1.1 The ...", "2.2 25% on ..."), only when a capital letter or a percentage follows, so "1.5 million users" stays text.
-const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)]|\d{1,3}(?:\.\d{1,3})+(?=\s+(?:[A-Z(\[]|\d+\s*%)))\s+/;
+const BULLET_RE = /^(\s*)(?:[-*+•]|\d{1,3}[.)]|\d{1,3}(?:\.\d{1,3})+(?=\s+(?:[A-Z(\[]|\d[\d,.]*\s*(?:%|(?:EUR|USD|GBP|PKR)\b)|[$\u20ac\u00a3]\s*\d)))\s+/;
 const KEY_VALUE_RE = /^\s*[A-Z][A-Za-z\/& -]{1,24}:\s+\S/;
 const HEADING_RE = /^(\s{0,3})#{1,6}\s+/;
 const TABLE_SEP_CELL_RE = /^\s*:?-{2,}:?\s*$/;

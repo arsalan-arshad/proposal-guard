@@ -1,0 +1,87 @@
+import { describe, expect, it } from 'vitest';
+import { scan, segment } from '../src/index.js';
+import type { RuleId } from '../src/index.js';
+
+/** Regression tests for the precision round (RULES_SPEC.md, changes 61 to 68): fewer false alarms, no new word lists for recall. All text is synthetic. */
+const count = (text: string, rule: RuleId): number => scan(text).findings.filter((f) => f.ruleId === rule).length;
+const parts = (text: string): string[] => scan(text).findings.filter((f) => f.ruleId === 'REVISE-04').map((f) => f.part ?? '');
+
+describe('HOST-02: titles and negations are not costs', () => {
+  it.each([
+    'No new hosting is needed.',
+    'The Developer will use an open-source search engine and no licence fees arise.',
+    'Third-party services',
+    '## Hosting',
+    '**Third-party services**',
+    'DNS change on switch day',
+  ])('does not flag: %s', (text) => {
+    expect(count(text, 'HOST-02')).toBe(0);
+  });
+
+  it('still flags a real service named in a bullet or a table cell', () => {
+    expect(count('- Email delivery through Mailgun', 'HOST-02')).toBe(1);
+    expect(count('| Item | Detail |\n|---|---|\n| Hosting (EU region) | managed app platform |', 'HOST-02')).toBe(1);
+  });
+});
+
+describe('HOST-02: payer stated in a predicate form', () => {
+  it.each([
+    "The audio hosting plan for the feed is Delphine's.",
+    'Captions need a captioning tool subscription, which would be on your side.',
+    "Hosting for the portal runs on SmoothRoute's existing cloud account.",
+    "Consultant may invoice for expenses incurred on Client's behalf, including SMS credits.",
+    'The translation software license that I use is by me.',
+  ])('states a payer: %s', (text) => {
+    expect(count(text, 'HOST-02')).toBe(0);
+  });
+
+  it('"on the Customer\'s behalf" alone does not say who pays', () => {
+    expect(count("The Agency shall arrange hosting on the Customer's behalf.", 'HOST-02')).toBe(1);
+  });
+});
+
+describe('TIME-03: negations, deemed acceptance and clause numbers', () => {
+  it('a negated approval is not a gate', () => {
+    expect(count('Payment of the retainer is not conditional on approval.', 'TIME-03')).toBe(0);
+    expect(count('Payment of the retainer is conditional on approval.', 'TIME-03')).toBe(1);
+  });
+
+  it('a general deemed-acceptance default covers every approval in the document and the rule reports "passed"', () => {
+    const doc = 'If the Owners do not respond within that time, the Drafter will treat the draft as approved and continue.\n\nFinal payment is released on approval of the drawings.';
+    const r = scan(doc);
+    expect(r.findings.filter((f) => f.ruleId === 'TIME-03')).toHaveLength(0);
+    expect(r.status['TIME-03']).toBe('passed');
+  });
+
+  it('without a default the same approval is still flagged', () => {
+    expect(count('Final payment is released on approval of the drawings.', 'TIME-03')).toBe(1);
+  });
+
+  it('a clause number before an amount is a list marker, a decimal quantity is not', () => {
+    expect(segment('6.1 1,450 EUR: 40% on signing, 60% on delivery.').map((s) => s.text)[0]).toBe('1,450 EUR: 40% on signing, 60% on delivery.');
+    expect(segment('1.5 million users are expected.').map((s) => s.text)[0]).toBe('1.5 million users are expected.');
+  });
+});
+
+describe('SCOPE-01: fewer false alarms from open-ended phrases', () => {
+  it.each([
+    "I'll send you builds as we go and you can tell me what you think.",
+    "If you want anything else on the day, an album, extra hours, just tell me and we'll work something out.",
+  ])('does not flag: %s', (text) => {
+    expect(count(text, 'SCOPE-01')).toBe(0);
+  });
+
+  it('"anything else" in a promise is still flagged', () => {
+    expect(count('We will deliver the app and anything else you need.', 'SCOPE-01')).toBe(1);
+  });
+});
+
+describe('REVISE-04: a price in term-sheet form is a change-order path', () => {
+  it('"Extra round: 150 EUR flat" prices extra work', () => {
+    expect(parts('Revision rounds: 2 included (rough cut, fine cut)\nExtra round: 150 EUR flat')).toEqual([]);
+  });
+
+  it('without a price part (b) still fires', () => {
+    expect(parts('Revision rounds: 2 included (rough cut, fine cut)')).toEqual(['b']);
+  });
+});
