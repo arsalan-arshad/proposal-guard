@@ -1,8 +1,9 @@
 # Proposal Guard — a rule-based scope-creep checker for proposals and SOWs
 
-> **Open-source (MIT)** | A small showcase project by [Arsalan Arshad](https://arsalandev.studio) | Early stage: not published to npm. Live demo: https://proposal-guard-production.up.railway.app/
+> **Open-source (MIT)** | A small showcase project by [Arsalan Arshad](https://arsalandev.studio) | Early stage. npm: [`proposal-guard`](https://www.npmjs.com/package/proposal-guard). Live demo: https://proposal-guard-production.up.railway.app/
 
 [![CI](https://github.com/arsalan-arshad/proposal-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/arsalan-arshad/proposal-guard/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/proposal-guard)](https://www.npmjs.com/package/proposal-guard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Hosted on Railway](https://img.shields.io/badge/demo-hosted%20on%20Railway-6d3fe0)](https://proposal-guard-production.up.railway.app/)
 
@@ -75,27 +76,47 @@ TypeScript (strict, ESM), Node 20 or newer, tests with Vitest. The scanning core
 
 ---
 
-## 5. Local Development Quickstart
+## 5. Quickstart
 
-Prerequisites: Node 20 or newer, npm, git. The package is not on npm yet, so you run it from a clone.
+Prerequisite: Node 20 or newer.
+
+**From npm** (version 0.1.0; the scanner has no runtime dependencies):
+
+```bash
+# one-off, nothing installed
+printf 'The app will be fast and seamless.\n\nUnlimited revisions are included.\n' | npx proposal-guard scan -
+npx proposal-guard scan my-proposal.md --json
+
+# or install the command
+npm install -g proposal-guard
+proposal-guard list-rules
+proposal-guard explain TIME-03
+
+# or use it as a library
+npm install proposal-guard      # import { scan } from 'proposal-guard'
+```
+
+**As a local MCP server** (read-only, three tools). The server needs two optional packages next to it:
+
+```bash
+npm install -g proposal-guard @modelcontextprotocol/server zod
+```
+
+```json
+{ "mcpServers": { "proposal-guard": { "command": "proposal-guard-mcp" } } }
+```
+
+If those two packages are missing, `proposal-guard-mcp` says what to install and exits with code 2. I checked this setup by installing from the npm registry into a clean directory and talking to the server over standard input and output (initialise, list tools, scan); I have not tested it inside a specific MCP client application.
+
+**From a clone** (for development):
 
 ```bash
 git clone https://github.com/arsalan-arshad/proposal-guard.git
 cd proposal-guard
 npm ci
 npm run build
-printf 'The app will be fast and seamless.\n\nUnlimited revisions are included.\n' | node dist/bin.js scan -
-node dist/bin.js list-rules
-node dist/bin.js explain TIME-03
+node dist/bin.js scan my-proposal.md
 ```
-
-To use the MCP server with a local MCP client, point it at the built file (use your own absolute path):
-
-```json
-{ "mcpServers": { "proposal-guard": { "command": "node", "args": ["/ABSOLUTE/PATH/TO/proposal-guard/dist/mcp.js"] } } }
-```
-
-I have tested the server by speaking the protocol over standard input and output; I have not tested it inside a specific MCP client application.
 
 ---
 
@@ -158,7 +179,7 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 - **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
 - **Security headers:** `demo/serve.json` (copied into the build) sets a Content-Security-Policy that forbids all connections and inline script, HSTS, `nosniff`, frame denial, `no-referrer`, a restrictive Permissions-Policy and cross-origin isolation headers. On 2026-11-12 the live site was checked and sends all of them on the page, a 404 and static files; the headers rely on the host being Vercel's `serve` package (deduced from its 404 page and response headers, and confirmed by the headers arriving).
 - **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
-- **npm:** the package (`proposal-guard`, version 0.1.0) is prepared for publishing but **is not published yet**, so `npm install proposal-guard` does not work today; run it from a clone as shown above. When it is published, the scanner has no runtime dependencies, and the MCP server needs the optional packages `@modelcontextprotocol/server` and `zod`. There is no release workflow.
+- **npm:** `proposal-guard` 0.1.0 is published (https://www.npmjs.com/package/proposal-guard), MIT. On 2026-11-12 I compared the published tarball with a fresh build of `main` at commit `6886d15`: same 35 files, byte-identical `dist`, README and `package.json`. The registry also lists a `0.0.0-stage` placeholder version that is not part of this repository's history. Not set up: npm provenance and a release workflow (releases are published by hand by the repository owner).
 
 ---
 
@@ -174,6 +195,6 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 - [ ] Better coverage of informal wording, table cells and lines without punctuation
 - [x] Browser-only demo (hosted on Railway)
 - [ ] Optional bring-your-own-key model that only suggests wording (not started)
-- [ ] npm package (decision pending)
+- [x] npm package published (0.1.0)
 
 Contributions are welcome: see [`CONTRIBUTING.md`](CONTRIBUTING.md). Security reports: see [`SECURITY.md`](SECURITY.md). Licence: [MIT](LICENSE).
