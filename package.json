@@ -1,8 +1,25 @@
 {
   "name": "proposal-guard",
-  "version": "0.0.0",
-  "description": "Deterministic scope-creep checker for draft proposals and statements of work. Not legal advice.",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Deterministic, rule-based scope-creep checker for draft proposals and statements of work. Not legal advice.",
+  "keywords": [
+    "proposal",
+    "sow",
+    "scope-creep",
+    "freelance",
+    "contract",
+    "linter",
+    "mcp",
+    "cli"
+  ],
+  "homepage": "https://github.com/arsalan-arshad/proposal-guard#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arsalan-arshad/proposal-guard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arsalan-arshad/proposal-guard/issues"
+  },
   "license": "MIT",
   "author": "Arsalan Arshad",
   "type": "module",
@@ -14,10 +31,16 @@
       "import": "./dist/index.js"
     }
   },
+  "bin": {
+    "proposal-guard": "./dist/bin.js",
+    "proposal-guard-mcp": "./dist/mcp-launch.js"
+  },
   "files": [
     "dist",
-    "LICENSE"
+    "LICENSE",
+    "README.md"
   ],
+  "sideEffects": false,
   "engines": {
     "node": ">=20"
   },
@@ -26,21 +49,31 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p demo",
     "test": "vitest run",
     "eval": "tsx eval/run.ts",
-    "build:demo": "node demo/build.mjs"
+    "build:demo": "node demo/build.mjs",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "peerDependencies": {
+    "@modelcontextprotocol/server": ">=2.4.0 <3",
+    "zod": ">=4.6.7 <5"
+  },
+  "peerDependenciesMeta": {
+    "@modelcontextprotocol/server": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
     "@types/node": "^26.6.6",
     "esbuild": "0.28.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.0"
-  },
-  "bin": {
-    "proposal-guard": "./dist/bin.js",
-    "proposal-guard-mcp": "./dist/mcp.js"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/server": "2.4.0",
+    "vitest": "^5.1.0",
     "zod": "4.6.7"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
