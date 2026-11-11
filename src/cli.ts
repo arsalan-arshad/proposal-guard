@@ -2,6 +2,7 @@ import { readFileSync, statSync } from 'node:fs';
 import { extname } from 'node:path';
 import { DEFAULT_MAX_CHARS, DISCLAIMER_SHORT, scan } from './scan.js';
 import { RULE_INFO, getRuleInfo } from './rules-info.js';
+import { VERSION } from './version.js';
 import type { Finding, ScanResult } from './types.js';
 
 export interface CliIo {
@@ -20,6 +21,7 @@ Usage:
   proposal-guard list-rules [--json]      List the four rules
   proposal-guard explain <RULE-ID>        Describe one rule
   proposal-guard --help
+  proposal-guard --version
 
 Exit codes:
   0  scanned, no findings (or list-rules/explain/help succeeded)
@@ -77,6 +79,10 @@ export function run(argv: string[], io: CliIo): number {
   try {
     const json = argv.includes('--json');
     const args = argv.filter((a) => a !== '--json');
+    if (args.length === 1 && (args[0] === '--version' || args[0] === '-v')) {
+      io.stdout(`${VERSION}\n`);
+      return 0;
+    }
     const unknown = args.filter((a) => a.startsWith('-') && a !== '-' && a !== '--help' && a !== '-h');
     if (unknown.length > 0) throw new UsageError(`Unknown option: ${unknown[0]}`);
     const [cmd, ...rest] = args;

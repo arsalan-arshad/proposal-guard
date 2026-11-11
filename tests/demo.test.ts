@@ -123,3 +123,31 @@ describe('light theme', () => {
     expect(ratio('#ffffff', vars['accent'] as string)).toBeGreaterThanOrEqual(4.5); // white button text on the accent
   });
 });
+
+describe('security headers (serve.json)', () => {
+  const cfg = JSON.parse(readFileSync('demo/serve.json', 'utf8')) as { headers: Array<{ source: string; headers: Array<{ key: string; value: string }> }> };
+  const all = Object.fromEntries((cfg.headers.find((h) => h.source === '**')?.headers ?? []).map((h) => [h.key, h.value]));
+
+  it('is valid, applies to every path, and sets the expected headers', () => {
+    for (const k of ['Content-Security-Policy', 'Strict-Transport-Security', 'X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy', 'Cross-Origin-Opener-Policy', 'Cross-Origin-Resource-Policy']) {
+      expect(all[k], k).toBeTruthy();
+    }
+    expect(all['X-Content-Type-Options']).toBe('nosniff');
+    expect(all['X-Frame-Options']).toBe('DENY');
+  });
+
+  it('the header policy is at least as strict as the page meta policy and blocks framing', () => {
+    const html = readFileSync('demo/index.html', 'utf8');
+    const meta = /Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? '';
+    const header = all['Content-Security-Policy'] ?? '';
+    const dirs = (p: string): Map<string, string> => new Map(p.split(';').map((d) => d.trim()).filter(Boolean).map((d) => [d.split(' ')[0] as string, d]));
+    const h = dirs(header);
+    for (const [name, value] of dirs(meta)) expect(h.get(name), name).toBe(value);
+    expect(h.get('frame-ancestors')).toBe("frame-ancestors 'none'");
+    expect(header).not.toMatch(/unsafe-|\*/);
+  });
+
+  it('the demo build copies serve.json next to the page', () => {
+    expect(readFileSync('demo/build.mjs', 'utf8')).toContain("'serve.json'");
+  });
+});
