@@ -2,7 +2,69 @@
 
 Not legal advice; this report measures a text checker on invented documents. It has three parts: the current rules on held-out set 4 (first), the round-2 rules on held-out set 3, and the first rules on held-out set 2 (both kept as history).
 
-## Current rules (round 4): held-out set 5 (run 2026-11-12)
+## Current rules (precision round): held-out set 6 (run 2026-11-12)
+
+**Headline: on a brand-new set that no rule was tuned against, 18 of the 38 findings the tool reported were correct (47%), and it found 18 of the 37 findings the labellers expected (49%). The published version before this one, run on the same documents and labels, scored 18 of 43 (42%) and 18 of 37 (49%). So the latest round removed five false alarms and lost no true positive: a small cleanup, not a breakthrough. The tool remains weak, and HOST-02 is the weakest part.**
+
+- **The acceptance test was written down before the run** (in the maintainer's working log, which is not published, so you have only my word for the timing; the test itself is stated here): ship the round only if overall precision is at least 5 percentage points higher than the published rules **and** overall recall is no more than 3 points lower, on the same documents and the same adjudicated labels. Result: precision +5.5 points (47.4% against 41.9%), recall unchanged (48.6%). It passed, narrowly.
+- One run each, rules frozen. New rules: git commit `af6ba04e66689e0e08b4a42642f822bad5f47655`, source hash (first 16 hex of the SHA-256 of all `src/**/*.ts`, sorted path order) `09ae539f1c77bde0`. Published rules: commit `918e4bb8727fde4dd7119318ff2f420e492f8f30`, hash `3a89b3661e878123`. Raw output: `eval/results/heldout6-new-2026-11-12.txt` and `heldout6-old-2026-11-12.txt`. After the run a fixed caution text was added to HOST-02 findings (display only); a re-run gives identical results.
+- **Headline measure fixed before the run:** strict matching against adjudicated labels (both labellers' agreed items plus REVISE-04 part (b) items, whose definition the spec text settles).
+- 30 invented documents. A blind Claude session wrote them (told not to read the rules, code, spec or any corpus); two further blind sessions labelled them independently and at the same time, from the rule definitions only. They agree on 70 of 79 judgements (89%). Labellers were told that a semicolon does not end a sentence (earlier sets used the opposite instruction, which created boundary mismatches). **All are the model family that wrote the rules: this is not independent human labelling, and no person has reviewed a sample of the labels.**
+- Between the freeze and the run, a separate reviewer agent that was not allowed to see the evaluation documents attacked the first version of these changes and found real regressions (a negation that silenced "payment is not released until approval", a negated "treat as approved" that became a document-wide default, a bare number read as a price, over-broad payer forms, and two performance regressions). All were fixed from its synthetic examples before this measurement.
+- This set was not used for any change. It is now seen.
+
+| Rule | Published rules: reported correct / found | Precision-round rules: reported correct / found |
+|---|---|---|
+| SCOPE-01 | 8 of 11 / 8 of 11 | 8 of 11 / 8 of 11 |
+| TIME-03 | 2 of 9 / 2 of 7 | 2 of 6 / 2 of 7 |
+| HOST-02 | 1 of 12 / 1 of 3 | 1 of 10 / 1 of 3 |
+| REVISE-04 | 7 of 11 / 7 of 16 | 7 of 11 / 7 of 16 |
+| All | 18 of 43 / 18 of 37 | 18 of 38 / 18 of 37 |
+
+### Manual review of the 20 false positives of the current rules
+
+| Rule | Doc | Reason | Kind |
+|---|---|---|---|
+| HOST-02 | h6-06 | "I purchase the commercial font licence and include the cost in my price": the payer is stated, in wording the rules lack | real |
+| HOST-02 | h6-07 | "billed by the provider on a per-token basis": the payer is not named | arguable |
+| HOST-02 | h6-09 | "Greenfold sells a monthly vegetable box subscription to households": the client's own product; the exclusion allows one word before "subscription" | real |
+| HOST-02 | h6-09 | "SMS reminders are out of scope for now": not part of the work | real |
+| HOST-02 | h6-12 | "Hosting: you.": the payer is stated in key-value form | real |
+| HOST-02 | h6-15 | "I use my own Photoshop subscription": the payer is stated ("my own") | real |
+| HOST-02 | h6-17 | A bold title with commas, "Mini quote, Hosting & Maintenance Plan" (the title test allows no commas) | real |
+| HOST-02 | h6-27 | "The bakery's name has no connection to hosting": a negation not directly on the cue | real |
+| HOST-02 | h6-28 | The client's own subscription "sold to its customers", "is out of scope" | real |
+| SCOPE-01 | h6-06 | "Client will give feedback very fast": the client's behaviour, not a deliverable | real |
+| SCOPE-01 | h6-12 | "One responsive landing page, built to the approved wireframe": "responsive" in its layout sense | real |
+| SCOPE-01 | h6-16 | "Any other change request shall be agreed in writing, with the price and delay stated": a change-order clause (the rule only recognises the words "change order") | real |
+| TIME-03 | h6-11 | "The Company's operations director will approve each deliverable": marked by one labeller only | contested |
+| TIME-03 | h6-20 | "to make sure you are fully happy with the integration": a promise of support, not an approval gate | real |
+| TIME-03 | h6-21 | "After that the dashboard is considered signed off": the second half of a default, in wording the rules lack | real |
+| TIME-03 | h6-25 | "the deliverable is accepted for invoicing purposes": a default in wording the rules lack | real |
+| REVISE-04 (a) | h6-21 | "chart tweaks ... are free within the first 2 weeks": bounded by time, not by number; marked by one labeller only | contested |
+| REVISE-04 (b) | h6-12 | extra changes are priced in a section the rules do not recognise | real |
+| REVISE-04 (b) | h6-21 | "New charts or new data sources: 75 GBP per hour": a price for extra work, not in the recognised forms | real |
+| REVISE-04 (b) | h6-23 | extra edits arguably covered elsewhere in the document | arguable |
+
+Of the 20: 2 are contested between the labellers, 2 are arguable and 16 are real mistakes by the rules. Most are wording the lists lack (payer, default, price) or non-cost senses (a client's own subscription, out-of-scope items, titles), which is the same pattern as in every earlier round. I did not tune against this list.
+
+### What the misses look like
+
+Informal or non-native revision and approval wording ("until he is satisfied", "handled in a friendly way", "you can check app and tell me if there is any problem, then we do payment"); open-ended phrasing with no list word ("we will figure out ... as they come up", "small extra things ... can be added when needed"); revision cues outside the list ("adjustments"); and API or cloud costs named in wording the lists lack.
+
+### HOST-02 across the last three fresh sets
+
+The published HOST-02 findings were right 2 of 9 times on held-out set 4 (round-3 rules), 3 of 15 on held-out set 5 (round-4 rules) and 1 of 12 on held-out set 6 (published rules): 6 of 36 in all. That is the reason every HOST-02 finding now carries a fixed caution that it is the least reliable rule. The caution contains no figure and does not change what is found.
+
+### What this means
+
+Three rounds of word-list tuning (rounds 2, 3 and 4) did not make the tool better on new documents, and the round that only removed false alarms made a small, real improvement. I would not tune the word lists further. The honest options remain to ship the tool as a first-pass checklist with these numbers shown (the demo page and README do), or to change method: a much larger human-labelled set, or a model used only to propose candidates that the rules then confirm. Neither has been done.
+
+---
+
+## Round-4 rules: held-out set 5 (run 2026-11-12)
+
+*History: figures for the rules before the precision round. The review of this set's mismatches informed that round, so it must not be used to measure the current rules.*
 
 **Headline: on a brand-new set that no rule was tuned against, 18 of the 44 findings the tool reported were correct (41%), and it found 18 of the 47 findings the labellers expected (38%). This is lower than the round-3 rules scored on the previous fresh set (52% and 45%), even though round 4 scored far higher on the sets it was tuned on (212 of 220 and 212 of 234). Round 4 overfitted; it did not make the tool better on new documents.**
 

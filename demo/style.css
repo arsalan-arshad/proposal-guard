@@ -23,5 +23,6 @@ mark.hit { background:var(--hi); color:inherit; border-radius:3px; padding:0 1px
 .card h3 { margin:6px 0; font-size:1rem; } .sev { margin-left:8px; font-size:.8rem; font-weight:600; color:var(--muted); }
 blockquote { margin:6px 0; padding-left:10px; border-left:3px solid var(--line); overflow-wrap:anywhere; }
 .sug { font-weight:600; }
+.caution { color:var(--med); font-size:.9rem; border-left:3px solid var(--med); padding-left:8px; }
 .small { color:var(--muted); font-size:.85rem; }
 @media (max-width: 480px) { main { padding: 16px; } }

@@ -1,0 +1,60 @@
+# heldout6, OLD (published 0.1.0 / main) rules, strict matching, adjudicated labels (headline, fixed before the run)
+# date: 2026-11-12 (Asia/Karachi)
+# commit: 918e4bb8727fde4dd7119318ff2f420e492f8f30  src hash: 3a89b3661e878123
+
+
+
+Corpus: corpus/heldout6  (30 documents)  [labels: labels.adjudicated.json]
+
+rule        TP  FP  FN   precision          recall
+SCOPE-01     8   3   3   8/11 = 73%         8/11 = 73%
+TIME-03      2   7   5   2/9 = 22%          2/7 = 29%
+HOST-02      1  11   2   1/12 = 8%          1/3 = 33%
+REVISE-04    7   4   9   7/11 = 64%         7/16 = 44%
+all         18  25  19   18/43 = 42%        18/37 = 49%
+
+Mismatches:
+  FN  h6-01.md  TIME-03|price is $1,800, half to start and half when you say it's good.
+  FP  h6-03.md  HOST-02|licences
+  FP  h6-06.md  HOST-02|licences
+  FP  h6-06.md  SCOPE-01|Client will give feedback very fast, I wait maximum one week and after that I proceed.
+  FN  h6-06.md  REVISE-04|a|Revisions: Client can ask for changes to the chosen logo until he is satisfied.
+  FN  h6-06.md  REVISE-04|b
+  FN  h6-06.md  SCOPE-01|Also small extra things like banner or poster can be added when needed without any problem.
+  FP  h6-07.md  HOST-02|ai
+  FP  h6-09.md  HOST-02|licences
+  FP  h6-09.md  HOST-02|messaging
+  FN  h6-10.md  REVISE-04|b
+  FP  h6-11.md  TIME-03|The Company's operations director will approve each deliverable.
+  FN  h6-11.md  REVISE-04|a|The Consultant shall make adjustments to the report until the Company is fully satisfied.
+  FN  h6-11.md  REVISE-04|b
+  FP  h6-12.md  SCOPE-01|One responsive landing page, built to the approved wireframe (version 2, attached).
+  FP  h6-12.md  TIME-03|One responsive landing page, built to the approved wireframe (version 2, attached).
+  FP  h6-12.md  HOST-02|cloud
+  FP  h6-12.md  TIME-03|50% to begin, 50% on approval.
+  FP  h6-12.md  REVISE-04|b
+  FN  h6-13.md  REVISE-04|a|Revisions to the theme are handled in a friendly way.
+  FN  h6-13.md  REVISE-04|b
+  FN  h6-13.md  TIME-03|There will be a final check by the Client before launch.
+  FP  h6-15.md  HOST-02|licences
+  FP  h6-16.md  TIME-03|The price is EUR 11,400, payable 25% on signature, 50% on delivery of a first working build, 25% on acceptance.
+  FP  h6-16.md  SCOPE-01|Any other change request shall be agreed in writing, with the price and delay stated, before work begins; the hourly rate is EUR 60.
+  FP  h6-17.md  HOST-02|cloud
+  FP  h6-20.md  TIME-03|I remain available after go-live for any issues and improvements to make sure you are fully happy with the integration.
+  FN  h6-20.md  SCOPE-01|I remain available after go-live for any issues and improvements to make sure you are fully happy with the integration.
+  FN  h6-20.md  TIME-03|Please approve the demo promptly so that go-live is not delayed.
+  FN  h6-20.md  HOST-02|api
+  FN  h6-20.md  HOST-02|cloud
+  FP  h6-21.md  TIME-03|After that the dashboard is considered signed off and the last invoice is issued.
+  FP  h6-21.md  REVISE-04|a|**Changes:** chart tweaks (colours, labels, ordering) are free within the first 2 weeks after delivery.
+  FP  h6-21.md  REVISE-04|b
+  FN  h6-22.md  REVISE-04|a|If you need any change in future I do it with no problem, any time, no extra charge, because I want long relation with you.
+  FN  h6-22.md  REVISE-04|b
+  FN  h6-22.md  TIME-03|You can check app and tell me if there is any problem, then we do payment.
+  FP  h6-23.md  REVISE-04|b
+  FP  h6-25.md  TIME-03|If the Client does not reply in that period, the deliverable is accepted for invoicing purposes.
+  FN  h6-26.md  SCOPE-01|We will figure out the reply handling edge cases as they come up, I've done this a few times and it generally works out.
+  FN  h6-26.md  TIME-03|I'll bill 1,600 and you can pay when it's live and working to your satisfaction.
+  FP  h6-27.md  HOST-02|cloud
+  FP  h6-28.md  HOST-02|licences
+  FP  h6-30.md  HOST-02|cloud

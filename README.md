@@ -84,7 +84,7 @@ TypeScript (strict, ESM), Node 20 or newer, tests with Vitest. The scanning core
 
 Prerequisite: Node 20 or newer.
 
-**From npm** (version 0.1.0; the scanner has no runtime dependencies):
+**From npm** (the scanner has no runtime dependencies):
 
 ```bash
 # one-off, nothing installed
@@ -137,7 +137,7 @@ node dist/bin.js scan my-proposal.md
 
 ```bash
 npm run typecheck
-npm test                       # 284 tests at the time of writing
+npm test                       # 329 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
 ```
@@ -146,44 +146,17 @@ The test suite includes the rule examples from the spec, segmenter tests, prompt
 
 ### Evaluation (read before trusting the tool)
 
-The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 5, 2026-11-12, strict matching, labels from two independent labellers):
+The only result worth quoting is from a held-out set that no rule was tuned against, run once with the rules frozen. Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md) (current rules, held-out set 6, 2026-11-12, strict matching, labels from two independent labellers):
 
 | Rule | Reported findings that were correct | Expected findings that were found |
 |---|---|---|
-| SCOPE-01 | 4 of 11 | 4 of 12 |
-| TIME-03 | 4 of 9 | 4 of 8 |
-| HOST-02 | 3 of 15 | 3 of 6 |
-| REVISE-04 | 7 of 9 | 7 of 21 |
-| All | 18 of 44 | 18 of 47 |
+| SCOPE-01 | 8 of 11 | 8 of 11 |
+| TIME-03 | 2 of 6 | 2 of 7 |
+| HOST-02 | 1 of 10 | 1 of 3 |
+| REVISE-04 | 7 of 11 | 7 of 16 |
+| All | 18 of 38 | 18 of 37 |
 
-**This is a weak result.** More than half of what the tool reports is wrong, and it misses most of what a careful reader would flag. HOST-02 is the worst: 12 of its 15 reports were wrong. On the five sets the rules were tuned on they score far higher (212 of 220 reported correct), which only shows how well they fit those documents: the previous fresh set scored 15 of 29 and 15 of 33 on the earlier rules, so tuning more has not helped on new text. Treat the tool as a first-pass checklist, not a verdict. Caveats: 24 invented documents; the documents and both sets of labels were written by Claude in separate sessions (the two labellers agree on 98% of judgements, which shows consistency, not correctness, and is not independent human labelling); one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
-
----|---|---|
-| SCOPE-01 | 6 of 6 | 6 of 12 |
-| TIME-03 | 4 of 9 | 4 of 10 |
-| HOST-02 | 2 of 9 | 2 of 4 |
-| REVISE-04 | 3 of 5 | 3 of 8 |
-| All | 15 of 29 | 15 of 34 |
-
-**This is a weak result.** About half of what the tool reports is wrong, and it misses more than half of what a careful reader would flag. HOST-02 is the worst: 7 of its 9 reports were wrong. Earlier fresh sets gave 14 of 25 and 14 of 37 (first rules) and 10 of 27 and 10 of 38 (round 2); the sets differ, so these are not a controlled comparison and do not prove improvement. On the development set the same rules score far higher because they were tuned on it; do not read that as quality. Caveats: 20 invented documents; documents and labels were both written by Claude in separate sessions, which is not independent human labelling; one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
-
----|---|---|
-| SCOPE-01 | 2 of 9 | 2 of 14 |
-| TIME-03 | 1 of 3 | 1 of 6 |
-| HOST-02 | 3 of 10 | 3 of 5 |
-| REVISE-04 | 4 of 5 | 4 of 13 |
-| All | 10 of 27 | 10 of 38 |
-
-**This is a weak result.** About 6 of the 17 reported errors are formatting effects (clause numbers, punctuation); a looser matching mode that ignores those reads 15 of 27 and 15 of 38, which is also in the report. On the development set the same rules score far higher (60 of 61 and 60 of 70) because they were tuned on it; do not read that as quality. Caveats: 20 invented documents; documents and labels were both written by Claude in separate sessions, which is not independent human labelling; one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason, and the results of the earlier rules on held-out set 2 are kept there as history.
-
----|---|---|
-| SCOPE-01 | 3 of 5 | 3 of 13 |
-| TIME-03 | 2 of 4 | 2 of 6 |
-| HOST-02 | 7 of 10 | 7 of 11 |
-| REVISE-04 | 2 of 6 | 2 of 7 |
-| All | 14 of 25 | 14 of 37 |
-
-Caveats, in short: 20 invented documents; both documents and labels were written by Claude in separate sessions, which is not independent human labelling; one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
+**This is a weak result.** About half of what the tool reports is wrong, and it misses about half of what a careful reader would flag. HOST-02 is the least reliable rule (in the last three fresh sets its published versions were right in 6 of 36 findings), so every HOST-02 finding carries a caution saying so. The version before this one, run on the same documents and labels, scored 18 of 43 reported correct and 18 of 37 found: the latest round removed five false alarms and lost no true positive, which is a small cleanup and not a breakthrough. On the sets the rules were tuned on they score far higher (211 of 218 reported correct), which only shows how well they fit those documents. Caveats: 30 invented documents; the documents and both sets of labels were written by Claude in separate sessions (the two labellers agree on 89% of judgements, which shows consistency, not correctness, and is not independent human labelling); one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
 
 ---
 
@@ -192,7 +165,7 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 - **Demo:** https://proposal-guard-production.up.railway.app/ , hosted on Railway and deployed by the repository owner. It needs no environment variables and no database. On 2026-11-11 the served `index.html`, `app.js`, `style.css` and images were byte-identical (by SHA-256) to the output of `npm run build:demo` from `main` at commit `8165226`.
 - **Security headers:** `demo/serve.json` (copied into the build) sets a Content-Security-Policy that forbids all connections and inline script, HSTS, `nosniff`, frame denial, `no-referrer`, a restrictive Permissions-Policy and cross-origin isolation headers. On 2026-11-12 the live site was checked and sends all of them on the page, a 404 and static files; the headers rely on the host being Vercel's `serve` package (deduced from its 404 page and response headers, and confirmed by the headers arriving).
 - **Not in this repository:** any Railway configuration or deploy automation. How and when the live site is updated after a change to `main` is not documented here and I have not verified it; check the hosted page against `npm run build:demo` before assuming it is current.
-- **npm:** `proposal-guard` 0.1.0 is published (https://www.npmjs.com/package/proposal-guard), MIT. On 2026-11-12 I compared the published tarball with a fresh build of `main` at commit `6886d15`: same 35 files, byte-identical `dist`, README and `package.json`. The registry also lists a `0.0.0-stage` placeholder version that is not part of this repository's history. npm itself is published by hand by the repository owner (no provenance). GitHub Packages is published by the workflow `publish-github-packages.yml` (on a published GitHub Release or a manual run), using the built-in `GITHUB_TOKEN`; it renames the package to `@arsalan-arshad/proposal-guard` on the runner only, builds first, and has `packages: write` for that job only.
+- **npm:** `proposal-guard` is published at https://www.npmjs.com/package/proposal-guard (MIT); the npm badge above shows the latest version, which can be behind `package.json` until the repository owner publishes. The first published version, 0.1.0, was compared on 2026-11-12 with a fresh build of `main` at commit `6886d15`: same 35 files, byte-identical `dist`, README and `package.json`. The registry also lists a `0.0.0-stage` placeholder version that is not part of this repository's history. npm itself is published by hand by the repository owner (no provenance). GitHub Packages is published by the workflow `publish-github-packages.yml` (on a published GitHub Release or a manual run), using the built-in `GITHUB_TOKEN`; it renames the package to `@arsalan-arshad/proposal-guard` on the runner only, builds first, and has `packages: write` for that job only.
 
 ---
 
@@ -208,6 +181,17 @@ Caveats, in short: 20 invented documents; both documents and labels were written
 - [ ] Better coverage of informal wording, table cells and lines without punctuation
 - [x] Browser-only demo (hosted on Railway)
 - [ ] Optional bring-your-own-key model that only suggests wording (not started)
-- [x] npm package published (0.1.0)
+- [x] npm package published
+
+
+## 9. Credits
+
+- **Built by [Arsalan Arshad](https://arsalandev.studio)** at [arsalandev.studio](https://arsalandev.studio). Case study: **https://arsalandev.studio/work/proposal-guard**. Brand images: Arsalan Arshad.
+- **Developed with AI assistance:** the code, tests and the synthetic evaluation sets were written with Claude Code (Anthropic). Every rule is fixed code that a person can read; no model runs when you scan.
+- **Open-source tools it stands on:** TypeScript, Vitest, esbuild and tsx (build and test, development only); the [Model Context Protocol TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) (Apache-2.0) and [zod](https://github.com/colinhacks/zod) (MIT) as optional packages for the MCP server; Vercel's [`serve`](https://github.com/vercel/serve) (MIT) serves the hosted demo.
+- **Prior art:** the idea is not new. Other scope-creep checkers exist, most of them model-based; see the positioning above.
+- **Licence:** MIT, see [`LICENSE`](LICENSE).
+
+---
 
 Contributions are welcome: see [`CONTRIBUTING.md`](CONTRIBUTING.md). Security reports: see [`SECURITY.md`](SECURITY.md). Licence: [MIT](LICENSE).

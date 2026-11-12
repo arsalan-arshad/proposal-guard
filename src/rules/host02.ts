@@ -61,7 +61,7 @@ const CATEGORIES: Category[] = [
     id: 'domain',
     label: 'domain and certificate',
     severity: 'Medium',
-    cues: [/\bdomain\s+names?\b/gi, /\bdomain\s+registration\b/gi, /\bDNS\b/g, /\bSSL\s+certificates?\b/gi],
+    cues: [/\bdomain\s+names?\b/gi, /\bdomain\s+registration\b/gi, /\bSSL\s+certificates?\b/gi],
   },
   {
     id: 'licences',
@@ -133,7 +133,11 @@ const ASSIGNMENT_RE = new RegExp(
     '\\bbilled\\s+(?:\\w+\\s+){0,6}?to\\b',
     "\\b(?:that|it)['\\u2019]?s\\s+on\\s+(?:me|you|us|them)\\b",
     '\\bbetween\\s+you\\s+and\\b',
-    "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b",
+    // A named party's, "on your side", "on Client's behalf", "is by me": payer stated in a predicate form.
+    "\\b(?:costs?|fees?|bills?|charges?|subscriptions?|plans?|accounts?|expenses?|licen[cs]es?)\\b[^.;]{0,40}\\b(?:is|are|will\\s+be)\\s+[A-Z][a-z]+['\\u2019]s\\b",
+    '\\bon\\s+(?:your|my|our|their)\\s+side\\b',
+    "\\binvoic\\w*\\b[^.;]{0,60}\\bexpenses?\\b[^.;]{0,60}\\bon\\s+(?:the\\s+)?(?:client|customer)['\\u2019]s\\s+behalf\\b",
+    "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+){0,2}account\\b",
     '\\b(?:your|their)\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b',
     "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
     "\\bat\\s+the\\s+client['\\u2019]?s\\s+expense\\b",
@@ -167,10 +171,33 @@ const PAYER_CELL_RE =
 /** A table column header that says who pays: every data row of that table then states a payer. */
 const PAYER_HEADER_RE = /\b(?:who\s+pays|paid\s+by|payer|billed\s+to|cost\s+owner|responsible|pays)\b/i;
 
+/** Shown with every HOST-02 finding: in our published tests most of its findings were wrong. Qualitative on purpose. */
+export const HOST02_CAUTION =
+  'This was the least reliable rule in our tests: most of its findings were wrong. Read the document to check who pays before acting on it.';
+
 const WHY = 'Usage-based services can cost more than expected, and with no stated payer the cost can land on you.';
 
 function suggestion(label: string): string {
   return `State who pays for ${label} costs, for example: ${label} costs are billed to the client's account at cost, or are included in the fee of [amount].`;
+}
+
+
+const NEG_ADJ = '(?:(?:new|additional|extra|separate|paid|any|other|further|third-party|monthly)\\s+){0,2}';
+const NEG_NO_RE = new RegExp(`\\b(?:no|without|nor)\\s+${NEG_ADJ}$`, 'i');
+const NEG_NOT_RE = new RegExp(`\\b(?:not|never)\\s+(?:\\w+\\s+)?(?:hold|need|require|incur|use|involve|include|have)\\s+(?:any\\s+|a\\s+|an\\s+)?${NEG_ADJ}$`, 'i');
+
+/** "No new hosting is needed", "without any paid subscription", "will not use a third-party API": a denial that sits directly on the cue, not "do not forget the Mailgun subscription". */
+function negatedBefore(masked: string, start: number): boolean {
+  const before = masked.slice(Math.max(0, start - 60), start);
+  return NEG_NO_RE.test(before) || NEG_NOT_RE.test(before);
+}
+
+/** A very short line with no sentence punctuation, such as "Third-party services" or "**Hosting**". */
+function isTitleLine(masked: string): boolean {
+  const t = masked.replace(/[*_#`]/g, '').trim();
+  const words = t.split(/\s+/);
+  // At most three words and no preposition: "Third-party services" is a title, "Email delivery through Mailgun" names a service.
+  return t.length > 0 && words.length <= 3 && !/[.,;!?]/.test(t) && /^[A-Z]/.test(t) && !/\b(?:on|through|via|with|by|from|at|in|for|to|using|of)\b/i.test(t);
 }
 
 /** HOST-02: a paid third-party service is named, and nothing says who pays for that kind of cost. */
@@ -187,11 +214,17 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
   const perSentence = sentences.map((s) => {
     const excluded = EXCLUSIONS.flatMap((re) => findAll(re, s.masked));
     const byCategory = new Map<HostCategory, Term[]>();
+    // A heading or a short title line ("Third-party services", "Subscription note") names a topic; it does not say the
+    // work uses the service. Table cells are real content and are not skipped.
+    const title = s.heading === true || (s.row === undefined && isTitleLine(s.masked));
     for (const cat of CATEGORIES) {
+      if (title) break;
       const terms = dropOverlapping(
         cat.cues.flatMap((re) => findAll(re, s.masked)),
         excluded,
-      ).sort((a, b) => a.start - b.start);
+      )
+        .filter((t) => !negatedBefore(s.masked, t.start))
+        .sort((a, b) => a.start - b.start);
       if (terms.length > 0) byCategory.set(cat.id, terms);
     }
     // A pointer to a named part of the document ("covered in Section 6") counts as a stated payer, as in the shared pointer test.
@@ -227,6 +260,7 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
       why: WHY,
       suggestion: suggestion(cat.label),
       category: cat.id,
+      caution: HOST02_CAUTION,
     });
   }
 

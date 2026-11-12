@@ -1,6 +1,6 @@
 {
   "name": "proposal-guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic, rule-based scope-creep checker for draft proposals and statements of work. Not legal advice.",
   "keywords": [
     "proposal",

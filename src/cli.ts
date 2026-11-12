@@ -42,6 +42,7 @@ function formatFinding(f: Finding): string {
     `  Sentence: ${JSON.stringify(f.sentence)}`,
     `  Why: ${f.why}`,
     `  Suggestion: ${f.suggestion}`,
+    ...(f.caution ? [`  Caution: ${f.caution}`] : []),
   ];
   return lines.join('\n');
 }
@@ -103,7 +104,7 @@ export function run(argv: string[], io: CliIo): number {
       if (json) io.stdout(JSON.stringify({ rule: info, disclaimer: DISCLAIMER_SHORT }, null, 2) + '\n');
       else
         io.stdout(
-          `${info.id}  ${info.name}\n\nFlags: ${info.flags}\nLeaves alone: ${info.leavesAlone}\nSeverity labels: ${info.severities.join(' or ')}\nSuggestion shape: ${info.suggestion}\n\n${DISCLAIMER_SHORT}\n`,
+          `${info.id}  ${info.name}\n\nFlags: ${info.flags}\nLeaves alone: ${info.leavesAlone}\nSeverity labels: ${info.severities.join(' or ')}\nSuggestion shape: ${info.suggestion}${info.caution ? `\nCaution: ${info.caution}` : ''}\n\n${DISCLAIMER_SHORT}\n`,
         );
       return 0;
     }

@@ -44,14 +44,32 @@ const WINDOW_RE = new RegExp(
 );
 
 const DEEMED_RE =
-  /\b(?:deemed\s+(?:to\s+be\s+)?(?:accepted|approved)|automatically\s+(?:accepted|approved)|considered\s+(?:to\s+be\s+)?(?:accepted|approved)|(?:treated|taken|regarded)\s+as\s+(?:accepted|approved)|(?:silence|no\s+(?:response|reply|answer)|nothing)\b[^.]{0,50}\b(?:acceptance|accepted|approved|approval))\b/i;
+  /\b(?:deemed\s+(?:to\s+be\s+)?(?:accepted|approved)|automatically\s+(?:accepted|approved)|considered\s+(?:to\s+be\s+)?(?:accepted|approved)|(?:treated|taken|regarded)\s+as\s+(?:accepted|approved)|treat(?:s|ed)?\s+(?:the\s+\w+\s+)?as\s+(?:accepted|approved)|(?:silence|no\s+(?:response|reply|answer)|nothing)\b[^.]{0,50}\b(?:acceptance|accepted|approved|approval))\b/i;
+
+const GATE_WORD_RE = /\b(?:until|before|unless|only|without)\b/i;
+/** "not conditional on", "not subject to", "no (client) approval": text just before an approval cue that denies the gate. */
+function negatesApproval(before: string): boolean {
+  return (
+    /\b(?:not|never)\s+(?:be\s+|is\s+|are\s+)?(?:conditional|contingent|dependent|subject)\s+(?:on|upon|to)\s+(?:the\s+|any\s+|client\s+|your\s+)?$/i.test(before) ||
+    /\bno\s+(?:\w+\s+)?$/i.test(before)
+  );
+}
+
+/** A deemed-acceptance clause that really is a default: not negated just before it, and not made conditional after it. */
+function isAffirmativeDefault(masked: string): boolean {
+  const m = DEEMED_RE.exec(masked);
+  if (m === null) return false;
+  const before = masked.slice(Math.max(0, m.index - 40), m.index);
+  const after = masked.slice(m.index + m[0].length);
+  return !/\b(?:no|not|never|nothing|unless|until|without)\b(?:\s+\w+){0,3}\s+$/i.test(before) && !/\b(?:until|unless|without)\b/i.test(after);
+}
 
 const WHY = 'Delivery or payment waits on an approval that has no deadline, so it can be delayed without limit.';
 const SUGGESTION =
   'Add a review period and a default: the client reviews within [N] business days; with no written response, the milestone is deemed accepted.';
 
 function handled(masked: string): boolean {
-  return has(WINDOW_RE, masked) || has(DEEMED_RE, masked) || hasPointer(masked);
+  return has(WINDOW_RE, masked) || isAffirmativeDefault(masked) || hasPointer(masked);
 }
 
 /** TIME-03: milestone, delivery or payment depends on approval with no time window. */
@@ -59,17 +77,23 @@ function handled(masked: string): boolean {
 export function checkTime03(sentences: Sentence[], claimed: ReadonlySet<number> = new Set()): RuleOutcome {
   const findings: Finding[] = [];
   let sawCue = false;
+  const documentDefault = sentences.some((x) => isAffirmativeDefault(x.masked));
 
   sentences.forEach((s, i) => {
     if (s.heading) return; // a title such as "Milestones and acceptance" is not a clause
     const excluded = EXCLUDED_SENSE.flatMap((re) => findAll(re, s.masked));
     const cues = dropOverlapping(findAll(ACCEPT_CUE_RE, s.masked), excluded);
     if (cues.length === 0) return;
+    // "not conditional on approval", "no approval is needed": the negation scopes over the approval itself. "not released
+    // until approval" and "without your approval" are gates, not negations, so any until/before/unless/only/without keeps the cue.
+    if (!GATE_WORD_RE.test(s.masked) && cues.every((c) => negatesApproval(s.masked.slice(Math.max(0, c.start - 50), c.start)))) return;
     // A revision promise ("included until the client is happy with it") is REVISE-04's, not an approval clause; a real
     // sign-off in the same sentence still counts.
     if (claimed.has(s.start) && s.masked && cues.every((c) => /^(?:happy|satisfied|pleased)\s+with$/i.test(s.masked.slice(c.start, c.end)))) return;
     if (!has(MILESTONE_RE, s.masked) && !(has(STRONG_CUE_RE, s.masked) && has(SEQUENCING_RE, s.masked) && has(CLIENT_SIDE_RE, s.masked))) return;
     sawCue = true;
+    // An affirmative deemed-acceptance default anywhere in the document covers every approval in it (the cue counts as handled).
+    if (documentDefault) return;
 
     const next = sentences[i + 1];
     const nextMasked = next && next.block === s.block ? next.masked : '';
