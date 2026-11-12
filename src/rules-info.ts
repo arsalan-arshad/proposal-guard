@@ -10,6 +10,8 @@ export interface RuleInfo {
   severities: Severity[];
   /** The fill-in-the-blanks shape of its suggestion. */
   suggestion: string;
+  /** Set for the least reliable rule. */
+  caution?: string;
 }
 
 /** Fixed descriptions of the four v1 rules. Kept short; the full definitions are in RULES_SPEC.md of the project. */
@@ -40,6 +42,7 @@ export const RULE_INFO: readonly RuleInfo[] = [
     leavesAlone: 'Costs where a payer is stated (billed to the client, included in the fee, borne by a named party) or a pointer to a named part of the document.',
     severities: ['High', 'Medium'],
     suggestion: 'State who pays: billed to the client\'s account at cost, or included in the fee of [amount].',
+    caution: 'The least reliable rule in our tests: most of its findings were wrong. Read the document to check who pays.',
   },
   {
     id: 'REVISE-04',

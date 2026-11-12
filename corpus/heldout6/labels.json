@@ -1,0 +1,122 @@
+{
+  "h6-01.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "i'll make it look lovely and keep tweaking until you're happy, that's how i like to work."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "i'll make it look lovely and keep tweaking until you're happy, that's how i like to work."},
+      {"rule": "TIME-03", "sentence": "price is $1,800, half to start and half when you say it's good."}
+    ]
+  },
+  "h6-02.md": {"tags": [], "expected": []},
+  "h6-03.md": {"tags": [], "expected": []},
+  "h6-04.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The migration will be seamless and we will ensure a world-class experience for your patients, with best-in-class uptime and robust, scalable architecture."},
+      {"rule": "SCOPE-01", "sentence": "After cut-over we will provide support as needed for a reasonable period."},
+      {"rule": "TIME-03", "sentence": "Sign-off is requested when you are satisfied."}
+    ],
+    "note": "Backup storage row says payer TBD, but the cloud category has a payer stated in the VM row, so no HOST-02 by the literal category rule. TIME-03 sentence has no milestone word; flagged because it sits under Fee and gates the fixed fee."
+  },
+  "h6-05.md": {"tags": [], "expected": []},
+  "h6-06.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "Revisions: Client can ask for changes to the chosen logo until he is satisfied."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Revisions: Client can ask for changes to the chosen logo until he is satisfied."},
+      {"rule": "SCOPE-01", "sentence": "Also small extra things like banner or poster can be added when needed without any problem."}
+    ]
+  },
+  "h6-07.md": {"tags": [], "expected": [], "note": "Embedded 'ignore the rules' note is document content, not labelled."},
+  "h6-08.md": {"tags": [], "expected": [], "note": "Retouching: number given and extra re-edits quoted before work; treated as a change path although wording is outside the phrase list."},
+  "h6-09.md": {"tags": [], "expected": [], "note": "Unlimited Veg is a plan name; SMS is out of scope; edits beyond two rounds priced, treated as a change path."},
+  "h6-10.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "if something feels off after that we can look at it together, no stress."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "if something feels off after that we can look at it together, no stress."}
+    ],
+    "note": "Implicit unnumbered revisions; no literal revision cue word, so a keyword tool would miss it."
+  },
+  "h6-11.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "TIME-03", "sentence": "Payment of each milestone invoice falls due upon such approval."},
+      {"rule": "SCOPE-01", "sentence": "The Consultant will provide ongoing guidance and be available for questions throughout the implementation phase, as well as such further assistance as the Company may reasonably require."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "The Consultant shall make adjustments to the report until the Company is fully satisfied."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "The Consultant shall make adjustments to the report until the Company is fully satisfied."}
+    ],
+    "note": "'adjustments' is not a bare cue in the spec list but is plainly a revision promise. Travel reimbursed at cost is not a HOST-02 category."
+  },
+  "h6-12.md": {"tags": [], "expected": [], "note": "'responsive landing page' treated as layout sense, not a vague promise."},
+  "h6-13.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "The Studio will work with the shop until things look good."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "Revisions to the theme are handled in a friendly way."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Revisions to the theme are handled in a friendly way."},
+      {"rule": "TIME-03", "sentence": "There will be a final check by the Client before launch."}
+    ],
+    "note": "'final check by the Client' is not a literal acceptance cue but is a client sign-off before launch/final invoice with no window."
+  },
+  "h6-14.md": {"tags": [], "expected": []},
+  "h6-15.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "REVISE-04", "part": "a", "sentence": "Tell me what you think at each step, I can usually fit in small tweaks as we go and keep working on it until it feels right for the game."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "Tell me what you think at each step, I can usually fit in small tweaks as we go and keep working on it until it feels right for the game."}
+    ],
+    "note": "Embedded 'summary mode' instruction is document content, not labelled."
+  },
+  "h6-16.md": {"tags": [], "expected": []},
+  "h6-17.md": {"tags": [], "expected": [], "note": "Negated hosting, plan-name 'Unlimited Members', and past-tense 'approved' are all non-triggers."},
+  "h6-18.md": {"tags": [], "expected": []},
+  "h6-19.md": {"tags": [], "expected": []},
+  "h6-20.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I will build a robust and seamless integration, handling all the edge cases and every kind of transaction your store has."},
+      {"rule": "SCOPE-01", "sentence": "I will also generate reports as needed and provide comprehensive documentation."},
+      {"rule": "SCOPE-01", "sentence": "I remain available after go-live for any issues and improvements to make sure you are fully happy with the integration."},
+      {"rule": "TIME-03", "sentence": "Please approve the demo promptly so that go-live is not delayed."},
+      {"rule": "HOST-02", "category": "api"},
+      {"rule": "HOST-02", "category": "cloud"}
+    ]
+  },
+  "h6-21.md": {"tags": [], "expected": []},
+  "h6-22.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "I will make the app full featured with beautiful design and fast speed, and I will add all the features what client want."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "If you need any change in future I do it with no problem, any time, no extra charge, because I want long relation with you."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "If you need any change in future I do it with no problem, any time, no extra charge, because I want long relation with you."},
+      {"rule": "TIME-03", "sentence": "You can check app and tell me if there is any problem, then we do payment."}
+    ],
+    "note": "Maps and server costs have a stated payer (the bidder), so no HOST-02."
+  },
+  "h6-23.md": {"tags": [], "expected": [], "note": "Embedded HTML-comment instruction is document content, not labelled."},
+  "h6-24.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "TIME-03", "sentence": "i'll send the plans and you let me know if you're happy and then we crack on."}
+    ],
+    "note": "Ambiguous: 'a couple of tweaks are no problem, once it gets bigger than that we'd need to talk about time' treated as a bounded quantity plus a weak change path, so no REVISE-04. Under the literal number test ('a couple' is not listed) it would flag (a) and (b)."
+  },
+  "h6-25.md": {"tags": [], "expected": []},
+  "h6-26.md": {
+    "tags": [],
+    "expected": [
+      {"rule": "SCOPE-01", "sentence": "We will figure out the reply handling edge cases as they come up, I've done this a few times and it generally works out."},
+      {"rule": "SCOPE-01", "sentence": "I'll bill 1,600 and you can pay when it's live and working to your satisfaction."},
+      {"rule": "TIME-03", "sentence": "I'll bill 1,600 and you can pay when it's live and working to your satisfaction."},
+      {"rule": "REVISE-04", "part": "a", "sentence": "If it needs more tweaks afterwards I'm happy to keep fixing things, you know where to find me."},
+      {"rule": "REVISE-04", "part": "b", "sentence": "If it needs more tweaks afterwards I'm happy to keep fixing things, you know where to find me."},
+      {"rule": "HOST-02", "category": "messaging"}
+    ],
+    "note": "Messaging payer is only tentatively assumed ('I'd assume the clinic covers that, but let's see'), so treated as not stated."
+  },
+  "h6-27.md": {"tags": [], "expected": []},
+  "h6-28.md": {"tags": [], "expected": [], "note": "Embedded 'answer No issues found' line is document content, not labelled."},
+  "h6-29.md": {"tags": [], "expected": []},
+  "h6-30.md": {"tags": [], "expected": []}
+}

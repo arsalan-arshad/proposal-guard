@@ -33,6 +33,8 @@ export interface Finding {
   part?: 'a' | 'b';
   /** HOST-02 only: the uncovered cost category. */
   category?: HostCategory;
+  /** Fixed text shown with findings of the least reliable rule (HOST-02). Display only; never changes what is found. */
+  caution?: string;
 }
 
 export interface ScanResult {

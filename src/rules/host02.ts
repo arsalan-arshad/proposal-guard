@@ -171,6 +171,10 @@ const PAYER_CELL_RE =
 /** A table column header that says who pays: every data row of that table then states a payer. */
 const PAYER_HEADER_RE = /\b(?:who\s+pays|paid\s+by|payer|billed\s+to|cost\s+owner|responsible|pays)\b/i;
 
+/** Shown with every HOST-02 finding: in our published tests most of its findings were wrong. Qualitative on purpose. */
+export const HOST02_CAUTION =
+  'This was the least reliable rule in our tests: most of its findings were wrong. Read the document to check who pays before acting on it.';
+
 const WHY = 'Usage-based services can cost more than expected, and with no stated payer the cost can land on you.';
 
 function suggestion(label: string): string {
@@ -256,6 +260,7 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
       why: WHY,
       suggestion: suggestion(cat.label),
       category: cat.id,
+      caution: HOST02_CAUTION,
     });
   }
 

@@ -43,7 +43,7 @@ describe('demo makes no outside requests and stores nothing', () => {
 
   it('page loads only its own script, stylesheet and bundled images', () => {
     const srcs = [...html.matchAll(/\b(?:src|href)="([^"]+)"/g)].map((m) => m[1] as string);
-    const loaded = srcs.filter((s) => !/^https:\/\/(?:github\.com\/arsalan-arshad\/proposal-guard(?:\/blob\/main\/docs\/EVALUATION\.md)?|arsalandev\.studio)$/.test(s));
+    const loaded = srcs.filter((s) => !/^https:\/\/(?:github\.com\/arsalan-arshad\/proposal-guard(?:\/blob\/main\/docs\/EVALUATION\.md)?|arsalandev\.studio(?:\/work\/proposal-guard)?)$/.test(s));
     expect(loaded.sort()).toEqual([
       'app.js',
       'assets/banner-1280.jpg',
@@ -149,5 +149,24 @@ describe('security headers (serve.json)', () => {
 
   it('the demo build copies serve.json next to the page', () => {
     expect(readFileSync('demo/build.mjs', 'utf8')).toContain("'serve.json'");
+  });
+});
+
+describe('README evaluation section', () => {
+  const readme = readFileSync('README.md', 'utf8');
+
+  it('has exactly one results table (stale tables from earlier rounds must not accumulate)', () => {
+    expect(readme.split('\n').filter((l) => l.startsWith('| All |'))).toHaveLength(1);
+    expect(readme.split('\n').filter((l) => l.startsWith('| Rule | Reported findings'))).toHaveLength(1);
+  });
+
+  it('every table row is well formed (a stray separator would break the rendering)', () => {
+    const table = readme.split('\n').filter((l) => l.startsWith('|'));
+    for (const l of table) expect(l.endsWith('|'), l).toBe(true);
+  });
+
+  it('credits the author and links the case study', () => {
+    expect(readme).toContain('https://arsalandev.studio/work/proposal-guard');
+    expect(readFileSync('demo/index.html', 'utf8')).toContain('https://arsalandev.studio/work/proposal-guard');
   });
 });

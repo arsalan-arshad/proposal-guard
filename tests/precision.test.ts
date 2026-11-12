@@ -144,3 +144,16 @@ describe('negative controls from the red-team review', () => {
     }
   });
 });
+
+describe('HOST-02 caution (display only)', () => {
+  it('every HOST-02 finding carries the fixed caution and no other rule does', () => {
+    const f = scan('The site is hosted on Vercel. The app will be fast and seamless.').findings;
+    expect(f.filter((x) => x.ruleId === 'HOST-02').every((x) => typeof x.caution === 'string' && x.caution.length > 20)).toBe(true);
+    expect(f.filter((x) => x.ruleId !== 'HOST-02').every((x) => x.caution === undefined)).toBe(true);
+  });
+
+  it('the caution names no figure', () => {
+    const f = scan('The site is hosted on Vercel.').findings[0];
+    expect(f?.caution).not.toMatch(/\d/);
+  });
+});

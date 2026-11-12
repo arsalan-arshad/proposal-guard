@@ -68,7 +68,8 @@ function renderFindings(result: ScanResult): void {
         () => (copy.textContent = 'Copy failed'),
       );
     });
-    card.append(head, quote, why, sug, copy);
+    const caution = f.caution ? el('p', 'caution', f.caution) : undefined;
+    card.append(head, quote, why, sug, ...(caution ? [caution] : []), copy);
     list.append(card);
   });
   const status = $('status');
