@@ -134,10 +134,9 @@ const ASSIGNMENT_RE = new RegExp(
     "\\b(?:that|it)['\\u2019]?s\\s+on\\s+(?:me|you|us|them)\\b",
     '\\bbetween\\s+you\\s+and\\b',
     // A named party's, "on your side", "on Client's behalf", "is by me": payer stated in a predicate form.
-    "\\b(?:is|are|will\\s+be)\\s+[A-Z][a-z]+['\\u2019]s\\b",
+    "\\b(?:costs?|fees?|bills?|charges?|subscriptions?|plans?|accounts?|expenses?|licen[cs]es?)\\b[^.;]{0,40}\\b(?:is|are|will\\s+be)\\s+[A-Z][a-z]+['\\u2019]s\\b",
     '\\bon\\s+(?:your|my|our|their)\\s+side\\b',
-    "\\binvoic\\w*\\b[^.;]{0,80}\\bon\\s+(?:the\\s+)?(?:client|customer)['\\u2019]s\\s+behalf\\b",
-    '\\bis\\s+by\\s+(?:me|you|us|them)\\b',
+    "\\binvoic\\w*\\b[^.;]{0,60}\\bexpenses?\\b[^.;]{0,60}\\bon\\s+(?:the\\s+)?(?:client|customer)['\\u2019]s\\s+behalf\\b",
     "\\b\\w+['\\u2019]s\\s+(?:own\\s+)?(?:\\w+\\s+){0,2}account\\b",
     '\\b(?:your|their)\\s+(?:own\\s+)?(?:\\w+\\s+)?account\\b',
     "\\b(?:our|my|the\\s+client['\\u2019]?s)\\s+responsibility\\b",
@@ -179,9 +178,14 @@ function suggestion(label: string): string {
 }
 
 
-/** "No new hosting is needed", "no licence fees arise", "will not hold any subscriptions": a negated cost is not a cost. */
+const NEG_ADJ = '(?:(?:new|additional|extra|separate|paid|any|other|further|third-party|monthly)\\s+){0,2}';
+const NEG_NO_RE = new RegExp(`\\b(?:no|without|nor)\\s+${NEG_ADJ}$`, 'i');
+const NEG_NOT_RE = new RegExp(`\\b(?:not|never)\\s+(?:\\w+\\s+)?(?:hold|need|require|incur|use|involve|include|have)\\s+(?:any\\s+|a\\s+|an\\s+)?${NEG_ADJ}$`, 'i');
+
+/** "No new hosting is needed", "without any paid subscription", "will not use a third-party API": a denial that sits directly on the cue, not "do not forget the Mailgun subscription". */
 function negatedBefore(masked: string, start: number): boolean {
-  return /\b(?:no|not|never|without|nor|n['\u2019]t)\b(?:\s+\w+){0,3}\s+$/i.test(masked.slice(Math.max(0, start - 40), start));
+  const before = masked.slice(Math.max(0, start - 60), start);
+  return NEG_NO_RE.test(before) || NEG_NOT_RE.test(before);
 }
 
 /** A very short line with no sentence punctuation, such as "Third-party services" or "**Hosting**". */

@@ -30,7 +30,6 @@ describe('HOST-02: payer stated in a predicate form', () => {
     'Captions need a captioning tool subscription, which would be on your side.',
     "Hosting for the portal runs on SmoothRoute's existing cloud account.",
     "Consultant may invoice for expenses incurred on Client's behalf, including SMS credits.",
-    'The translation software license that I use is by me.',
   ])('states a payer: %s', (text) => {
     expect(count(text, 'HOST-02')).toBe(0);
   });
@@ -83,5 +82,65 @@ describe('REVISE-04: a price in term-sheet form is a change-order path', () => {
 
   it('without a price part (b) still fires', () => {
     expect(parts('Revision rounds: 2 included (rough cut, fine cut)')).toEqual(['b']);
+  });
+});
+
+/** Found by an adversarial review of the first version of this round: each of these was silenced by mistake and must stay flagged. */
+describe('negative controls from the red-team review', () => {
+  it.each([
+    'Payment is not due until you approve the final design.',
+    'Payment is not released until approval of the design.',
+    'No payment is released without your approval of the final build.',
+    'Do not release the final payment without client approval of the build.',
+  ])('TIME-03 still flags a gate written with a negation: %s', (text) => {
+    expect(count(text, 'TIME-03')).toBe(1);
+  });
+
+  it('a negated "treat as approved" or a conditional "deemed accepted" is not a default', () => {
+    const flagged = (text: string): string[] => scan(text).findings.filter((f) => f.ruleId === 'TIME-03').map((f) => f.sentence);
+    const first = 'Final payment is released after the client approves the build.';
+    expect(flagged(`${first} We will not treat the draft as approved until you sign.`)).toContain(first);
+    expect(flagged(`${first} Nothing shall be deemed accepted without written sign-off.`)).toContain(first);
+  });
+
+  it('a real affirmative default still covers the document', () => {
+    expect(count('Final payment is released after the client approves the build. If the client does not reply within 5 days, the build is deemed accepted.', 'TIME-03')).toBe(0);
+  });
+
+  it.each([
+    'We include 3 revisions. Extra rounds: 2 max.',
+    'We include 3 revisions. Extra work: 3 weeks turnaround.',
+    'We include 3 revisions.\nExtra changes - 5 days notice.',
+  ])('a number that is not a price is not a change-order path: %s', (text) => {
+    expect(parts(text)).toContain('b');
+  });
+
+  it.each([
+    'Please do not forget the Mailgun subscription for this site.',
+    "Hosting on AWS is Dave's idea.",
+    "The site runs on AWS and the invoice will be sent on the client's behalf.",
+  ])('HOST-02 still flags: %s', (text) => {
+    expect(count(text, 'HOST-02')).toBeGreaterThanOrEqual(1);
+  });
+
+  it('a clause number before any three-letter currency code is a list marker', () => {
+    expect(segment('1.2 100 AUD for the first stage.').map((s) => s.text)[0]).toBe('100 AUD for the first stage.');
+  });
+
+  it('the new patterns stay fast on long adversarial input', () => {
+    const inputs = [
+      'invoice '.repeat(40000),
+      'no hosting '.repeat(40000),
+      "Bob's ".repeat(80000),
+      'treat the '.repeat(40000),
+      'nothing '.repeat(40000),
+      'is Abc'.repeat(40000),
+      'expenses on the client behalf '.repeat(16000),
+    ];
+    for (const text of inputs) {
+      const t = Date.now();
+      scan(text);
+      expect(Date.now() - t).toBeLessThan(5000);
+    }
   });
 });
