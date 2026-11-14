@@ -51,7 +51,8 @@
     "eval": "tsx eval/run.ts",
     "agree": "tsx eval/agree.ts",
     "build:demo": "node demo/build.mjs",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "eval:compare": "tsx eval/compare.ts"
   },
   "peerDependencies": {
     "@modelcontextprotocol/server": ">=2.4.0 <3",

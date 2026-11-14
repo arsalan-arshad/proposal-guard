@@ -1,0 +1,79 @@
+{
+"01": {"CMP-01": [],
+ "CMP-02": [
+  {"category":"domain","sentence":"The domain name is already registered and I will keep that where it is."},
+  {"category":"cloud","sentence":"Hosting I am not sure about yet, maybe you can suggest a good option."}],
+ "CMP-03": [
+  {"item":"payment","unit":"day","reference_sentence":"I pay invoices within 30 days of receiving them because my bookkeeper does one payment run a month.","proposal_sentence":"Invoices are due within 15 days of issue.","reference_values":[30],"proposal_values":[15]},
+  {"item":"revisions","unit":"total","reference_sentence":"I am happy to go through three rounds of revisions on the design and after that we can talk about it.","proposal_sentence":"The fee includes two rounds of revisions on the design.","reference_values":[3],"proposal_values":[2]}],
+ "notes":"'it has to feel quick and smooth' not flagged: no listed commitment verb or deliverable noun (borderline). Domain: no payer phrase in either text although domain already registered (borderline)."},
+"02": {"CMP-01": [], "CMP-02": [], "CMP-03": [], "notes":"Review business-day vs day: not compared. Revisions 2 vs 2; payment 30 vs 30."},
+"03": {"CMP-01": [
+  {"rule":"SCOPE-01","sentence":"The application shall integrate with our existing ticketing system, the payroll export, and other related internal systems as required."},
+  {"rule":"SCOPE-01","sentence":"The solution must be intuitive, robust and easy to use for technicians with limited training."},
+  {"rule":"TIME-03","sentence":"Final delivery is subject to acceptance by the Cooperative's operations team."}],
+ "CMP-02": [
+  {"category":"messaging","sentence":"Customers receive appointment reminders and arrival alerts by SMS, which will be delivered through Twilio."},
+  {"category":"cloud","sentence":"The backend will be deployed on AWS in the region nearest our depots."}],
+ "CMP-03": [], "notes":"List-number prefixes (2.2 etc.) left out of copied sentences."},
+"04": {"CMP-01": [
+  {"rule":"REVISE-04","sentence":"Revisions: we expect unlimited revisions until the film feels right to the whole team."},
+  {"rule":"TIME-03","sentence":"Payment is by bank transfer after we approve the final film."},
+  {"rule":"REVISE-04","part":"b"}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"Part b reported: proposal 'small changes are billed at my day rate, quoted before I start' does not match the change-order pattern (borderline; a human would see a path)."},
+"05": {"CMP-01": [], "CMP-02": [],
+ "CMP-03": [{"item":"payment","unit":"day","reference_sentence":"Invoices are payable net 45 from the invoice date.","proposal_sentence":"Invoices are due within 14 days of issue.","reference_values":[45],"proposal_values":[14]}],
+ "notes":"Acceptance window is stated in ref so no TIME-03. Review 10 vs 10, delivery 8 vs 8."},
+"06": {"CMP-01": [], "CMP-02": [], "CMP-03": [], "notes":"Mailchimp/email delivery: payer stated ('we ... will keep paying for it'). Feedback by Gwen has no acceptance cue."},
+"07": {"CMP-01": [], "CMP-02": [], "CMP-03": [],
+ "notes":"'Our CEO is hosting a launch dinner' is not a hosting cost (sense), not reported; literal cue 'hosting' present (borderline). Delivery 10 working days vs 3 weeks: different unit keys."},
+"08": {"CMP-01": [
+  {"rule":"TIME-03","sentence":"The final report will be accepted by our steering committee."},
+  {"rule":"TIME-03","sentence":"The committee meets monthly and the report cannot be released to the wider team until the committee has signed off."},
+  {"rule":"TIME-03","sentence":"Payment of the final instalment follows the committee's approval."}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"Not flagged (borderline): bullet 'A written report with recommendations that follow industry best practices and other appropriate improvements' (no listed commitment verb or deliverable noun); 'adapt as needed' sentence (no commitment verb/noun)."},
+"09": {"CMP-01": [
+  {"rule":"TIME-03","sentence":"Sign-off: our CTO, Birgit, approves the cut-over plan and the final handover."}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"Google Cloud covered by proposal 'billed to your organisation'. SSL negated. Proposal delivery sentence contains 'first week' so ignored by CMP-03; values equal anyway."},
+"10": {"CMP-01": [{"rule":"REVISE-04","part":"b"}], "CMP-02": [],
+ "CMP-03": [{"item":"revisions","unit":"total","reference_sentence":"Revisions: two revision rounds are included in our budget for this project, with feedback gathered by our store manager.","proposal_sentence":"Three rounds of revisions are included.","reference_values":[2],"proposal_values":[3]}],
+ "notes":"Part b: proposal 'extra rounds are available ... billed at the agreed hourly rate' is not the exact pattern 'extra rounds are billed' (borderline). Injection line in ref ignored."},
+"11": {"CMP-01": [], "CMP-02": [],
+ "CMP-03": [{"item":"delivery","unit":"week","reference_sentence":"The website shall be completed within 6 weeks of receipt of all content.","proposal_sentence":"I will finish within 8 weeks of receiving all content.","reference_values":[6],"proposal_values":[8]}],
+ "notes":"Hosting: 'Client's existing hosting plan' treated as stating the client as payer (borderline; no explicit assignment phrase). Review 4 business days: no cue word in the clause, equal anyway."},
+"12": {"CMP-01": [
+  {"rule":"SCOPE-01","sentence":"The app should be intuitive and feel premium, with a delightful experience."},
+  {"rule":"SCOPE-01","sentence":"We may add more features later and expect the developer to support them as needed."}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"Store accounts covered by proposal 'fees are paid by you'. Review 2 days vs 48 hours: different units. Injection line ignored."},
+"13": {"CMP-01": [{"rule":"REVISE-04","part":"b"}], "CMP-02": [], "CMP-03": [],
+ "notes":"Part b: proposal 'quoted as extra work' does not match pattern literally. Revisions per chapter [3] vs total [2]: scope keys differ so not compared."},
+"14": {"CMP-01": [
+  {"rule":"SCOPE-01","sentence":"Build a monthly dashboard of campaign performance (web, e-mail, branch promotions and so on)."},
+  {"rule":"SCOPE-01","sentence":"Provide recommendations to improve conversion where appropriate."}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"Subscription: 'Union's own analytics workspace, on its existing software subscription' treated as payer stated (borderline). Label prefixes (A1., A3.) omitted."},
+"15": {"CMP-01": [{"rule":"REVISE-04","part":"b"}], "CMP-02": [], "CMP-03": [],
+ "notes":"OpenAI covered by 'the usage is on me ... you do not need to worry about the API bill' (borderline: no listed assignment phrase). Payment 7 days vs proposal 'due 14 days from' has no introducer word so not extracted (human would see mismatch)."},
+"16": {"CMP-01": [], "CMP-02": [], "CMP-03": [],
+ "notes":"'signs off each cut' not flagged (no milestone-context word). Subscription covered by proposal 'on my own subscription, cost is part of my fee'. Ref revisions 'one round on each rough cut' not extractable. REVISE-04 b not reported: proposal 'extra rounds are billed' matches."},
+"17": {"CMP-01": [
+  {"rule":"REVISE-04","sentence":"We will also make sure the work is reviewed to our satisfaction and we want revisions until we are completely happy with the setup."},
+  {"rule":"REVISE-04","part":"b"}],
+ "CMP-02": [], "CMP-03": [],
+ "notes":"'we will review your pipeline design and approve it' not TIME-03 (no milestone-context word). 'handle other related infrastructure tasks' lacks 'and other' so not SCOPE-01."},
+"18": {"CMP-01": [{"rule":"REVISE-04","part":"b"}], "CMP-02": [], "CMP-03": [], "notes":"Delivery 15 days both with 'each issue' (ignored anyway)."},
+"19": {"CMP-01": [],
+ "CMP-02": [{"category":"cloud","sentence":"Domain and hosting: please advise us."}],
+ "CMP-03": [], "notes":"Bullet 'responsive and quick to load' not flagged (no commitment verb/noun). Proposal Netlify has no payer phrase."},
+"20": {"CMP-01": [
+  {"rule":"TIME-03","sentence":"Approval of the loyalty app is also needed before payment"}],
+ "CMP-02": [{"category":"messaging","sentence":"SMS reminders to customers about points are a possible later addition through a provider such as Twilio."}],
+ "CMP-03": [
+  {"item":"delivery","unit":"week","reference_sentence":"The whole project should go live within 6 weeks of the start","proposal_sentence":"The project goes live within 9 weeks of the start.","reference_values":[6],"proposal_values":[9]},
+  {"item":"review","unit":"business-day","reference_sentence":"We will review work within 2 business days of each delivery","proposal_sentence":"Please review each delivery within 5 business days; I will not start a part until the previous one is accepted.","reference_values":[2],"proposal_values":[5]}],
+ "notes":"Catalogue approval bullet not flagged (no milestone-context word; borderline). CMP-02 messaging is a 'possible later addition' but cue present."}
+}
