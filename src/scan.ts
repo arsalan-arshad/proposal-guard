@@ -3,7 +3,7 @@ import { checkRevise04 } from './rules/revise04.js';
 import { checkScope01 } from './rules/scope01.js';
 import { checkTime03 } from './rules/time03.js';
 import { segment } from './segment.js';
-import type { Finding, RuleId, ScanOptions, ScanResult } from './types.js';
+import type { Finding, RuleId, ScanOptions, ScanResult, Sentence } from './types.js';
 
 /** The short disclaimer from DISCLAIMER_TEXT.md. Show it wherever findings are shown. */
 export const DISCLAIMER_SHORT =
@@ -24,8 +24,11 @@ export function scan(text: string, options: ScanOptions = {}): ScanResult {
     throw new RangeError(`Input is ${text.length} characters; the limit is ${max}.`);
   }
 
-  const sentences = segment(text);
+  return scanSentences(segment(text));
+}
 
+/** The four rules over already-segmented text. `scan()` is `scanSentences(segment(text))` after the length check. */
+export function scanSentences(sentences: Sentence[]): ScanResult {
   // REVISE-04 runs first: where it fires on a phrase, SCOPE-01 stays silent on it.
   const revise = checkRevise04(sentences);
   const claimed = revise.findings.flatMap((f) => f.terms);

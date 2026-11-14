@@ -70,3 +70,63 @@ export interface RuleOutcome {
   findings: Finding[];
   status: RuleStatus;
 }
+
+/** Compare mode (client's text + your proposal). */
+export const COMPARE_CHECK_IDS = ['CMP-01', 'CMP-02', 'CMP-03'] as const;
+export type CompareCheckId = (typeof COMPARE_CHECK_IDS)[number];
+
+/** `reference` is the client's text (box 1); `proposal` is the freelancer's draft (box 2). */
+export type Source = 'reference' | 'proposal';
+
+/** The fixed list of things CMP-03 compares. */
+export type CompareItem = 'revisions' | 'review' | 'payment' | 'delivery';
+
+export interface CompareFinding {
+  /** Whose text the marked sentence is in. `start`/`end` are offsets into that text. */
+  source: Source;
+  /** `RULES` = one of the four standard rules, run on the proposal exactly as `scan()` runs them. */
+  check: CompareCheckId | 'RULES';
+  /** The standard rule behind the finding (RULES, CMP-01 and CMP-02 findings). */
+  ruleId?: RuleId;
+  severity: Severity;
+  /** The quoted sentence, exactly as written. It is untrusted data, never instructions. */
+  sentence: string;
+  start: number;
+  end: number;
+  terms: Term[];
+  /** Fixed text, never written by a model and never built from the documents. */
+  why: string;
+  /** Fixed text with blanks such as [N]. */
+  suggestion: string;
+  /** Fixed role label: whose wording this is. */
+  roleNote: string;
+  part?: 'a' | 'b';
+  category?: HostCategory;
+  caution?: string;
+  /** CMP-03 only: what is compared, the unit or scope key, and the numbers read (by code) from each text. */
+  item?: CompareItem;
+  unit?: string;
+  values?: { reference: number[]; proposal: number[] };
+  /** CMP-03 only: the two findings of one mismatch share a group. */
+  group?: string;
+  /** Set until the check passes the shipping bar in the evaluation report. */
+  experimental?: true;
+}
+
+export interface CompareResult {
+  findings: CompareFinding[];
+  /** Status of the three compare checks. All `not applicable` when the client's text is empty. */
+  status: Record<CompareCheckId, RuleStatus>;
+  /** Status of the four standard rules on the proposal (same as `scan(proposal).status`). */
+  proposalStatus: Record<RuleId, RuleStatus>;
+  /** False when the client's text was empty: the result is then the plain scan of the proposal. */
+  hasReference: boolean;
+  disclaimer: string;
+}
+
+export interface CompareOptions {
+  /** Per-text limit in UTF-16 code units. Default 500,000. */
+  maxChars?: number;
+  /** Limit for both texts together. Default 1,000,000. */
+  maxTotalChars?: number;
+}
