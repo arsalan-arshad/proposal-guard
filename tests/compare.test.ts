@@ -233,7 +233,73 @@ describe('limits and performance', () => {
     const b = 'You review within 5 business days. Invoices are due within 14 days. Unlimited revisions are included.\n'.repeat(4000);
     expect(timed(() => compare(a, b))).toBeLessThan(8000);
     expect(timed(() => compare('within 5 days '.repeat(28000), 'net 30 '.repeat(57000)))).toBeLessThan(8000);
+    expect(timed(() => compare('delivery within 5 days '.repeat(17000), 'Pay within 14 days of the invoice, deposit within 3 days. '.repeat(7000)))).toBeLessThan(8000);
+    expect(timed(() => compare('| Review | within 5 days | Payment | net 30 |\n'.repeat(9000), 'Revisions: 2 per page | each round '.repeat(11000)))).toBeLessThan(8000);
     expect(timed(() => compare('1 ' .repeat(200000), '2 revisions '.repeat(33000)))).toBeLessThan(8000);
     expect(timed(() => compare(('a, ' + 'and ').repeat(57000), 'within 5 days '.repeat(28000)))).toBeLessThan(8000);
+  });
+});
+
+/** Invented examples from an adversarial review (reviewer not allowed to read the corpus). Each was a false alarm or a missed read. */
+describe('CMP-03 after the adversarial review', () => {
+  it('a duration is read by what it modifies, not by its anchor event', () => {
+    expect(items('We expect delivery within 5 days of project approval.', 'The client has 3 days to review each draft.')).toEqual([]);
+    expect(items('We need to launch within 2 weeks of sign-off.', 'Client sign-off within 1 week of delivery.')).toEqual([]);
+    expect(items('Work begins within 3 days of the deposit being received.', 'Deposit due within 7 days.')).toEqual([]);
+    expect(items('Payment is due within 7 days of approval.', 'Payment is due within 14 days.')).toEqual(['payment:day']);
+    expect(items('The client has 5 business days to review each milestone.', 'You review within 3 business days of delivery.')).toEqual(['review:business-day']);
+  });
+
+  it('other senses of a duration are not terms', () => {
+    expect(items('Bug fixes within 30 days after delivery.', 'Warranty of 90 days after delivery.')).toEqual([]);
+    expect(items('Late payments accrue interest after 30 days.', 'Payment within 14 days.')).toEqual([]);
+    expect(items('This quote must be accepted within 14 days.', 'Client approves each milestone within 3 days.')).toEqual([]);
+    expect(items('I will incorporate feedback within 2 days.', 'Client feedback is due within 5 days.')).toEqual([]);
+    expect(items('The client must complete the intake form within 2 days.', 'Final delivery is within 5 days of kickoff.')).toEqual([]);
+    expect(items('Net 30 days, 2% discount if paid in 10 days.', 'Net 30.')).toEqual([]);
+  });
+
+  it('phase and round labels, version history and floors are not revision counts', () => {
+    expect(items('Round 2 revisions: 2 pages.', 'Three rounds of revisions included.')).toEqual([]);
+    expect(items('Phase 2 revisions will be scoped later.', 'Three rounds of revisions included.')).toEqual([]);
+    expect(items('The current site has 5 revisions in version control.', 'Three rounds of revisions included.')).toEqual([]);
+    expect(items('We expect at least 2 rounds of revisions.', '3 rounds of revisions included.')).toEqual([]);
+  });
+
+  it('table rows are read, and the whole row is the mark', () => {
+    const ref = '| Item | Term |\n|---|---|\n| Revision rounds | three |\n| Review window | 5 days |\n| Payment | within 30 days |';
+    const prop = '| Item | Term |\n|---|---|\n| Revision rounds | 2 |\n| Review window | 3 days |\n| Payment | within 14 days |';
+    const r = compare(ref, prop);
+    expect(by(r, 'CMP-03').filter((f) => f.source === 'reference').map((f) => `${f.item}:${f.unit}`).sort()).toEqual(['payment:day', 'review:day', 'revisions:total']);
+    for (const f of r.findings) expect((f.source === 'reference' ? ref : prop).slice(f.start, f.end)).toBe(f.sentence);
+    expect(by(r, 'CMP-03')[0]?.sentence).toContain(' | ');
+  });
+
+  it('"(N)" after a number is ignored, "5 (five)" is accepted, hyphenated words are not read', () => {
+    expect(items('Three (3) revisions are included.', 'Two (2) rounds of revisions.')).toEqual(['revisions:total']);
+    expect(items('Pay within 5 (five) days.', 'Pay within 7 days.')).toEqual(['payment:day']);
+    expect(items('Pay within twenty-five days.', 'Pay within 5 days.')).toEqual([]);
+    expect(items('Pay within 14-30 days.', 'Pay within 5 days.')).toEqual([]);
+  });
+
+  it('the revision scope key is local and has a denominator', () => {
+    expect(items('Includes 3 rounds of revisions.', '2 rounds of revisions included; each additional round is $200.')).toEqual(['revisions:total']);
+    expect(items('Up to 3 revisions per page.', '2 rounds of revisions per milestone.')).toEqual([]);
+    expect(items('Each milestone includes 3 revisions.', 'Each milestone includes 2 revisions.')).toEqual(['revisions:per:milestone']);
+  });
+
+  it('payment terms with a deposit or a final part are compared like with like', () => {
+    expect(items('Deposit within 7 days. Balance within 30 days.', 'Deposit within 14 days. Balance within 30 days.')).toEqual(['payment:day:deposit']);
+    expect(items('Deposit within 7 days.', 'Balance within 30 days.')).toEqual([]);
+    expect(items('Each milestone invoice is payable within 7 days.', 'Final invoice payable within 30 days.')).toEqual([]);
+  });
+
+  it('"net N" is days only', () => {
+    expect(items('Net 4 weeks.', 'Net 28.')).toEqual([]);
+    expect(items('Net 30.', 'Net 15.')).toEqual(['payment:day']);
+  });
+
+  it('a client text of only invisible characters counts as empty', () => {
+    expect(compare('​‍﻿', 'We include 2 rounds of revisions.').hasReference).toBe(false);
   });
 });

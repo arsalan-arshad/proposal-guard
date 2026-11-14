@@ -56,9 +56,12 @@ const NUMBER_WORDS: Record<string, number> = {
   one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
   fourteen: 14, fifteen: 15, twenty: 20, thirty: 30,
 };
-const NUM_TOKEN = '(\\d{1,4}|a\\s+single|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fourteen|fifteen|twenty|thirty)';
-/** Not the tail of a longer figure ("1,000", "2.5", "$50"). */
-const NOT_AFTER_FIGURE = '(?<![\\d.,$€£])';
+const WORD_ALT = 'one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fourteen|fifteen|twenty|thirty';
+const NUM_TOKEN = `(\\d{1,4}|a\\s+single|${WORD_ALT})`;
+/** An optional "(3)" or "(three)" after a number. */
+const PAREN = `(?:\\s*\\((?:\\d{1,4}|${WORD_ALT})\\))?`;
+/** Not the tail of a longer figure or a range ("1,000", "2.5", "$50", "14-30", "twenty-five"). */
+const NOT_AFTER_FIGURE = '(?<![\\d.,$€£\\-–—])';
 
 function parseNumber(token: string): number | undefined {
   const t = token.toLowerCase().replace(/\s+/g, ' ');
@@ -69,7 +72,7 @@ function parseNumber(token: string): number | undefined {
 
 const REVISION_RES: RegExp[] = [
   new RegExp(
-    `${NOT_AFTER_FIGURE}\\b${NUM_TOKEN}\\s+(?:(?:included|free|standard|minor|major|complimentary)\\s+)?(?:revision\\s+rounds?|feedback\\s+rounds?|rounds?\\s+of\\s+(?:\\w+\\s+)?(?:revisions?|changes|edits|feedback|amendments)|revisions?)\\b`,
+    `${NOT_AFTER_FIGURE}\\b${NUM_TOKEN}${PAREN}\\s+(?:(?:included|free|standard|minor|major|complimentary)\\s+)?(?:revision\\s+rounds?|feedback\\s+rounds?|rounds?\\s+of\\s+(?:\\w+\\s+)?(?:revisions?|changes|edits|feedback|amendments)|revisions?)\\b`,
     'gi',
   ),
   // Term-sheet form: "Revisions: 2", "| Revision rounds | three |". A number followed by a unit or a longer word is not a count.
@@ -79,49 +82,72 @@ const REVISION_RES: RegExp[] = [
   ),
 ];
 const PAID_EXTRA_RE = /\b(?:extra|additional|further|beyond|more|after)\b/i;
-const SCOPE_PER_RE = /\b(?:per|each|every)\b/i;
-const RANGE_BEFORE_RE = /(?:\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\s*(?:to|or|-|–|—)\s*$/i;
+const PER_AFTER_RE = /\b(?:per|each|every)\s+(?!(?:additional|extra|further|other|subsequent)\b)(\w+)/i;
+const LABEL_BEFORE_RE = /\b(?:round|version|phase|release|rev|draft|stage|sprint|iteration|step|chapter|section|page|v)\.?\s*$/i;
+const FLOOR_BEFORE_RE = /\b(?:at\s+least|minimum(?:\s+of)?|no\s+fewer\s+than|no\s+less\s+than)\s*$/i;
+const HISTORY_RE = /\b(?:git|version\s+history|version\s+control|revision\s+history)\b/i;
+const RANGE_BEFORE_RE = /(?:\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\s*(?:to|or)\s*$/i;
 
 const INTRO = 'within|in|inside|after|of|has|have|gets?|given|allowed';
 const DURATION_RE = new RegExp(
-  `(?:\\b(${INTRO})\\s+(?:the\\s+(?:next\\s+|first\\s+)?|those\\s+|these\\s+|that\\s+)?)?${NOT_AFTER_FIGURE}\\b${NUM_TOKEN}(?:\\s*\\(\\d{1,4}\\))?([- ])(?:(calendar|business|working)[- ])?(hours?|days?|weeks?)\\b`,
+  `(?:\\b(${INTRO})\\s+(?:the\\s+(?:next\\s+|first\\s+)?|those\\s+|these\\s+|that\\s+)?)?${NOT_AFTER_FIGURE}\\b${NUM_TOKEN}${PAREN}([- ])(?:(calendar|business|working)[- ])?(hours?|days?|weeks?)\\b`,
   'gi',
 );
-const NET_RE = /\bnet[\s-]+(\d{1,3})\b(?!\s*%)/gi;
+const NET_RE = /\bnet[\s-]+(\d{1,3})\b(?!\s*(?:%|weeks?|months?|hours?))/gi;
 const BOUND_BEFORE_RE =
   /\b(?:at\s+least|at\s+most|minimum|maximum|up\s+to|no\s+more\s+than|no\s+less\s+than|no\s+later\s+than|over|under|about|approximately|around|roughly|nearly|almost)\s*$/i;
 
 const CLAUSE_BREAK_RE = /;|,|\s(?:and|but|then|while|or)\s|\s[—–]\s|—/gi;
+/** After a duration, the clause ends at an anchor word: "within 5 days of project approval" is about the 5 days, not the approval. */
+const ANCHOR_RE = /\b(?:of|after|from|following|since|upon|once|when)\b/i;
 const CLAUSE_SPAN = 100;
 const PAYMENT_CUE_RE = /\b(?:invoice\w*|payments?|payable|pay|pays|paying|paid|balance|deposit|remit\w*|settle\w*)\b/i;
 const REVIEW_CUE_RE = /\b(?:review\w*|approv\w*|accept(?:s|ed|ing|ance)?|sign[- ]?off|feedback|proofs?|confirm\w*)\b/i;
-const DELIVERY_CUE_RE = /\b(?:delivery|delivered|delivers?|launch\w*|go(?:es)?\s+live|completion|complete[ds]?|handover|deadline|turnaround|finish\w*)\b/i;
+const DELIVERY_CUE_RE = /\b(?:delivery|delivered|delivers?|launch\w*|go(?:es)?\s+live|completion|handover|deadline|turnaround|finish\w*|complete[ds]?)\b/i;
+/** "complete" is a delivery cue unless what is completed is a form-like client task ("complete the intake form"). */
+const CLIENT_TASK_RE = /\bcomplet\w*\s+(?:the\s+|an?\s+|our\s+|your\s+)?(?:\w+\s+){0,2}?(?:forms?|surveys?|questionnaires?|checklists?|paperwork|onboarding|registrations?|applications?\s+forms?)\b/i;
 const MILESTONE_WORD_RE =
   /\b(?:first|initial|drafts?|prototypes?|mock-?ups?|wireframes?|phases?|milestones?|stages?|rounds?|sprints?|beta|demos?|previews?|each|per|every)\b/i;
+/** Other senses of a duration: warranty, interest, offer validity, discounts. The sentence is skipped. */
+const OTHER_SENSE_RE =
+  /\b(?:warrant\w*|guarantee\w*|interest|penalt\w*|late\s+fees?|expire\w*|valid(?:ity)?|bug[- ]?fix\w*|support\s+period|maintenance\s+period|retain\w*|retention|accru\w*|discounts?|early|(?:this|the|our|my)\s+(?:quote|quotation|proposal|offer|estimate))\b/i;
+/** The freelancer answering feedback is not the client's review window. */
+const OWN_FEEDBACK_RE = /\b(?:answer|respond(?:s)?\s+to|incorporat\w*|implement\w*|address\w*|act(?:s)?\s+on|appl(?:y|ies))\b[^.;,]{0,25}\bfeedback\b/i;
+const DEPOSIT_RE = /\b(?:deposit|advance|retainer|up-?front|down\s*payment)\b/i;
+const FINAL_RE = /\b(?:balance|final|remaining|last)\b/i;
 
-interface Mention {
+export interface Mention {
   item: CompareItem;
-  /** Unit or scope key: `hour`, `day`, `business-day`, `week` (durations); `per`, `total` (revisions). */
+  /** Unit or scope key: `hour`, `day`, `business-day`, `week` (durations, payment may add `:deposit` or `:final`); `total` or `per:<noun>` (revisions). */
   unit: string;
   value: number;
   sentence: Sentence;
   term: Term;
 }
 
-/** The clause around a duration: from the nearest break before it to the nearest break after it (at most 100 characters each side). */
-function clauseAround(masked: string, start: number, end: number): string {
+/** The clause around a duration: back to the nearest break, forward to the nearest break or anchor word (at most 100 characters each side). */
+function clauseAround(masked: string, start: number, end: number, inRow: boolean): string {
   const before = masked.slice(Math.max(0, start - CLAUSE_SPAN), start);
   let from = 0;
   for (const m of findAll(CLAUSE_BREAK_RE, before)) from = m.end;
-  const after = masked.slice(end, end + CLAUSE_SPAN);
-  const first = findAll(CLAUSE_BREAK_RE, after)[0];
-  return before.slice(from) + masked.slice(start, end) + (first ? after.slice(0, first.start) : after);
+  if (inRow) {
+    // In a table row the clause is the duration's own cell and the cell before it.
+    const pipes = [...before.matchAll(/\|/g)].map((m) => m.index ?? 0);
+    if (pipes.length >= 2) from = Math.max(from, (pipes[pipes.length - 2] as number) + 1);
+  }
+  let after = masked.slice(end, end + CLAUSE_SPAN);
+  const cut = [findAll(CLAUSE_BREAK_RE, after)[0]?.start, after.search(ANCHOR_RE), inRow ? after.indexOf('|') : -1]
+    .filter((n): n is number => n !== undefined && n >= 0)
+    .sort((a, b) => a - b)[0];
+  if (cut !== undefined) after = after.slice(0, cut);
+  return before.slice(from) + masked.slice(start, end) + after;
 }
 
-function durationItem(clause: string, sentenceMasked: string): CompareItem | undefined {
+function durationItem(clause: string, hasMilestoneWord: () => boolean): CompareItem | undefined {
+  if (OWN_FEEDBACK_RE.test(clause)) return undefined;
   if (PAYMENT_CUE_RE.test(clause)) return 'payment';
   if (REVIEW_CUE_RE.test(clause)) return 'review';
-  if (DELIVERY_CUE_RE.test(clause) && !MILESTONE_WORD_RE.test(sentenceMasked)) return 'delivery';
+  if (DELIVERY_CUE_RE.test(clause.replace(CLIENT_TASK_RE, ' ')) && !hasMilestoneWord()) return 'delivery';
   return undefined;
 }
 
@@ -131,14 +157,53 @@ function unitKey(qualifier: string | undefined, unit: string): string {
   return u;
 }
 
-/** Everything CMP-03 can read from one text. */
-export function extractMentions(sentences: Sentence[]): Mention[] {
+function paymentSub(clause: string): string {
+  return DEPOSIT_RE.test(clause) ? ':deposit' : FINAL_RE.test(clause) ? ':final' : '';
+}
+
+/**
+ * Table rows are read as one unit: the cells of a row joined with their pipes, quoted as the whole row (so offsets
+ * stay valid). Everything else is one unit per sentence.
+ */
+function readingUnits(sentences: Sentence[], text: string): Array<{ s: Sentence; inRow: boolean }> {
+  const out: Array<{ s: Sentence; inRow: boolean }> = [];
+  let i = 0;
+  while (i < sentences.length) {
+    const first = sentences[i] as Sentence;
+    if (first.row === undefined) {
+      out.push({ s: first, inRow: false });
+      i++;
+      continue;
+    }
+    let j = i;
+    while (j + 1 < sentences.length && (sentences[j + 1] as Sentence).row === first.row) j++;
+    const last = sentences[j] as Sentence;
+    const chars = text.slice(first.start, last.end).split('');
+    for (let k = i; k <= j; k++) {
+      const c = sentences[k] as Sentence;
+      for (let p = 0; p < c.masked.length; p++) chars[c.start - first.start + p] = c.masked.charAt(p);
+    }
+    out.push({
+      s: { ...first, text: text.slice(first.start, last.end), masked: chars.join(''), start: first.start, end: last.end, heading: false },
+      inRow: true,
+    });
+    i = j + 1;
+  }
+  return out;
+}
+
+/** Everything CMP-03 can read from one text. `text` is the original input the sentences came from. */
+export function extractMentions(sentences: Sentence[], text?: string): Mention[] {
   const out: Mention[] = [];
-  for (const s of sentences) {
+  const units = text === undefined ? sentences.map((s) => ({ s, inRow: false })) : readingUnits(sentences, text);
+  for (const { s, inRow } of units) {
     if (s.heading) continue;
     const m = s.masked;
-    const scope = SCOPE_PER_RE.test(m) ? 'per' : 'total';
+    const history = HISTORY_RE.test(m);
+    let milestone: boolean | undefined; // computed at most once per sentence: it scans the whole sentence
+    const hasMilestoneWord = (): boolean => (milestone ??= MILESTONE_WORD_RE.test(m));
     for (const re of REVISION_RES) {
+      if (history) break;
       for (const hit of matchesWithGroups(re, m)) {
         const token = hit.groups[0];
         const value = token === undefined ? undefined : parseNumber(token);
@@ -147,24 +212,37 @@ export function extractMentions(sentences: Sentence[]): Mention[] {
         const before = m.slice(Math.max(0, numStart - 25), numStart);
         if (PAID_EXTRA_RE.test(before)) continue;
         if (RANGE_BEFORE_RE.test(m.slice(Math.max(0, numStart - 12), numStart))) continue;
-        out.push({ item: 'revisions', unit: scope, value, sentence: s, term: { text: hit.text, start: hit.start, end: hit.end } });
+        if (LABEL_BEFORE_RE.test(m.slice(Math.max(0, numStart - 12), numStart))) continue;
+        if (FLOOR_BEFORE_RE.test(m.slice(Math.max(0, numStart - 20), numStart))) continue;
+        const after = PER_AFTER_RE.exec(m.slice(hit.end, hit.end + 40)) ?? PER_AFTER_RE.exec(m.slice(Math.max(0, numStart - 25), numStart));
+        const unit = after?.[1] ? `per:${after[1].toLowerCase().replace(/s$/, '')}` : 'total';
+        out.push({ item: 'revisions', unit, value, sentence: s, term: { text: hit.text, start: hit.start, end: hit.end } });
       }
     }
+    if (OTHER_SENSE_RE.test(m)) continue;
     for (const hit of matchesWithGroups(DURATION_RE, m)) {
       const [intro, token, sep, qualifier, unit] = hit.groups;
       if (token === undefined || unit === undefined) continue;
-      if (intro === undefined && sep !== '-') continue; // needs "within 5 days" or "5-day"
+      // Needs "within 5 days" or "5-day"; in a table row a duration that starts its own cell needs no introducer.
+      if (intro === undefined && sep !== '-' && !(inRow && /\|\s*$/.test(m.slice(0, hit.start)))) continue;
       if (BOUND_BEFORE_RE.test(m.slice(Math.max(0, hit.start - 20), hit.start))) continue;
       const value = parseNumber(token);
       if (value === undefined) continue;
-      const item = durationItem(clauseAround(m, hit.start, hit.end), m);
+      const clause = clauseAround(m, hit.start, hit.end, inRow);
+      const item = durationItem(clause, hasMilestoneWord);
       if (item === undefined) continue;
-      out.push({ item, unit: unitKey(qualifier, unit), value, sentence: s, term: { text: hit.text, start: hit.start, end: hit.end } });
+      out.push({
+        item,
+        unit: unitKey(qualifier, unit) + (item === 'payment' ? paymentSub(clause) : ''),
+        value,
+        sentence: s,
+        term: { text: hit.text, start: hit.start, end: hit.end },
+      });
     }
     for (const hit of matchesWithGroups(NET_RE, m)) {
       const value = parseNumber(hit.groups[0] ?? '');
       if (value === undefined) continue;
-      out.push({ item: 'payment', unit: 'day', value, sentence: s, term: { text: hit.text, start: hit.start, end: hit.end } });
+      out.push({ item: 'payment', unit: 'day' + paymentSub(clauseAround(m, hit.start, hit.end, inRow)), value, sentence: s, term: { text: hit.text, start: hit.start, end: hit.end } });
     }
   }
   return out;
@@ -202,9 +280,9 @@ const MISMATCH_SUGGESTION: Record<CompareItem, string> = {
 };
 const MISMATCH_SEVERITY: Record<CompareItem, Severity> = { revisions: 'Medium', review: 'Medium', payment: 'High', delivery: 'Medium' };
 
-function checkNumberMismatch(refSentences: Sentence[], propSentences: Sentence[]): { findings: CompareFinding[]; status: RuleStatus } {
-  const ref = extractMentions(refSentences);
-  const prop = extractMentions(propSentences);
+function checkNumberMismatch(refSentences: Sentence[], propSentences: Sentence[], refText: string, propText: string): { findings: CompareFinding[]; status: RuleStatus } {
+  const ref = extractMentions(refSentences, refText);
+  const prop = extractMentions(propSentences, propText);
   const keys = new Set<string>();
   const keyOf = (m: Mention): string => `${m.item}|${m.unit}`;
   for (const m of ref) keys.add(keyOf(m));
@@ -287,6 +365,11 @@ function checkCostWithoutPayer(refSentences: Sentence[], propSentences: Sentence
 
 // ---------------------------------------------------------------------------------------------------------------
 
+/** Empty, or only whitespace and invisible characters (zero-width space and joiners, byte-order mark). */
+function isEmptyText(s: string): boolean {
+  return /^[\s\u200b-\u200d\u2060\ufeff]*$/.test(s);
+}
+
 const NOT_APPLICABLE: Record<CompareCheckId, RuleStatus> = { 'CMP-01': 'not applicable', 'CMP-02': 'not applicable', 'CMP-03': 'not applicable' };
 
 /**
@@ -308,7 +391,7 @@ export function compare(reference: string, proposal: string, options: CompareOpt
   const propScan = scanSentences(propSentences);
   const proposalFindings = propScan.findings.map((f) => tag(f, 'proposal', 'RULES'));
 
-  if (reference.trim() === '') {
+  if (isEmptyText(reference)) {
     return { findings: proposalFindings, status: { ...NOT_APPLICABLE }, proposalStatus: propScan.status, hasReference: false, disclaimer: DISCLAIMER_SHORT };
   }
 
@@ -329,7 +412,7 @@ export function compare(reference: string, proposal: string, options: CompareOpt
         : 'not applicable';
 
   const cmp02 = checkCostWithoutPayer(refSentences, propSentences);
-  const cmp03 = checkNumberMismatch(refSentences, propSentences);
+  const cmp03 = checkNumberMismatch(refSentences, propSentences, reference, proposal);
 
   const sourceRank = (f: CompareFinding): number => (f.source === 'reference' ? 0 : 1);
   const checkRank = (f: CompareFinding): number => ['CMP-01', 'CMP-02', 'CMP-03', 'RULES'].indexOf(f.check);

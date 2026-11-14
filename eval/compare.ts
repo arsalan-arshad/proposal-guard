@@ -39,10 +39,13 @@ if (!dir) {
 const details = args.includes('--details');
 const pairIds = readdirSync(join(dir, 'pairs')).filter((n) => /^\d+$/.test(n)).sort();
 
+/** Labels name the unit key without its refinements (`per`, not `per:article`; `day`, not `day:deposit`). */
+const coarse = (unit: string | undefined): string => (unit ?? '').split(':')[0] ?? '';
+
 function keysOfLabels(l: PairLabels, check: (typeof CHECKS)[number]): string[] {
   if (check === 'CMP-01') return (l['CMP-01'] ?? []).map((x) => (x.rule === 'REVISE-04' && x.part === 'b' ? 'REVISE-04|b' : `${x.rule}|${norm(x.sentence ?? '')}`));
   if (check === 'CMP-02') return (l['CMP-02'] ?? []).map((x) => x.category);
-  return (l['CMP-03'] ?? []).map((x) => `${x.item}|${x.unit}`);
+  return (l['CMP-03'] ?? []).map((x) => `${x.item}|${coarse(x.unit)}`);
 }
 
 const load = (file: string): Labels => JSON.parse(readFileSync(join(dir, file), 'utf8')) as Labels;
@@ -80,7 +83,7 @@ for (const id of pairIds) {
     for (const f of r.findings) {
       if (f.check !== check) continue;
       if (check === 'CMP-03') {
-        if (f.source === 'reference') got.add(`${f.item}|${f.unit}`);
+        if (f.source === 'reference') got.add(`${f.item}|${coarse(f.unit)}`);
       } else if (check === 'CMP-02') got.add(f.category ?? '');
       else got.add(f.ruleId === 'REVISE-04' && f.part === 'b' ? 'REVISE-04|b' : `${f.ruleId}|${norm(f.sentence)}`);
     }
