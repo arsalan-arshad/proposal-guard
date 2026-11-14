@@ -159,3 +159,21 @@ describe('compare', () => {
     expect(readFileSync(p, 'utf8')).toBe(REF);
   });
 });
+
+describe('compare checks in list-rules and explain', () => {
+  it('explain works for CMP ids and shows the maturity label', () => {
+    const r = exec(['explain', 'cmp-03']);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('CMP-03');
+    expect(r.out).toContain('Status: experimental');
+    expect(exec(['explain', 'CMP-01']).out).toContain('Status: stable');
+    expect(exec(['explain', 'CMP-09']).code).toBe(2);
+    expect(JSON.parse(exec(['explain', 'CMP-02', '--json']).out).check.id).toBe('CMP-02');
+  });
+  it('list-rules keeps four rules and lists the three checks separately', () => {
+    expect(exec(['list-rules']).out).toContain('CMP-02');
+    const j = JSON.parse(exec(['list-rules', '--json']).out);
+    expect(j.rules).toHaveLength(4);
+    expect(j.compareChecks).toHaveLength(3);
+  });
+});

@@ -29,8 +29,9 @@ describe('roles and offsets', () => {
     expect(JSON.stringify(r)).not.toMatch(/score|percent|rank|risk level/i);
   });
 
-  it('all three checks are labelled experimental until measured', () => {
-    for (const f of r.findings.filter((x) => x.check !== 'RULES')) expect(f.experimental).toBe(true);
+  it('CMP-02 and CMP-03 are labelled experimental (they missed the shipping bar); CMP-01 and the proposal side are not', () => {
+    for (const f of r.findings.filter((x) => x.check === 'CMP-02' || x.check === 'CMP-03')) expect(f.experimental).toBe(true);
+    for (const f of r.findings.filter((x) => x.check === 'CMP-01')) expect(f.experimental).toBeUndefined();
     for (const f of r.findings.filter((x) => x.check === 'RULES')) expect(f.experimental).toBeUndefined();
   });
 });

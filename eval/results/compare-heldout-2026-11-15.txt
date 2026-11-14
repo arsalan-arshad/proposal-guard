@@ -1,0 +1,19 @@
+Compare evaluation: corpus/compare-heldout (20 pairs), labels labels.adjudicated.json
+CMP-01: reported 19, correct 16 (precision 16 of 19, 84%); expected 22, found 16 (recall 16 of 22, 73%); false positives 3, misses 6
+CMP-02: reported 11, correct 6 (precision 6 of 11, 55%); expected 6, found 6 (recall 6 of 6, 100%); false positives 5, misses 0
+CMP-03: reported 7, correct 7 (precision 7 of 7, 100%); expected 7, found 7 (recall 7 of 7, 100%); false positives 0, misses 0
+
+06 CMP-01 FALSE POSITIVE: SCOPE-01|She can be quick or slow depending on events, so build some patience into your plan.
+07 CMP-02 FALSE POSITIVE: cloud
+08 CMP-01 FALSE POSITIVE: SCOPE-01|A written report with recommendations that follow industry best practices and other appropriate improvements
+11 CMP-02 FALSE POSITIVE: cloud
+14 CMP-02 FALSE POSITIVE: licences
+15 CMP-02 FALSE POSITIVE: ai
+16 CMP-02 FALSE POSITIVE: licences
+17 CMP-01 FALSE POSITIVE: TIME-03|How we work: we will review your pipeline design and approve it.
+04 CMP-01 MISSED: REVISE-04|b
+10 CMP-01 MISSED: REVISE-04|b
+12 CMP-01 MISSED: SCOPE-01|We may add more features later and expect the developer to support them as needed.
+13 CMP-01 MISSED: REVISE-04|b
+15 CMP-01 MISSED: REVISE-04|b
+17 CMP-01 MISSED: SCOPE-01|We will also make sure the work is reviewed to our satisfaction and we want revisions until we are completely happy with the setup.

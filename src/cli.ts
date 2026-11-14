@@ -2,7 +2,7 @@ import { readFileSync, statSync } from 'node:fs';
 import { extname } from 'node:path';
 import { compare, DEFAULT_MAX_TOTAL_CHARS } from './compare.js';
 import { DEFAULT_MAX_CHARS, DISCLAIMER_SHORT, scan } from './scan.js';
-import { RULE_INFO, getRuleInfo } from './rules-info.js';
+import { COMPARE_INFO, RULE_INFO, getCompareInfo, getRuleInfo } from './rules-info.js';
 import { VERSION } from './version.js';
 import type { CompareFinding, CompareResult, Finding, ScanResult } from './types.js';
 
@@ -23,7 +23,7 @@ Usage:
                                           Mark sentences in the client's text and in your proposal
                                           (only one of the two may be "-")
   proposal-guard list-rules [--json]      List the four rules
-  proposal-guard explain <RULE-ID>        Describe one rule
+  proposal-guard explain <RULE-ID|CMP-ID> Describe one rule or compare check
   proposal-guard --help
   proposal-guard --version
 
@@ -34,7 +34,7 @@ Exit codes:
 
 It never writes or edits your file, makes no network calls and stores nothing.
 Input limit: ${DEFAULT_MAX_CHARS} characters per text (${DEFAULT_MAX_TOTAL_CHARS} for compare). English text only.
-Compare marks are highlights, not a score. Its checks are experimental until measured (see docs/EVALUATION.md).
+Compare marks are highlights, not a score. CMP-02 and CMP-03 are experimental (see docs/EVALUATION.md).
 
 ${DISCLAIMER_SHORT}
 `;
@@ -127,12 +127,24 @@ export function run(argv: string[], io: CliIo): number {
     }
     if (cmd === 'list-rules') {
       if (rest.length > 0) throw new UsageError('list-rules takes no arguments.');
-      if (json) io.stdout(JSON.stringify({ rules: RULE_INFO, disclaimer: DISCLAIMER_SHORT }, null, 2) + '\n');
-      else io.stdout(RULE_INFO.map((r) => `${r.id}  ${r.name}`).join('\n') + `\n\n${DISCLAIMER_SHORT}\n`);
+      if (json) io.stdout(JSON.stringify({ rules: RULE_INFO, compareChecks: COMPARE_INFO, disclaimer: DISCLAIMER_SHORT }, null, 2) + '\n');
+      else
+        io.stdout(
+          RULE_INFO.map((r) => `${r.id}  ${r.name}`).join('\n') +
+            `\n\nCompare checks (proposal-guard compare):\n` +
+            COMPARE_INFO.map((c) => `${c.id}  ${c.name}${c.maturity === 'experimental' ? ' [experimental]' : ''}`).join('\n') +
+            `\n\n${DISCLAIMER_SHORT}\n`,
+        );
       return 0;
     }
     if (cmd === 'explain') {
-      if (rest.length !== 1) throw new UsageError('Usage: proposal-guard explain <RULE-ID>');
+      if (rest.length !== 1) throw new UsageError('Usage: proposal-guard explain <RULE-ID|CMP-ID>');
+      const cmp = getCompareInfo(rest[0] ?? '');
+      if (cmp) {
+        if (json) io.stdout(JSON.stringify({ check: cmp, disclaimer: DISCLAIMER_SHORT }, null, 2) + '\n');
+        else io.stdout(`${cmp.id}  ${cmp.name}\n\nFlags: ${cmp.flags}\nLeaves alone: ${cmp.leavesAlone}\nStatus: ${cmp.maturity}\n\n${DISCLAIMER_SHORT}\n`);
+        return 0;
+      }
       const info = getRuleInfo(rest[0] ?? '');
       if (!info) throw new UsageError(`Unknown rule "${rest[0]}". Run list-rules.`);
       if (json) io.stdout(JSON.stringify({ rule: info, disclaimer: DISCLAIMER_SHORT }, null, 2) + '\n');

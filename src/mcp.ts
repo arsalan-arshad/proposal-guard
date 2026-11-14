@@ -31,7 +31,7 @@ server.registerTool(
   {
     title: "Compare a client's text with a proposal",
     description:
-      "Mark sentences in the client's text (job post or contract) and in your proposal: risk wording in the client's text, a paid service with no stated payer, and numbers that differ between the two texts. Marks are highlights, not a score. Experimental. Read-only. Not legal advice.",
+      "Mark sentences in the client's text (job post or contract) and in your proposal: risk wording in the client's text, a paid service with no stated payer, and numbers that differ between the two texts. Marks are highlights, not a score. Two of the three checks are experimental. Read-only. Not legal advice.",
     inputSchema: z.object({ reference: z.string().max(DEFAULT_MAX_CHARS), proposal: z.string().max(DEFAULT_MAX_CHARS) }),
     annotations: READ_ONLY,
   },

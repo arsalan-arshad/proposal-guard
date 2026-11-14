@@ -170,3 +170,22 @@ describe('README evaluation section', () => {
     expect(readFileSync('demo/index.html', 'utf8')).toContain('https://arsalandev.studio/work/proposal-guard');
   });
 });
+
+describe('README compare section', () => {
+  const readme = readFileSync('README.md', 'utf8');
+  const report = readFileSync('docs/EVALUATION.md', 'utf8');
+
+  it('quotes the same compare figures as docs/EVALUATION.md', () => {
+    // report rows: | CMP-01 | what | reported | correct (precision) | expected | found (recall) | bar |
+    for (const [id, reported, correct, expected] of [['CMP-01', 19, 16, 22], ['CMP-02', 11, 6, 6], ['CMP-03', 7, 7, 7]] as const) {
+      const row = report.split('\n').find((l) => l.startsWith(`| ${id} |`)) as string;
+      expect(row, id).toContain(`| ${reported} | ${correct} (`);
+      expect(row, id).toContain(`| ${expected} | ${correct} (`);
+      expect(readme, id).toContain(`| ${correct} of ${reported} | ${correct} of ${expected} |`);
+    }
+  });
+
+  it('the README table does not start with the single-document results header, so that table stays unique', () => {
+    expect(readme.split('\n').filter((l) => l.startsWith('| Check | Reported findings'))).toHaveLength(1);
+  });
+});

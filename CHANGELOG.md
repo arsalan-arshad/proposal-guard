@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 (prepared, not published)
+
+Compare mode: the client's job post or contract next to your proposal. Marks are highlights on sentences, never a score.
+
+- New `compare(reference, proposal)` (library), `proposal-guard compare <client|-> <proposal|->` (CLI, `--json`, same exit codes), MCP tool `compare_documents` (read-only), and an optional second box in the demo (empty box = the old behaviour).
+- Three checks. `CMP-01`: SCOPE-01, TIME-03 and REVISE-04 on the client's text. `CMP-02`: a paid service named in the client's text with no payer in either text (HOST-02 word lists). `CMP-03`: a number that differs between the two texts for revision rounds, review time, payment time or delivery time.
+- Measured once on 20 invented pairs (agents wrote and labelled them): CMP-01 16 of 19 reported correct (met the pre-declared bar, `stable`); CMP-02 6 of 11 and CMP-03 7 of 7 with only 7 reported (below the bar: `experimental`, marked as such in every output). See `docs/EVALUATION.md`.
+- The four existing rules are unchanged: `npm run eval` output was byte-identical on all seven corpora before and after.
+- Internals: HOST-02 analysis and the REVISE-04 change-order pattern are exported for reuse; `scanSentences` split out of `scan`. A 500,000-character cap per text and 1,000,000 together.
+- Found by an adversarial review and fixed before measurement: duration read by its anchor event, warranty/interest/offer senses, phase and round numbers read as revision counts, table rows, "(N)" forms, a quadratic path.
+
 ## 0.2.0 (not yet published to npm when this file was written)
 
 Precision release: fewer false alarms, no new word lists for recall. Measured on a fresh 30-document set against 0.1.0 on the same documents and labels: reported findings correct 18 of 38 (0.1.0: 18 of 43), found 18 of 37 (unchanged). A small cleanup, not a breakthrough; see `docs/EVALUATION.md`.

@@ -27,11 +27,13 @@ import type {
 export const DEFAULT_MAX_TOTAL_CHARS = 1_000_000;
 
 /**
- * `experimental` until a check passes the shipping bar fixed before the held-out run (docs/EVALUATION.md):
- * precision of at least 60% on held-out pairs, with at least 8 reported findings.
+ * `experimental` unless a check passed the shipping bar fixed before the held-out run (docs/EVALUATION.md):
+ * precision of at least 60% on held-out pairs, with at least 8 reported findings. Result of the single run on
+ * 2026-11-15: CMP-01 passed (16 of 19); CMP-02 (6 of 11) and CMP-03 (7 of 7, but only 7 reported) did not.
+ * Changing this label does not change what is found.
  */
 export const COMPARE_MATURITY: Record<CompareCheckId, 'experimental' | 'stable'> = {
-  'CMP-01': 'experimental',
+  'CMP-01': 'stable',
   'CMP-02': 'experimental',
   'CMP-03': 'experimental',
 };

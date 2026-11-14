@@ -21,6 +21,8 @@ Freelancers often send a proposal or statement of work with wording that quietly
 
 **It is not a new idea.** Several scope-creep checkers already exist, most of them model-based. What this project adds is a short, readable, open rule set, tests that treat pasted text as untrusted, and an evaluation report that publishes its misses. **It flags some listed patterns and misses much else.** See the evaluation below before relying on it.
 
+**New in 0.3.0: compare mode.** Optionally give the tool the client's job post or contract as well. It then marks sentences in **both** texts: risky wording in the client's text (a clause you would be accepting), a paid service the client's text names that neither text says who pays for, and a number (revision rounds, review days, payment days, delivery time) that differs between the two texts. **Marks are highlights on sentences, never a score or a percentage.** It does not tell you whether your proposal covers what the client asked for (that needs meaning, and a keyword tool would raise false alarms). Of its three checks, one met a pre-declared bar on one small set of invented pairs and two did not, so those two are labelled experimental in every output; see the evaluation below.
+
 > **Not legal advice.** Proposal Guard is open-source software that checks the wording of a draft proposal or statement of work against a small set of fixed rules (`SCOPE-01`, `TIME-03`, `HOST-02`, `REVISE-04`). It reports sentences that match, says which rule matched and why, and suggests a clause with blanks (such as `[N]`) for you to complete. It is English-only, keyword-based and has known false positives and misses, described in the evaluation report. It does not assess whether any clause is lawful, enforceable or complete, and it does not cover jurisdiction, liability, intellectual property, tax or payment amounts. "No findings" does not mean a document is safe. The optional model feature, if you turn it on with your own key, can only suggest wording for a sentence the rules already flagged; it never changes what the rules found. Nothing here creates a lawyer–client relationship. Have a qualified professional review any contract that matters.
 >
 > *Status note: the optional model feature mentioned above is not implemented. Nothing in this repository calls a model.*
@@ -32,10 +34,11 @@ Freelancers often send a proposal or statement of work with wording that quietly
 - **Four rules** (`src/rules/`): `SCOPE-01` vague promise or open-ended scope; `TIME-03` approval or sign-off with no time window; `HOST-02` paid third-party cost with no stated payer (document level, one finding per cost category); `REVISE-04` unnumbered or unlimited revisions, or no change-order path.
 - **Sentence segmenter** (`src/segment.ts`): handles paragraphs, bullets, headings and table cells; ignores code, URLs, e-mail addresses and file names; keeps character offsets.
 - **Library** (`src/scan.ts`): `scan(text)` returns findings, a per-rule status (`findings`, `passed` or `not applicable`) and the short disclaimer. Input is capped at 500,000 characters.
-- **Command line** (`src/cli.ts`): `scan <file|->` with plain-text or `--json` output, `list-rules`, `explain <RULE-ID>`. Exit codes: 0 scanned with no findings, 1 findings present, 2 usage or input error. Accepts `.md` and `.txt` files or standard input.
-- **Local MCP server** (`src/mcp.ts`): stdio, read-only, three tools (`scan_proposal`, `list_rules`, `explain_finding`). No file paths, no network, no shell. Quoted sentences come back inside a labelled result with a notice that they are untrusted data.
-- **Browser demo** (`demo/`): the same scanner in a static page. It makes no network requests (a content-security policy forbids them), stores nothing and writes your text to the page with `textContent` only. `npm run build:demo` writes it to `demo-dist/`. Live at https://proposal-guard-production.up.railway.app/ (see section 7).
-- **Evaluation tooling** (`eval/run.ts`, `corpus/`): synthetic labelled documents and a runner that prints per-rule true positives, false positives and misses with counts.
+- **Compare mode** (`src/compare.ts`): `compare(clientText, proposal)` returns role-tagged findings (`source` is `reference` for the client's text, `proposal` for yours), the status of three checks and the same disclaimer; caps are 500,000 characters per text and 1,000,000 together. `CMP-01` runs SCOPE-01, TIME-03 and REVISE-04 on the client's text (REVISE-04 part (b) only if your proposal has no change-order phrase); `CMP-02` marks a paid service named in the client's text when neither text states a payer; `CMP-03` marks a number that differs between the two texts for revision rounds, review time, payment time or delivery time (same unit only, no conversion). Your proposal is scanned exactly as `scan()` scans it. With an empty client's text the result is the plain scan.
+- **Command line** (`src/cli.ts`): `scan <file|->`, `compare <client-file|-> <proposal-file|->` (only one may be `-`) with plain-text or `--json` output, `list-rules`, `explain <RULE-ID or CMP-ID>`. Exit codes: 0 scanned with no findings, 1 findings present, 2 usage or input error. Accepts `.md` and `.txt` files or standard input.
+- **Local MCP server** (`src/mcp.ts`): stdio, read-only, four tools (`scan_proposal`, `compare_documents`, `list_rules`, `explain_finding`). No file paths, no network, no shell. Quoted sentences come back inside a labelled result with a notice that they are untrusted data.
+- **Browser demo** (`demo/`): the same scanner in a static page, with an optional second box for the client's text (marks in both boxes; with that box empty it behaves as before). It makes no network requests (a content-security policy forbids them), stores nothing and writes your text to the page with `textContent` only. `npm run build:demo` writes it to `demo-dist/`. Live at https://proposal-guard-production.up.railway.app/ (see section 7).
+- **Evaluation tooling** (`eval/run.ts`, `eval/compare.ts`, `corpus/`): synthetic labelled documents and a runner that prints per-rule true positives, false positives and misses with counts.
 
 What it does **not** do: rewrite your document, send anything anywhere, read Word or PDF files, check legality or enforceability, or understand meaning beyond its word lists.
 
@@ -78,6 +81,8 @@ TypeScript (strict, ESM), Node 20 or newer, tests with Vitest. The scanning core
 | `status` (per rule) | `findings`, `passed` or `not applicable` |
 | `disclaimer` | the short "not legal advice" notice, in every result |
 
+Compare mode (`compare()`) adds, per finding: `source` (`reference` = the client's text, `proposal` = yours), `check` (`CMP-01`, `CMP-02`, `CMP-03`, or `RULES` for the four standard rules on your proposal), `roleNote` (fixed text saying whose wording it is), `experimental` (set on the checks that missed the shipping bar) and, for number mismatches, `item`, `unit`, `values` (numbers read from each text by code) and `group` (the two marks of one mismatch share it). Offsets are into that finding's own text.
+
 ---
 
 ## 5. Quickstart
@@ -90,6 +95,7 @@ Prerequisite: Node 20 or newer.
 # one-off, nothing installed
 printf 'The app will be fast and seamless.\n\nUnlimited revisions are included.\n' | npx proposal-guard scan -
 npx proposal-guard scan my-proposal.md --json
+npx proposal-guard compare client-job-post.md my-proposal.md   # marks in both texts; one of the two may be -
 
 # or install the command
 npm install -g proposal-guard
@@ -100,7 +106,7 @@ proposal-guard explain TIME-03
 npm install proposal-guard      # import { scan } from 'proposal-guard'
 ```
 
-**As a local MCP server** (read-only, three tools). The server needs two optional packages next to it:
+**As a local MCP server** (read-only, four tools). The server needs two optional packages next to it:
 
 ```bash
 npm install -g proposal-guard @modelcontextprotocol/server zod
@@ -137,9 +143,10 @@ node dist/bin.js scan my-proposal.md
 
 ```bash
 npm run typecheck
-npm test                       # 329 tests at the time of writing
+npm test                       # 388 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
+npm run eval:compare -- corpus/compare-heldout --details   # compare mode, see below
 ```
 
 The test suite includes the rule examples from the spec, segmenter tests, prompt-injection tests, CLI and MCP tests, and adversarial-input timing tests. CI (`.github/workflows/ci.yml`) runs typecheck, tests and build on Node 22 for pull requests into `main`; the code has been run locally on Node 24.
@@ -157,6 +164,18 @@ The only result worth quoting is from a held-out set that no rule was tuned agai
 | All | 18 of 38 | 18 of 37 |
 
 **This is a weak result.** About half of what the tool reports is wrong, and it misses about half of what a careful reader would flag. HOST-02 is the least reliable rule (in the last three fresh sets its published versions were right in 6 of 36 findings), so every HOST-02 finding carries a caution saying so. The version before this one, run on the same documents and labels, scored 18 of 43 reported correct and 18 of 37 found: the latest round removed five false alarms and lost no true positive, which is a small cleanup and not a breakthrough. On the sets the rules were tuned on they score far higher (211 of 218 reported correct), which only shows how well they fit those documents. Caveats: 30 invented documents; the documents and both sets of labels were written by Claude in separate sessions (the two labellers agree on 89% of judgements, which shows consistency, not correctness, and is not independent human labelling); one document moves a figure by several points; the rules are English-only word lists. No other tool was compared. The report lists every false positive with a reason.
+
+### Compare mode (new, held-out pairs, 2026-11-15)
+
+Copied from [`docs/EVALUATION.md`](docs/EVALUATION.md): 20 invented client-text and proposal pairs that no check was tuned against, run once, strict matching, labels from two independent labeller agents. A pre-declared bar decided the labels: a check is `stable` only with strict precision of at least 60% and at least 8 reported findings.
+
+| Check | Reported findings that were correct | Expected findings that were found | Label |
+|---|---|---|---|
+| CMP-01 risky wording in the client's text | 16 of 19 | 16 of 22 | stable |
+| CMP-02 paid service, no payer in either text | 6 of 11 | 6 of 6 | experimental |
+| CMP-03 number differs between the two texts | 7 of 7 | 7 of 7 | experimental |
+
+Read it with care. These are 20 pairs written and labelled by agents, so every percentage moves several points per pair and the sample is optimistic. CMP-01 is the existing SCOPE-01, TIME-03 and REVISE-04 code run on the client's text (47% right on the fresh single-document set above), so "stable" means it passed this one bar on this one small set, not that it is reliable. CMP-02 reuses the HOST-02 word lists and makes the same kinds of mistakes (4 of its 5 false positives were clear errors; its findings carry the same fixed caution). CMP-03 made no mistakes but reported only 7 findings, fewer than the bar's 8, so one more error would have changed the picture. Compare mode checks four numbers only, in one unit at a time (hours are never compared with days, weeks with days or business days with plain days, and nothing says a comparison was skipped), English only, and does not judge whether your proposal answers what the client asked for. Not legal advice.
 
 ---
 
@@ -182,6 +201,8 @@ The only result worth quoting is from a held-out set that no rule was tuned agai
 - [x] Browser-only demo (hosted on Railway)
 - [ ] Optional bring-your-own-key model that only suggests wording (not started)
 - [x] npm package published
+- [x] Compare mode (client's text next to your proposal), measured once on 20 invented pairs; 0.3.0 is prepared and not yet published
+- [ ] A much larger, person-labelled set for compare mode (the held-out pairs are now seen)
 
 
 ## 9. Credits
