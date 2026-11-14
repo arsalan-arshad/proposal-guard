@@ -1,12 +1,12 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
-import { explainFinding, listRules, scanProposal } from './mcp-tools.js';
+import { compareDocuments, explainFinding, listRules, scanProposal } from './mcp-tools.js';
 import { DEFAULT_MAX_CHARS } from './scan.js';
 import { VERSION } from './version.js';
 
 /**
- * Local, read-only MCP server over stdio. Three tools; none takes a file path,
+ * Local, read-only MCP server over stdio. Four tools; none takes a file path,
  * none touches the network, the shell or the disk. stdout carries only the
  * protocol; anything else goes to stderr.
  */
@@ -24,6 +24,18 @@ server.registerTool(
     annotations: READ_ONLY,
   },
   async ({ text }) => scanProposal(text),
+);
+
+server.registerTool(
+  'compare_documents',
+  {
+    title: "Compare a client's text with a proposal",
+    description:
+      "Mark sentences in the client's text (job post or contract) and in your proposal: risk wording in the client's text, a paid service with no stated payer, and numbers that differ between the two texts. Marks are highlights, not a score. Experimental. Read-only. Not legal advice.",
+    inputSchema: z.object({ reference: z.string().max(DEFAULT_MAX_CHARS), proposal: z.string().max(DEFAULT_MAX_CHARS) }),
+    annotations: READ_ONLY,
+  },
+  async ({ reference, proposal }) => compareDocuments(reference, proposal),
 );
 
 server.registerTool(

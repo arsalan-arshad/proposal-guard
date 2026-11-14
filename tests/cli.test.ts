@@ -110,3 +110,52 @@ describe('other commands', () => {
     expect(exec(['frobnicate']).code).toBe(2);
   });
 });
+
+describe('compare', () => {
+  const REF = 'The client reviews each delivery within 3 business days.\n\nThe result must be fast and seamless.';
+  const PROP = 'You have 5 business days to review each milestone.';
+
+  it('prints role-labelled marks, check status and the disclaimer; exits 1', () => {
+    const r = exec(['compare', file('client.md', REF), file('proposal.md', PROP)]);
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("Client's text");
+    expect(r.out).toContain('Your proposal');
+    expect(r.out).toContain('CMP-03');
+    expect(r.out).toContain('[experimental]');
+    expect(r.out).toContain('highlights, not a score');
+    expect(r.out).toContain(DISCLAIMER_SHORT);
+    expect(r.out).not.toMatch(/score:|%/);
+  });
+
+  it('reads one input from stdin, either side; --json is parseable', () => {
+    const a = exec(['compare', '-', file('p2.md', PROP), '--json'], REF);
+    const b = exec(['compare', file('c2.md', REF), '-', '--json'], PROP);
+    expect(a.code).toBe(1);
+    expect(JSON.parse(a.out).findings).toEqual(JSON.parse(b.out).findings);
+    expect(JSON.parse(a.out).hasReference).toBe(true);
+  });
+
+  it('exits 0 with no findings', () => {
+    expect(exec(['compare', file('c3.md', 'Hello.'), file('p3.md', 'Hi.')]).code).toBe(0);
+  });
+
+  it('is exit 2 for both "-", wrong argument counts, bad file types, and oversize texts', () => {
+    expect(exec(['compare', '-', '-'], REF).code).toBe(2);
+    expect(exec(['compare', file('c4.md', REF)]).code).toBe(2);
+    expect(exec(['compare', file('c5.md', REF), file('p5.pdf', PROP)]).code).toBe(2);
+    expect(exec(['compare', file('c6.md', REF), join(dir, 'missing.md')]).code).toBe(2);
+    expect(exec(['compare', '-', file('p7.md', PROP)], 'a'.repeat(500_001)).code).toBe(2);
+  });
+
+  it('the proposal findings equal those of scan', () => {
+    const c = JSON.parse(exec(['compare', file('c8.md', 'Hello.'), file('p8.md', SOW), '--json']).out);
+    const s = JSON.parse(exec(['scan', file('p8s.md', SOW), '--json']).out);
+    expect(c.findings.map((f: any) => [f.ruleId, f.sentence, f.start])).toEqual(s.findings.map((f: any) => [f.ruleId, f.sentence, f.start]));
+  });
+
+  it('never writes the input files', () => {
+    const p = file('c9.md', REF);
+    exec(['compare', p, file('p9.md', PROP)]);
+    expect(readFileSync(p, 'utf8')).toBe(REF);
+  });
+});

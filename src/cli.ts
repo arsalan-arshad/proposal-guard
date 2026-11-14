@@ -1,9 +1,10 @@
 import { readFileSync, statSync } from 'node:fs';
 import { extname } from 'node:path';
+import { compare, DEFAULT_MAX_TOTAL_CHARS } from './compare.js';
 import { DEFAULT_MAX_CHARS, DISCLAIMER_SHORT, scan } from './scan.js';
 import { RULE_INFO, getRuleInfo } from './rules-info.js';
 import { VERSION } from './version.js';
-import type { Finding, ScanResult } from './types.js';
+import type { CompareFinding, CompareResult, Finding, ScanResult } from './types.js';
 
 export interface CliIo {
   stdout: (s: string) => void;
@@ -18,6 +19,9 @@ export const HELP = `proposal-guard - read-only scope-creep checker for draft pr
 
 Usage:
   proposal-guard scan <file|-> [--json]   Scan a .md/.txt file, or stdin with "-"
+  proposal-guard compare <client-file|-> <proposal-file|-> [--json]
+                                          Mark sentences in the client's text and in your proposal
+                                          (only one of the two may be "-")
   proposal-guard list-rules [--json]      List the four rules
   proposal-guard explain <RULE-ID>        Describe one rule
   proposal-guard --help
@@ -29,7 +33,8 @@ Exit codes:
   2  usage or input error
 
 It never writes or edits your file, makes no network calls and stores nothing.
-Input limit: ${DEFAULT_MAX_CHARS} characters. English text only.
+Input limit: ${DEFAULT_MAX_CHARS} characters per text (${DEFAULT_MAX_TOTAL_CHARS} for compare). English text only.
+Compare marks are highlights, not a score. Its checks are experimental until measured (see docs/EVALUATION.md).
 
 ${DISCLAIMER_SHORT}
 `;
@@ -53,6 +58,35 @@ export function formatText(r: ScanResult): string {
   else out.push(`${r.findings.length} finding${r.findings.length === 1 ? '' : 's'}:`, '', r.findings.map(formatFinding).join('\n\n'));
   out.push('', 'Rule status:');
   for (const [id, s] of Object.entries(r.status)) out.push(`  ${id}: ${s}`);
+  out.push('', r.disclaimer);
+  return out.join('\n') + '\n';
+}
+
+const SOURCE_LABEL = { reference: "Client's text", proposal: 'Your proposal' } as const;
+
+function formatCompareFinding(f: CompareFinding): string {
+  const what = f.check === 'RULES' ? (f.ruleId ?? 'RULES') : f.ruleId ? `${f.check} (${f.ruleId})` : f.check;
+  const lines = [
+    `[${f.severity}] ${SOURCE_LABEL[f.source]} - ${what}${f.part ? ` (${f.part})` : ''}${f.category ? ` - ${f.category}` : ''}${f.item ? ` - ${f.item}` : ''}${f.experimental ? ' [experimental]' : ''}`,
+    `  ${f.roleNote}`,
+    `  Sentence: ${JSON.stringify(f.sentence)}`,
+    ...(f.values ? [`  Numbers read from the texts: client's text ${f.values.reference.join(', ')}; proposal ${f.values.proposal.join(', ')} (${f.unit})`] : []),
+    `  Why: ${f.why}`,
+    `  Suggestion: ${f.suggestion}`,
+    ...(f.caution ? [`  Caution: ${f.caution}`] : []),
+  ];
+  return lines.join('\n');
+}
+
+export function formatCompareText(r: CompareResult): string {
+  const out: string[] = [];
+  if (!r.hasReference) out.push("No client's text given: this is the plain scan of the proposal.", '');
+  if (r.findings.length === 0) out.push('No findings.');
+  else out.push(`${r.findings.length} mark${r.findings.length === 1 ? '' : 's'} (highlights, not a score):`, '', r.findings.map(formatCompareFinding).join('\n\n'));
+  out.push('', 'Compare checks:');
+  for (const [id, s] of Object.entries(r.status)) out.push(`  ${id}: ${s}`);
+  out.push('Rules on the proposal:');
+  for (const [id, s] of Object.entries(r.proposalStatus)) out.push(`  ${id}: ${s}`);
   out.push('', r.disclaimer);
   return out.join('\n') + '\n';
 }
@@ -119,6 +153,21 @@ export function run(argv: string[], io: CliIo): number {
         throw e;
       }
       io.stdout(json ? JSON.stringify(result, null, 2) + '\n' : formatText(result));
+      return result.findings.length > 0 ? 1 : 0;
+    }
+    if (cmd === 'compare') {
+      if (rest.length !== 2) throw new UsageError('Usage: proposal-guard compare <client-file|-> <proposal-file|-> [--json]');
+      if (rest[0] === '-' && rest[1] === '-') throw new UsageError('Only one of the two inputs may be "-" (standard input).');
+      const reference = readInput(rest[0] ?? '', io);
+      const proposal = readInput(rest[1] ?? '', io);
+      let result: CompareResult;
+      try {
+        result = compare(reference, proposal);
+      } catch (e) {
+        if (e instanceof RangeError) throw new UsageError(e.message);
+        throw e;
+      }
+      io.stdout(json ? JSON.stringify(result, null, 2) + '\n' : formatCompareText(result));
       return result.findings.length > 0 ? 1 : 0;
     }
     throw new UsageError(`Unknown command "${cmd}". Run --help.`);
