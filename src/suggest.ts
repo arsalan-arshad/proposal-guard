@@ -109,11 +109,13 @@ function numbersIn(text: string, skipListMarkers: boolean): NumberHit[] {
   for (const m of masked.matchAll(NUMBER_TOKEN_RE)) {
     const start = m.index ?? 0;
     if (skipListMarkers) {
-      const lineStart = masked.lastIndexOf('\n', start - 1) + 1;
-      const before = masked.slice(lineStart, start);
+      // Only the last 40 characters matter ("1." / "2)" at the start of a line, "Suggestion 3:"), so never scan a whole long line.
+      const window = masked.slice(Math.max(0, start - 41), start);
+      const nl = window.lastIndexOf('\n');
+      const atLineStart = nl !== -1 || start <= 41;
+      const before = nl !== -1 ? window.slice(nl + 1) : window;
       const after = masked.slice(start + m[0].length, start + m[0].length + 2);
-      // "1." / "2)" at the start of a line, and "Suggestion 3:" are numbering, not claims.
-      if (/^\s*(?:[-*•]\s*)?(?:suggestion|point|item|step|option)?\s*$/i.test(before) && /^[.):]/.test(after)) continue;
+      if (atLineStart && /^\s*(?:[-*\u2022]\s*)?(?:suggestion|point|item|step|option)?\s*$/i.test(before) && /^[.):]/.test(after)) continue;
     }
     out.push({ text: text.slice(start, start + m[0].length), start, end: start + m[0].length });
   }

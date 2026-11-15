@@ -118,7 +118,9 @@ describe('numbersNotInTexts', () => {
   it('is fast on a long reply', () => {
     const t = Date.now();
     numbersNotInTexts(BRIEF, DRAFT, 'within 99 days '.repeat(30000));
-    expect(Date.now() - t).toBeLessThan(3000);
+    numbersNotInTexts(BRIEF, DRAFT, '7 '.repeat(200000));
+    numbersNotInTexts(BRIEF, DRAFT, ('1.\n' + 'x'.repeat(100) + ' 2) ').repeat(3000));
+    expect(Date.now() - t).toBeLessThan(2000);
   });
 });
 
@@ -127,5 +129,12 @@ describe('the core stays offline', () => {
     const { readFileSync } = await import('node:fs');
     const code = readFileSync('src/suggest.ts', 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
     for (const banned of ['fetch(', 'XMLHttpRequest', 'WebSocket', 'node:http', 'node:https', 'localStorage', 'process.env']) expect(code.includes(banned), banned).toBe(false);
+  });
+});
+
+describe('list numbering is still recognised after the look-back was bounded', () => {
+  it('"1." at a line start and "Suggestion 3:" are ignored, a figure mid-line is not', () => {
+    expect(numbersNotInTexts('a', 'b', '1. First\n2) Second\n- 3. Third\nSuggestion 4: Fourth').map((h) => h.text)).toEqual([]);
+    expect(numbersNotInTexts('a', 'b', 'Add a fee of 250. 3. then more').map((h) => h.text)).toEqual(['250', '3']);
   });
 });
