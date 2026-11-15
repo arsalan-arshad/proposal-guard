@@ -11,6 +11,8 @@ Everything here is made up. No real proposal, contract, client name, price or pe
 | `heldout3/` | 20 | Third held-out set, run once on the round-2 rules. Now seen (its review informed the structural round 3). |
 | `heldout4/` | 20 | Fourth held-out set, run once on the round-3 rules. Now seen (second-labelled afterwards and used to tune round 4). |
 | `heldout5/` | 24 | Fifth held-out set, labelled by two independent labellers from the start, run once on the round-4 rules. Now seen. |
+| `compare-dev/` | 16 pairs | Compare mode (client's text + proposal). The number check was tuned against these. |
+| `compare-heldout/` | 20 pairs | Compare mode held-out set, run once on 2026-11-15 (source hash `2c05d396dd0131a1`). Now seen. |
 | `heldout6/` | 30 | Sixth held-out set, two labellers; the published rules and the precision-round rules were compared on it once. Now seen. |
 
 Each folder has `docs/*.md` and `labels.json`. A label is a sentence a careful reader applying the rule definition would flag (or, for `HOST-02`, a cost category with no stated payer; for `REVISE-04` part (b), the document-level change-order gap). Labels were written from the rule definition, before running the code. Some labels are deliberately outside what the rules can find (marked `known-limit` in the tags, with a note), so that recall shows real misses.
@@ -38,3 +40,14 @@ Prompt-injection strings inside some documents (for example "ignore all previous
 - Both labellers are Claude sessions, not people. Agreement across the three sets is 208 of 230 judgements (90%); the figure shows the labels are consistent, not that they are right.
 - `npm run eval -- corpus/heldout4 --consensus` scores against the adjudicated labels (part (b) is left out for folders labelled before the part (b) definition was settled: `dev` and `heldout`).
 
+
+## Compare corpora (`compare-dev/`, `compare-heldout/`)
+
+Each pair is `pairs/NN/reference.md` (the client's text) and `pairs/NN/proposal.md`. All text is invented. Written by one writer agent per set and labelled by two labeller agents (`labels.a.json`, `labels.b.json`), none of which saw the code; `labels.adjudicated.json` is what both agreed on plus the calls below. No person has reviewed any of it. Run `npm run eval:compare -- corpus/compare-heldout --details` or add `--agree` for labeller agreement.
+
+Calls made on the disagreements (from the definitions and the texts, before the tool was run on the pairs):
+- dev 11, TIME-03 "deemed accepted when the Customer gives written approval": included (acceptance depends on approval, so it is not an affirmative default).
+- dev 01, payment "30 days after we receive them": excluded (a duration must be introduced before the number to count).
+- held-out 17, SCOPE-01 on "reviewed to our satisfaction ... until we are completely happy": included for the tool (acceptance by the client's opinion; contested, since REVISE-04 also fires on the sentence).
+- held-out 06 SCOPE-01 (client reply speed), held-out 11 cloud ("the Client's existing hosting plan"), held-out 14 licences (an existing subscription, and a demand that bidders explain who pays): excluded.
+A leading clause number ("A.2") is ignored when sentences are matched, because the labellers copied sentences without it.

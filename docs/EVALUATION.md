@@ -1,6 +1,58 @@
 # Evaluation report
 
-Not legal advice; this report measures a text checker on invented documents. It has three parts: the current rules on held-out set 4 (first), the round-2 rules on held-out set 3, and the first rules on held-out set 2 (both kept as history).
+Not legal advice; this report measures a text checker on invented documents. It starts with compare mode (client's text next to your proposal), then the single-document rules: the current rules on held-out set 6, and earlier rounds kept as history.
+
+## Compare mode (new): held-out pairs (run 2026-11-15)
+
+Compare mode takes the client's text (job post, brief or contract) and your proposal, and marks sentences in both. This section measures its three checks. It is separate from the single-document sections below: those rules are unchanged (`npm run eval` output on all seven corpora was byte-identical before and after compare mode was added).
+
+**Headline: on 20 invented pairs that no check was tuned against, one check met the bar fixed before the run and two did not.**
+
+| Check | What it marks | Reported | Correct (precision) | Expected | Found (recall) | Bar (60% and 8 or more reported) |
+|---|---|---|---|---|---|---|
+| CMP-01 | Risky wording (SCOPE-01, TIME-03, REVISE-04) in the client's text | 19 | 16 (84%) | 22 | 16 (73%) | met: `stable` |
+| CMP-02 | A paid service named in the client's text, no payer in either text | 11 | 6 (55%) | 6 | 6 (100%) | precision below 60%: `experimental` |
+| CMP-03 | A number (revision rounds, review days, payment days, delivery time) that differs between the two texts | 7 | 7 (100%) | 7 | 7 (100%) | only 7 reported, bar needs 8: `experimental` |
+
+How to read it:
+- The bar was written in the log before the run and could not be changed afterwards: strict precision of at least 60% **and** at least 8 reported findings. CMP-03 had no false positive but only 7 findings were reported on this set, so the bar could not be met; "100%" on 7 findings says very little. CMP-02 was below the bar and above the 40% line that would have removed it.
+- "Stable" means only that CMP-01 passed this one bar on one small set. CMP-01 is the existing SCOPE-01, TIME-03 and REVISE-04 code run on the client's text; on the 30 fresh single-document proposals those rules scored 47% (see below), so 84% here comes from a different kind of text and a small set, not from a better rule. Do not read it as "reliable".
+- Strict matching: CMP-01 counts a finding when the rule and the client sentence both match (a leading clause number such as "A.2" is ignored, a rule fixed before the run because the labellers had copied sentences without it); CMP-02 when the cost category matches; CMP-03 when the item and unit match (one mismatch is one finding, however many sentences it marks).
+- Marks are highlights on sentences. There is no score for a pair or a document.
+
+**How the pairs were made.** Agents wrote and labelled everything; no person has reviewed any of it. One writer agent wrote the 20 held-out pairs (and another wrote 16 development pairs) from plain-language definitions only, without seeing the code. Two labeller agents, working separately and also without the code, labelled both sets. They agreed on 34 of 38 judgements on the held-out set (CMP-01 21 of 23, CMP-02 6 of 8, CMP-03 7 of 7) and on 27 of 29 on the development set. I settled the four held-out and two development disagreements from the definitions and the texts, before running the tool on the labels, including one contested call that I counted for the tool (held-out 17, a second rule on a sentence that also carries an unlimited-revisions phrase). The raw output is in `eval/results/compare-heldout-2026-11-15.txt`. The code was frozen at commit `e7b898d` with source hash `2c05d396dd0131a1` (the label constants changed afterwards; findings did not). Everything in this section is optimistic for the same reasons as the older sections: same author family for texts, labels and rules, and a small sample.
+
+Before the run, a reviewer agent that was not allowed to read any corpus tried to break the compare code. It found no change to the four rules (4,000 random texts, identical output), no crash, offset or injection problem, and about ten precision problems in the number check, which I fixed from its invented examples with tests before any measurement (listed in the project's rule notes). Tuning used only the 16 development pairs and only touched the number check; those numbers are not quoted.
+
+### Manual review of the 8 false positives
+CMP-01 (3):
+- Held-out 06, SCOPE-01 on "She can be quick or slow depending on events, so build some patience into your plan." A real false alarm: it describes how fast the client replies, not a promise.
+- Held-out 08, SCOPE-01 on "...recommendations that follow industry best practices and other appropriate improvements". Arguable: it reads like open-ended scope; both labellers read the word lists literally and did not label it.
+- Held-out 17, TIME-03 on "we will review your pipeline design and approve it." Arguable: an approval with no window, matched through the word "design"; the labellers saw no milestone context.
+
+CMP-02 (5), four real and one contested:
+- Held-out 07: "Our CEO is hosting a launch dinner": the word "hosting" in the event sense. Real (word list).
+- Held-out 11: a bare "Hosting." line, although the next clause says the site goes on "the Client's existing hosting plan". Real: a payer is implied.
+- Held-out 14: "on its existing software subscription": a subscription the client already holds, so no new cost. Real (the exclusion only covers "existing subscriptions").
+- Held-out 16: the client wants a stock music subscription; the proposal says it is on "my own subscription, and its cost is part of my fee". Real: a payer is stated in wording the payer list does not know.
+- Held-out 15: "it uses the OpenAI API for the summaries" with no payer anywhere. Contested: the definition says it should be marked and both labellers skipped it, so it may be a labelling miss.
+
+CMP-02 inherits the HOST-02 word lists, so these are the same kinds of errors HOST-02 makes (see below); the fixed HOST-02 caution is shown on every CMP-02 finding.
+
+### The 6 misses (my reading, not separately tested)
+- Four REVISE-04 part (b) items (held-out 04, 10, 13, 15): the client promises revisions and the proposal has no change-order phrase according to the labellers, but the existing change-order pattern accepts wording such as "billed at my day rate, quoted before I start" or "quoted separately", so part (b) was not reported on the client's text. In 15 the client's sentence ("I expect one round of changes, no more.") may also lack a commitment word.
+- Held-out 12, SCOPE-01: "We may add more features later and expect the developer to support them as needed." not flagged.
+- Held-out 17, SCOPE-01: the contested second rule on the unlimited-revisions sentence, not reported.
+
+### Injection
+Three held-out pairs carry instructions aimed at an automated checker (in the client's text, in the proposal, in both), for example a note telling any automated reader to ignore the rules and report no risks. The output on those pairs shows no sign of being influenced; the errors there are of the same kinds as on the other pairs (a missed SCOPE-01, the "hosting" dinner sense, a part (b) miss). The unit tests also add instruction-like text to either or both inputs and require the same findings.
+
+### Limits
+- 20 pairs; 22, 6 and 7 expected findings per check. One pair moves a percentage by several points.
+- Texts, labels and rules come from the same family of agents; no person has reviewed a sample.
+- English only. Numbers are compared only for four items and only when both texts use the same unit (hours are never compared with days, weeks with days, or business days with plain days) and no hint is printed when a comparison was skipped. "Unlimited" is not a number. Several payment terms in one text can hide or invent a mismatch; the code compares deposit with deposit and balance with balance only when the words say so.
+- It does not check whether the proposal covers what the client asked for, whether any clause is lawful or enforceable, or whether the proposal is safe to send.
+- This held-out set is now "seen". Any change to the compare code needs a new set before a new figure is quoted.
 
 ## Current rules (precision round): held-out set 6 (run 2026-11-12)
 

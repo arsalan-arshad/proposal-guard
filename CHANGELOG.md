@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 (prepared, not published)
+
+Compare mode: the client's job post or contract next to your proposal. Marks are highlights on sentences, never a score.
+
+- New `compare(reference, proposal)` (library), `proposal-guard compare <client|-> <proposal|->` (CLI, `--json`, same exit codes), MCP tool `compare_documents` (read-only), and an optional second box in the demo (empty box = the old behaviour).
+- Three checks. `CMP-01`: SCOPE-01, TIME-03 and REVISE-04 on the client's text. `CMP-02`: a paid service named in the client's text with no payer in either text (HOST-02 word lists). `CMP-03`: a number that differs between the two texts for revision rounds, review time, payment time or delivery time.
+- Measured once on 20 invented pairs (agents wrote and labelled them): CMP-01 16 of 19 reported correct (met the pre-declared bar, `stable`); CMP-02 6 of 11 and CMP-03 7 of 7 with only 7 reported (below the bar: `experimental`, marked as such in every output). See `docs/EVALUATION.md`.
+- The four existing rules are unchanged: `npm run eval` output was byte-identical on all seven corpora before and after.
+- Internals: HOST-02 analysis and the REVISE-04 change-order pattern are exported for reuse; `scanSentences` split out of `scan`. A 500,000-character cap per text and 1,000,000 together.
+- Demo split into three pages with a tab bar: **Scan** is the 0.2.0 page (its script is identical to 0.2.0; only the tab bar was added), **Compare** is the page with the optional client's-text box, and **Suggest** is new and optional (see below). Scan and Compare keep a content-security policy that forbids every connection; `serve.json` now sets the policy per page.
+- Suggest (experimental, not evaluated): the fixed rules run on the page, the exact request is shown, and only after the user pastes their own Gemini API key, ticks a box and clicks Send is one request sent to `generativelanguage.googleapis.com`. Nothing is stored; the key stays in the page's memory. Model text never changes a finding; numbers in a reply that are in neither text are listed by code. The page warns that Google's terms say free-tier content may be used to improve its products and read by reviewers, and that Google advises against client-side keys in production.
+- Library `src/suggest.ts` (no network): `buildSuggestionRequest`, `numbersNotInTexts`, `geminiRequestBody`, `geminiUrl`, `parseGeminiResponse`. Command line `suggest-prompt <client|-> <proposal|->` prints the request for any model and sends nothing. MCP tools `prepare_suggestion` and `check_suggestion_numbers` (the server stays read-only and offline and never calls a model).
+- Not tested: a successful live model reply (no key). No accuracy figure exists or is claimed for model suggestions.
+- Found by an adversarial review and fixed before measurement: duration read by its anchor event, warranty/interest/offer senses, phase and round numbers read as revision counts, table rows, "(N)" forms, a quadratic path.
+
 ## 0.2.0 (not yet published to npm when this file was written)
 
 Precision release: fewer false alarms, no new word lists for recall. Measured on a fresh 30-document set against 0.1.0 on the same documents and labels: reported findings correct 18 of 38 (0.1.0: 18 of 43), found 18 of 37 (unchanged). A small cleanup, not a breakthrough; see `docs/EVALUATION.md`.

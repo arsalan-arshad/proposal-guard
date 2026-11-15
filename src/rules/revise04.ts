@@ -50,7 +50,7 @@ const LIMIT_RE =
 const COMMITMENT_RE =
   /\b(?:includ(?:e|es|ed|ing)|offer(?:s|ed|ing)?|provid(?:e|es|ed|ing)|allow(?:s|ed|ing)?|will|free|unlimited|as\s+many|deliver(?:s|ed)?|(?:we|I|you)\s+can|(?:happy|glad)\s+to|no\s+problem)\b/i;
 
-const CHANGE_ORDER_RE = new RegExp(
+export const CHANGE_ORDER_RE = new RegExp(
   [
     'change[- ]orders?',
     'change\\s+requests?',

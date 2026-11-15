@@ -1,4 +1,5 @@
-import type { RuleId, Severity } from './types.js';
+import { COMPARE_MATURITY } from './compare.js';
+import type { CompareCheckId, RuleId, Severity } from './types.js';
 
 export interface RuleInfo {
   id: RuleId;
@@ -57,4 +58,42 @@ export const RULE_INFO: readonly RuleInfo[] = [
 
 export function getRuleInfo(id: string): RuleInfo | undefined {
   return RULE_INFO.find((r) => r.id === id.toUpperCase());
+}
+
+export interface CompareCheckInfo {
+  id: CompareCheckId;
+  name: string;
+  flags: string;
+  leavesAlone: string;
+  /** `experimental` unless the check met the shipping bar in docs/EVALUATION.md. */
+  maturity: 'experimental' | 'stable';
+}
+
+/** Fixed descriptions of the three compare checks. The full definitions are in RULES_SPEC.md of the project. */
+export const COMPARE_INFO: readonly CompareCheckInfo[] = [
+  {
+    id: 'CMP-01',
+    name: "Risk in the client's own text",
+    flags: "SCOPE-01, TIME-03 and REVISE-04 findings in the client's text: wording you would be accepting if you sign it.",
+    leavesAlone: "HOST-02 (see CMP-02); REVISE-04 part (b) when your proposal has a change-order phrase; anything the three rules do not flag.",
+    maturity: COMPARE_MATURITY['CMP-01'],
+  },
+  {
+    id: 'CMP-02',
+    name: 'Paid service named in the client\'s text, no payer in either text',
+    flags: "A cost category from the HOST-02 word lists named in the client's text when no sentence in either text states who pays for it.",
+    leavesAlone: 'A category only your proposal names, a negated or excluded mention, and any category with a payer stated in either text.',
+    maturity: COMPARE_MATURITY['CMP-02'],
+  },
+  {
+    id: 'CMP-03',
+    name: 'Number mismatch',
+    flags: 'Revision rounds, review time, payment time or delivery time stated with different numbers in the two texts (same unit only).',
+    leavesAlone: 'Items only one text states, shared values, different units or scopes, "unlimited", paid extras, milestone-level deadlines, warranty or interest periods.',
+    maturity: COMPARE_MATURITY['CMP-03'],
+  },
+];
+
+export function getCompareInfo(id: string): CompareCheckInfo | undefined {
+  return COMPARE_INFO.find((c) => c.id === id.toUpperCase());
 }

@@ -1,0 +1,251 @@
+{
+ "01": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "We would like a fresh, modern site that feels warm and is really easy to use on phones."
+   },
+   {
+    "rule": "SCOPE-01",
+    "sentence": "The site should load quickly and look beautiful everywhere"
+   },
+   {
+    "rule": "REVISE-04",
+    "sentence": "How we like to work: we will give feedback as we go and we expect unlimited revisions until we love it."
+   }
+  ],
+  "CMP-02": [
+   {
+    "category": "cloud",
+    "sentence": "We plan to put it on Netlify like our old landing page"
+   }
+  ],
+  "CMP-03": []
+ },
+ "02": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "The vendor shall also provide training materials and any other documentation reasonably required for adoption."
+   },
+   {
+    "rule": "TIME-03",
+    "sentence": "Each release candidate is subject to written acceptance by the cooperative's operations manager."
+   },
+   {
+    "rule": "TIME-03",
+    "sentence": "Payment of each milestone invoice follows acceptance."
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": [
+   {
+    "item": "delivery",
+    "unit": "week",
+    "reference_sentence": "The completed application shall be delivered within 12 weeks of contract signature.",
+    "proposal_sentence": "We will complete the build and deliver the final app in 8 weeks from the signed agreement.",
+    "reference_values": [
+     12
+    ],
+    "proposal_values": [
+     8
+    ]
+   }
+  ]
+ },
+ "03": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": [
+   {
+    "item": "revisions",
+    "unit": "per",
+    "reference_sentence": "The Company may request two rounds of revisions per article.",
+    "proposal_sentence": "I include three rounds of revisions per article.",
+    "reference_values": [
+     2
+    ],
+    "proposal_values": [
+     3
+    ]
+   }
+  ]
+ },
+ "04": {
+  "CMP-01": [
+   {
+    "rule": "TIME-03",
+    "sentence": "Animation and final render after both are approved"
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "05": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "Use the OpenAI API to categorise the free-text \"delivery notes\" column into a handful of types (gate code, leave with neighbour, call first, and so on)"
+   }
+  ],
+  "CMP-02": [
+   {
+    "category": "api",
+    "sentence": "Geocode each cleaned address with the Google Maps API so we can plot customers on a map"
+   }
+  ],
+  "CMP-03": []
+ },
+ "06": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "07": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "Creative should be tailored to each channel and refreshed as needed during the campaign."
+   }
+  ],
+  "CMP-02": [
+   {
+    "category": "messaging",
+    "sentence": "**Channel mix:** email, SMS, social"
+   }
+  ],
+  "CMP-03": []
+ },
+ "08": {
+  "CMP-01": [
+   {
+    "rule": "TIME-03",
+    "sentence": "Our operations director will review the draft report and give approval before the final version is issued."
+   },
+   {
+    "rule": "SCOPE-01",
+    "sentence": "We are open to additional ideas that come up during the work and will expect the consultant to follow up on them as needed."
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "09": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "10": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "We want a cleaner website where listeners can find episodes quickly."
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "11": {
+  "CMP-01": [
+   {
+    "rule": "SCOPE-01",
+    "sentence": "The Contractor shall integrate the Portal with any other systems the Customer reasonably identifies during development."
+   },
+   {
+    "rule": "REVISE-04",
+    "sentence": "The Contractor shall make revisions to the Portal until the Customer is satisfied."
+   },
+   {
+    "rule": "REVISE-04",
+    "sentence": "Revisions are included in the Fees."
+   },
+   {
+    "rule": "TIME-03",
+    "sentence": "The deliverable shall be deemed accepted when the Customer gives written approval."
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": [
+   {
+    "item": "delivery",
+    "unit": "week",
+    "reference_sentence": "The Contractor shall complete the Portal within ten (10) weeks of the effective date.",
+    "proposal_sentence": "We will complete the Portal within 14 weeks of the effective date.",
+    "reference_values": [
+     10
+    ],
+    "proposal_values": [
+     14
+    ]
+   },
+   {
+    "item": "payment",
+    "unit": "day",
+    "reference_sentence": "The Customer shall pay each undisputed invoice within net 45 days.",
+    "proposal_sentence": "Each invoice is due net 30.",
+    "reference_values": [
+     45
+    ],
+    "proposal_values": [
+     30
+    ]
+   }
+  ]
+ },
+ "12": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "13": {
+  "CMP-01": [
+   {
+    "rule": "REVISE-04",
+    "sentence": "Because we do not know exactly what we will want to see until we have it in front of us, we expect unlimited revisions to the dashboard layout during the first month."
+   },
+   {
+    "rule": "REVISE-04",
+    "part": "b"
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "14": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": [
+   {
+    "item": "delivery",
+    "unit": "week",
+    "reference_sentence": "Timing: the film must be finished within 6 weeks of the wedding.",
+    "proposal_sentence": "I complete and deliver the final film within 8 weeks of the wedding.",
+    "reference_values": [
+     6
+    ],
+    "proposal_values": [
+     8
+    ]
+   }
+  ]
+ },
+ "15": {
+  "CMP-01": [],
+  "CMP-02": [],
+  "CMP-03": []
+ },
+ "16": {
+  "CMP-01": [
+   {
+    "rule": "TIME-03",
+    "sentence": "Our head of marketing accepts each milestone."
+   },
+   {
+    "rule": "TIME-03",
+    "sentence": "Milestone payments become due once she has accepted the build."
+   }
+  ],
+  "CMP-02": [],
+  "CMP-03": []
+ }
+}

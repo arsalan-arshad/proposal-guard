@@ -1,7 +1,7 @@
 import { dropOverlapping, findAll, has, hasPointer } from '../patterns.js';
 import type { Finding, HostCategory, RuleOutcome, Sentence, Severity, Term } from '../types.js';
 
-interface Category {
+export interface Category {
   id: HostCategory;
   label: string;
   severity: Severity;
@@ -9,7 +9,7 @@ interface Category {
 }
 
 // Brand names are case-sensitive on purpose ("Railway", "Azure", "Firebase" are also ordinary words or names).
-const CATEGORIES: Category[] = [
+export const CATEGORIES: Category[] = [
   {
     id: 'cloud',
     label: 'cloud and hosting',
@@ -175,9 +175,9 @@ const PAYER_HEADER_RE = /\b(?:who\s+pays|paid\s+by|payer|billed\s+to|cost\s+owne
 export const HOST02_CAUTION =
   'This was the least reliable rule in our tests: most of its findings were wrong. Read the document to check who pays before acting on it.';
 
-const WHY = 'Usage-based services can cost more than expected, and with no stated payer the cost can land on you.';
+export const WHY = 'Usage-based services can cost more than expected, and with no stated payer the cost can land on you.';
 
-function suggestion(label: string): string {
+export function suggestion(label: string): string {
   return `State who pays for ${label} costs, for example: ${label} costs are billed to the client's account at cost, or are included in the fee of [amount].`;
 }
 
@@ -200,8 +200,21 @@ function isTitleLine(masked: string): boolean {
   return t.length > 0 && words.length <= 3 && !/[.,;!?]/.test(t) && /^[A-Z]/.test(t) && !/\b(?:on|through|via|with|by|from|at|in|for|to|using|of)\b/i.test(t);
 }
 
-/** HOST-02: a paid third-party service is named, and nothing says who pays for that kind of cost. */
-export function checkHost02(sentences: Sentence[]): RuleOutcome {
+/** What HOST-02 knows about one sentence: its category cues, and whether it states a payer. */
+export interface HostSentenceInfo {
+  s: Sentence;
+  byCategory: Map<HostCategory, Term[]>;
+  assigns: boolean;
+  generic: boolean;
+}
+
+/** True if some sentence states a payer for the category (or a generic cost term with a payer, which covers every category). */
+export function hostCovers(infos: readonly HostSentenceInfo[], id: HostCategory): boolean {
+  return infos.some((p) => p.generic || (p.assigns && p.byCategory.has(id)));
+}
+
+/** Per-sentence HOST-02 analysis. Shared with compare mode, which asks the same question across two texts. */
+export function analyseHost02(sentences: Sentence[]): HostSentenceInfo[] {
   // Per sentence: category cues (minus excluded senses) and whether it states a payer.
   // A table cell that names a party ("Client", "Included") states the payer for the other cells of its row.
   const payerRows = new Set(sentences.filter((s) => s.row !== undefined && PAYER_CELL_RE.test(s.masked)).map((s) => s.row as number));
@@ -232,7 +245,12 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
     const generic = assigns && has(GENERIC_RE, s.masked);
     return { s, byCategory, assigns, generic };
   });
+  return perSentence;
+}
 
+/** HOST-02: a paid third-party service is named, and nothing says who pays for that kind of cost. */
+export function checkHost02(sentences: Sentence[]): RuleOutcome {
+  const perSentence = analyseHost02(sentences);
   const findings: Finding[] = [];
   let sawCue = false;
 
@@ -240,7 +258,7 @@ export function checkHost02(sentences: Sentence[]): RuleOutcome {
     const withCue = perSentence.filter((p) => p.byCategory.has(cat.id));
     if (withCue.length === 0) continue;
     sawCue = true;
-    const covered = perSentence.some((p) => p.generic || (p.assigns && p.byCategory.has(cat.id)));
+    const covered = hostCovers(perSentence, cat.id);
     if (covered) continue;
 
     const first = withCue[0];
