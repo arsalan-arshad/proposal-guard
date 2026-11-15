@@ -177,3 +177,23 @@ describe('compare checks in list-rules and explain', () => {
     expect(j.compareChecks).toHaveLength(3);
   });
 });
+
+describe('suggest-prompt', () => {
+  const REF = 'Pay within 30 days. The site will run on AWS.';
+  const PROP = 'Invoices are due net 14.';
+  it('prints the exact request and says nothing was sent; exits 0', () => {
+    const r = exec(['suggest-prompt', file('sc.md', REF), file('sp.md', PROP)]);
+    expect(r.code).toBe(0);
+    expect(r.out).toContain('Nothing was sent anywhere');
+    expect(r.out).toContain('=== INSTRUCTIONS ===');
+    expect(r.out).toContain('<client_text>');
+    expect(r.out).toContain(DISCLAIMER_SHORT);
+  });
+  it('--json is parseable; one input may be "-"; bad usage is exit 2', () => {
+    const j = JSON.parse(exec(['suggest-prompt', '-', file('sp2.md', PROP), '--json'], REF).out);
+    expect(j.userText).toContain('Pay within 30 days');
+    expect(exec(['suggest-prompt', '-', '-'], REF).code).toBe(2);
+    expect(exec(['suggest-prompt', file('sc3.md', REF)]).code).toBe(2);
+    expect(exec(['suggest-prompt', '-', file('sp4.md', PROP)], 'a'.repeat(70_000)).code).toBe(2);
+  });
+});

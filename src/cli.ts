@@ -2,6 +2,7 @@ import { readFileSync, statSync } from 'node:fs';
 import { extname } from 'node:path';
 import { compare, DEFAULT_MAX_TOTAL_CHARS } from './compare.js';
 import { DEFAULT_MAX_CHARS, DISCLAIMER_SHORT, scan } from './scan.js';
+import { buildSuggestionRequest } from './suggest.js';
 import { COMPARE_INFO, RULE_INFO, getCompareInfo, getRuleInfo } from './rules-info.js';
 import { VERSION } from './version.js';
 import type { CompareFinding, CompareResult, Finding, ScanResult } from './types.js';
@@ -22,6 +23,9 @@ Usage:
   proposal-guard compare <client-file|-> <proposal-file|-> [--json]
                                           Mark sentences in the client's text and in your proposal
                                           (only one of the two may be "-")
+  proposal-guard suggest-prompt <client-file|-> <proposal-file|-> [--json]
+                                          Print the exact request you could send to a model of your choice
+                                          (rule findings + both texts + fixed instructions). Sends nothing.
   proposal-guard list-rules [--json]      List the four rules
   proposal-guard explain <RULE-ID|CMP-ID> Describe one rule or compare check
   proposal-guard --help
@@ -38,6 +42,9 @@ Compare marks are highlights, not a score. CMP-02 and CMP-03 are experimental (s
 
 ${DISCLAIMER_SHORT}
 `;
+
+const SUGGEST_NOTICE =
+  'Nothing was sent anywhere. This is the text you could give to a model you choose, with your own key or account. Free model services may keep and read what you send, so use invented text if you are unsure. A model may be wrong; check any number it gives against your own documents.';
 
 class UsageError extends Error {}
 
@@ -181,6 +188,22 @@ export function run(argv: string[], io: CliIo): number {
       }
       io.stdout(json ? JSON.stringify(result, null, 2) + '\n' : formatCompareText(result));
       return result.findings.length > 0 ? 1 : 0;
+    }
+    if (cmd === 'suggest-prompt') {
+      if (rest.length !== 2) throw new UsageError('Usage: proposal-guard suggest-prompt <client-file|-> <proposal-file|-> [--json]');
+      if (rest[0] === '-' && rest[1] === '-') throw new UsageError('Only one of the two inputs may be "-" (standard input).');
+      const reference = readInput(rest[0] ?? '', io);
+      const proposal = readInput(rest[1] ?? '', io);
+      let req: ReturnType<typeof buildSuggestionRequest>;
+      try {
+        req = buildSuggestionRequest(reference, proposal);
+      } catch (e) {
+        if (e instanceof RangeError) throw new UsageError(e.message);
+        throw e;
+      }
+      if (json) io.stdout(JSON.stringify({ notice: SUGGEST_NOTICE, systemInstruction: req.systemInstruction, userText: req.userText, disclaimer: req.disclaimer }, null, 2) + '\n');
+      else io.stdout(`${SUGGEST_NOTICE}\n\n=== INSTRUCTIONS ===\n${req.systemInstruction}\n\n=== MESSAGE ===\n${req.userText}\n\n${req.disclaimer}\n`);
+      return 0;
     }
     throw new UsageError(`Unknown command "${cmd}". Run --help.`);
   } catch (e) {

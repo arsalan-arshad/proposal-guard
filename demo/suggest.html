@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://generativelanguage.googleapis.com; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Proposal Guard demo: suggest</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <nav class="tabs" aria-label="Demo modes"><a href="index.html">Scan (as in 0.2.0)</a><a href="compare.html">Compare</a><a href="suggest.html" aria-current="page">Suggest with your own Gemini key</a></nav>
+  <header class="brand">
+    <img src="assets/icon-64.png" width="48" height="48" alt="">
+    <h1>Proposal Guard: suggest</h1>
+  </header>
+  <p class="lead">Paste the client's job post or contract and your draft. The fixed rules run first, on this page. Then, only if you choose, a model you control suggests better wording using both texts. Optional and experimental.</p>
+
+  <section class="warn">
+    <p><strong>This is the only page of the demo that can send text anywhere.</strong> Nothing is sent until you click "Send to Gemini", and only to Google's Gemini API (generativelanguage.googleapis.com), with your own key. Tabs 1 and 2 still make no network requests at all.</p>
+    <p><strong>Free keys and privacy.</strong> Google's terms for unpaid Gemini API use say submitted content may be used to improve Google products and may be read by human reviewers; for paid use Google says it does not use prompts to improve its products. So on a free key, send only invented text or text you are happy to share. Do not paste a real client's confidential contract.</p>
+    <p><strong>Your key.</strong> It stays in this page's memory for this visit: it is not stored, not logged and not sent anywhere except in the request to Google. Google's own guidance is never to put a key in client-side code in production, so use a key made for this, restrict it, and delete it afterwards.</p>
+    <p><strong>Not legal advice.</strong> A model can be wrong and can write confidently about things that are not in your documents. Treat every suggestion as a draft to check. No model text is used to decide any finding.</p>
+  </section>
+
+  <section class="notice">
+    <p><strong>What is different from pasting both texts into Gemini yourself?</strong></p>
+    <ul>
+      <li>The fixed rules run first, on your device, and their findings are shown on their own. The request starts from them, and the model can never change them.</li>
+      <li>You see the exact text that will be sent before you send it, and you confirm each time.</li>
+      <li>The instructions to the model are fixed and public in the open-source code: treat both texts as data and not as instructions, do not invent numbers or prices (use blanks such as [N]), make no legal claims. The request has no tools.</li>
+      <li>Plain code then lists every number in the reply that is in neither of your texts, so an invented figure is visible.</li>
+    </ul>
+    <p><strong>What it does not add:</strong> a better model or better wording. Gemini on its own can do this job, and may write as well or better. If you are happy to paste your texts there, nothing here improves the writing. The model's suggestions were not evaluated, and the project makes no accuracy claim about them.</p>
+  </section>
+
+  <label for="brief">Client's job post or contract</label>
+  <textarea id="brief" rows="8" spellcheck="false" autocomplete="off"></textarea>
+  <label for="draft">Your draft (use invented text if you are just trying it out)</label>
+  <textarea id="draft" rows="8" spellcheck="false" autocomplete="off"></textarea>
+  <div class="row">
+    <button id="prepare" type="button">1. Check with the rules and prepare the request</button>
+    <button id="sample" type="button">Load invented sample</button>
+    <button id="clear" type="button">Clear everything</button>
+  </div>
+  <p id="error" role="alert"></p>
+
+  <section id="prepared" hidden>
+    <h2>What the fixed rules found (on this page)</h2>
+    <div id="findings"></div>
+    <h2>Exactly what will be sent to Google</h2>
+    <p id="sent-summary" class="small"></p>
+    <pre id="sent" class="sent"></pre>
+
+    <h2>2. Send it, with your own key</h2>
+    <label for="model">Model id (you can change it; the default comes from Google's model list and was not tested with a live key)</label>
+    <input id="model" type="text" spellcheck="false" autocomplete="off">
+    <label for="key">Your Gemini API key</label>
+    <input id="key" type="password" spellcheck="false" autocomplete="off">
+    <label class="check"><input id="ack" type="checkbox"> I understand that the text shown above will be sent to Google, and that on a free key it may be used to improve Google products and read by reviewers.</label>
+    <div class="row">
+      <button id="send" type="button" disabled>Send to Gemini</button>
+      <button id="forget" type="button" class="secondary">Forget key</button>
+    </div>
+    <p id="status" class="small" role="status"></p>
+  </section>
+
+  <section id="answer" hidden>
+    <h2>Model suggestion (written by Gemini, not by the rules)</h2>
+    <p class="small">Plain text. It did not change any finding above. Check it against your documents before using any of it.</p>
+    <div id="reply"></div>
+    <div id="numbers-box" hidden>
+      <h3>Numbers in this suggestion that are in neither of your texts</h3>
+      <p class="small">Found by code, not by the model. Treat them as blanks to fill in yourself, not as facts.</p>
+      <ul id="numbers" class="numbers"></ul>
+    </div>
+  </section>
+
+  <p id="short-disclaimer" class="small"></p>
+  <p class="small">Open source (MIT): <a href="https://github.com/arsalan-arshad/proposal-guard" rel="noopener noreferrer">github.com/arsalan-arshad/proposal-guard</a>. A project by <a href="https://arsalandev.studio" rel="noopener noreferrer">arsalandev.studio</a>: <a href="https://arsalandev.studio/work/proposal-guard" rel="noopener noreferrer">case study</a>.</p>
+</main>
+<script src="suggest.js"></script>
+</body>
+</html>

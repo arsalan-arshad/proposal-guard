@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 (prepared, not published; builds on 0.3.0, which is also not published)
+
+Three demo tabs and optional model suggestions with your own key.
+
+- Demo: three pages with a tab bar. **Scan** is the 0.2.0 page, byte for byte plus the tab bar (its script is identical to 0.2.0). **Compare** is the 0.3.0 page. **Suggest** is new: rules first, the exact request shown, then one request to Google's Gemini API with the user's own key, only after a tick box and a click. Scan and Compare keep a policy that forbids all connections; only Suggest allows `https://generativelanguage.googleapis.com`. `serve.json` now sets the policy per page.
+- Library (`src/suggest.ts`, no network): `buildSuggestionRequest`, `numbersNotInTexts`, `geminiRequestBody`, `geminiUrl`, `parseGeminiResponse`.
+- Command line: `suggest-prompt <client|-> <proposal|->` prints the request for any model; sends nothing.
+- MCP server: `prepare_suggestion` and `check_suggestion_numbers` (still read-only, still no network, still never calls a model; the host's own model writes the suggestions).
+- Not evaluated: model output has no accuracy figure. Only the deterministic parts are tested (request shape, number check, reply reader, one request to one address). A successful live reply was not tested (no key).
+- Note: Google's terms say content sent on a free key may be used to improve its products and read by reviewers; the page says so before sending.
+
 ## 0.3.0 (prepared, not published)
 
 Compare mode: the client's job post or contract next to your proposal. Marks are highlights on sentences, never a score.
