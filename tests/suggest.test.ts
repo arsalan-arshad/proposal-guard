@@ -1,14 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  DEFAULT_GEMINI_MODEL,
-  GEMINI_ORIGIN,
-  SUGGEST_SYSTEM_INSTRUCTION,
-  buildSuggestionRequest,
-  geminiRequestBody,
-  geminiUrl,
-  numbersNotInTexts,
-  parseGeminiResponse,
-} from '../src/index.js';
+import { SUGGEST_SYSTEM_INSTRUCTION, buildSuggestionRequest, formatSuggestionPrompt, numbersNotInTexts } from '../src/index.js';
 
 /** All text here is invented. */
 const BRIEF = 'We need a shop site. Delivery within 6 weeks. We pay invoices within 30 days. The site will run on AWS.';
@@ -60,40 +51,13 @@ describe('buildSuggestionRequest', () => {
   });
 });
 
-describe('the Gemini request', () => {
-  const req = buildSuggestionRequest(BRIEF, DRAFT);
-  it('has the documented shape, one user message, no tools', () => {
-    const body = geminiRequestBody(req) as any;
-    expect(body.systemInstruction.parts[0].text).toBe(SUGGEST_SYSTEM_INSTRUCTION);
-    expect(body.contents).toHaveLength(1);
-    expect(body.contents[0].role).toBe('user');
-    expect(body.contents[0].parts[0].text).toBe(req.userText);
-    expect(Object.keys(body).sort()).toEqual(['contents', 'generationConfig', 'systemInstruction']);
-    expect(JSON.stringify(body)).not.toMatch(/"tools"|functionDeclarations|googleSearch|codeExecution/);
-  });
-  it('the address is the one allowed host, and a model id cannot add a path', () => {
-    expect(geminiUrl(DEFAULT_GEMINI_MODEL)).toBe(`${GEMINI_ORIGIN}/v1beta/models/${DEFAULT_GEMINI_MODEL}:generateContent`);
-    for (const bad of ['', 'a/b', '../x', 'x?key=1', 'x y', 'x:generateContent/../y', 'a'.repeat(80)]) expect(() => geminiUrl(bad)).toThrow(RangeError);
-    expect(geminiUrl('gemini-x.1_a')).toContain('/models/gemini-x.1_a:');
-  });
-});
-
-describe('parseGeminiResponse', () => {
-  it('reads text from candidates', () => {
-    expect(parseGeminiResponse({ candidates: [{ content: { parts: [{ text: 'Hello ' }, { text: 'world' }] }, finishReason: 'STOP' }] })).toEqual({ ok: true, text: 'Hello world' });
-  });
-  it('reads the documented error body', () => {
-    const r = parseGeminiResponse({ error: { code: 400, message: 'API key not valid. Please pass a valid API key.', status: 'INVALID_ARGUMENT' } });
-    expect(r).toEqual({ ok: false, error: 'API key not valid. Please pass a valid API key.' });
-  });
-  it('handles a blocked prompt, an empty reply and junk without throwing', () => {
-    expect(parseGeminiResponse({ promptFeedback: { blockReason: 'SAFETY' } })).toMatchObject({ ok: false, error: expect.stringContaining('SAFETY') });
-    expect(parseGeminiResponse({ candidates: [{ finishReason: 'MAX_TOKENS' }] })).toMatchObject({ ok: false, error: expect.stringContaining('MAX_TOKENS') });
-    for (const junk of [null, 5, 'x', [], {}, { candidates: [] }, { candidates: [{ content: { parts: [{ text: 5 }] } }] }]) expect(parseGeminiResponse(junk).ok).toBe(false);
-  });
-  it('truncates a long error message', () => {
-    const r = parseGeminiResponse({ error: { message: 'x'.repeat(1000) } });
-    expect(r.ok === false && r.error.length).toBe(300);
+describe('formatSuggestionPrompt', () => {
+  it('is the fixed instructions followed by the data blocks, as one block of text to copy', () => {
+    const req = buildSuggestionRequest(BRIEF, DRAFT);
+    const text = formatSuggestionPrompt(req);
+    expect(text.startsWith(SUGGEST_SYSTEM_INSTRUCTION)).toBe(true);
+    expect(text.endsWith(req.userText)).toBe(true);
+    expect(text).toContain('<client_text>');
   });
 });
 
@@ -128,7 +92,7 @@ describe('the core stays offline', () => {
   it('suggest.ts has no network or storage calls', async () => {
     const { readFileSync } = await import('node:fs');
     const code = readFileSync('src/suggest.ts', 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
-    for (const banned of ['fetch(', 'XMLHttpRequest', 'WebSocket', 'node:http', 'node:https', 'localStorage', 'process.env']) expect(code.includes(banned), banned).toBe(false);
+    for (const banned of ['fetch(', 'XMLHttpRequest', 'WebSocket', 'node:http', 'node:https', 'localStorage', 'process.env', 'googleapis', 'x-goog-api-key']) expect(code.includes(banned), banned).toBe(false);
   });
 });
 

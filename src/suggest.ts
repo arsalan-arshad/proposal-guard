@@ -5,9 +5,9 @@ import type { CompareFinding } from './types.js';
 /**
  * Model-assisted suggestions, prepared by plain code. NOTHING in this file calls a model or the network.
  *
- * The fixed rules run first and decide every finding. This module only (1) builds the exact request a person may
- * choose to send to a model with their own key, (2) checks the model's reply for numbers that are in neither text,
- * and (3) reads a reply or error. The model's words are never merged into the findings and never edit a document.
+ * The fixed rules run first and decide every finding. This module only (1) builds the exact prompt a person may choose
+ * to paste into an assistant of their own, and (2) checks a reply the person pastes back for numbers that are in neither
+ * text. The model's words are never merged into the findings and never edit a document.
  * Both texts are untrusted data: they go inside labelled data tags, after fixed instructions, and a request has no tools.
  */
 
@@ -131,46 +131,10 @@ export function numbersNotInTexts(brief: string, draft: string, suggestion: stri
   return numbersIn(suggestion, true).filter((h) => !known.has(normaliseNumber(h.text)));
 }
 
-// ---------------------------------------------------------------------------------------------------------------
-// Google Gemini (REST, user's own key). Request and response shapes only; the call itself is made by the page.
-
-export const GEMINI_ORIGIN = 'https://generativelanguage.googleapis.com';
-/** From the model list in Google's documentation on 2026-11-15; a free-tier model. Unverified with a live key: the page lets the user change it. */
-export const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
-const MODEL_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,60}$/;
-
-export function geminiUrl(model: string): string {
-  if (!MODEL_ID_RE.test(model)) throw new RangeError('That does not look like a model id.');
-  return `${GEMINI_ORIGIN}/v1beta/models/${model}:generateContent`;
-}
-
-/** The JSON body. It has no `tools` field: the model cannot call anything. */
-export function geminiRequestBody(req: SuggestionRequest): Record<string, unknown> {
-  return {
-    systemInstruction: { parts: [{ text: req.systemInstruction }] },
-    contents: [{ role: 'user', parts: [{ text: req.userText }] }],
-    generationConfig: { temperature: 0.3, maxOutputTokens: 2048 },
-  };
-}
-
-export type GeminiReply = { ok: true; text: string } | { ok: false; error: string };
-
-/** Reads a generateContent reply (or an error body). Defensive on purpose: shapes beyond the documented error were not verified with a live key. */
-export function parseGeminiResponse(json: unknown): GeminiReply {
-  const j = json as Record<string, any> | null;
-  if (j === null || typeof j !== 'object') return { ok: false, error: 'The reply was not JSON.' };
-  const err = j['error'] as Record<string, unknown> | undefined;
-  if (err && typeof err === 'object') {
-    const msg = typeof err['message'] === 'string' ? (err['message'] as string) : 'The API returned an error.';
-    return { ok: false, error: msg.slice(0, 300) };
-  }
-  const block = j['promptFeedback']?.blockReason;
-  if (typeof block === 'string') return { ok: false, error: `The model declined the request (${block.slice(0, 60)}).` };
-  const parts = j['candidates']?.[0]?.content?.parts;
-  const text = Array.isArray(parts) ? parts.map((p: any) => (typeof p?.text === 'string' ? p.text : '')).join('') : '';
-  if (text.trim() === '') {
-    const why = j['candidates']?.[0]?.finishReason;
-    return { ok: false, error: `The model returned no text${typeof why === 'string' ? ` (${why.slice(0, 60)})` : ''}.` };
-  }
-  return { ok: true, text };
+/**
+ * One block of text to paste into any assistant: the fixed instructions, then the data blocks. Nothing is sent by this
+ * code; the person copies it themselves.
+ */
+export function formatSuggestionPrompt(req: SuggestionRequest): string {
+  return `${req.systemInstruction}\n\n${req.userText}`;
 }
