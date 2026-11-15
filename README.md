@@ -145,7 +145,7 @@ node dist/bin.js scan my-proposal.md
 
 ```bash
 npm run typecheck
-npm test                       # 423 tests at the time of writing
+npm test                       # 424 tests at the time of writing
 npm run build
 npm run eval -- corpus/dev     # tuned against; not a result
 npm run eval:compare -- corpus/compare-heldout --details   # compare mode, see below
