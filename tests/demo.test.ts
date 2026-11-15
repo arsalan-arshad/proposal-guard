@@ -78,19 +78,12 @@ describe('demo makes no outside requests and stores nothing', () => {
     return out.outputFiles[0]?.text ?? '';
   };
 
-  it('the scan tab (0.2.0) and the compare tab have no network, storage or HTML-injection APIs at all', async () => {
-    for (const entry of ['app.ts', 'compare.ts']) {
+  it('none of the three pages has any network, storage or HTML-injection API', async () => {
+    for (const entry of ['app.ts', 'compare.ts', 'suggest.ts']) {
       const code = await bundle(entry);
-      for (const banned of [...BANNED, 'fetch(']) expect(code.includes(banned), `${entry}: ${banned}`).toBe(false);
+      for (const banned of [...BANNED, 'fetch(', 'googleapis', 'x-goog-api-key']) expect(code.includes(banned), `${entry}: ${banned}`).toBe(false);
+      expect(code.match(/https?:\/\/[A-Za-z0-9.-]+/g) ?? [], entry).toEqual([]);
     }
-  });
-
-  it('the suggest tab may call fetch, only towards the Gemini address, and has no storage or HTML-injection APIs', async () => {
-    const code = await bundle('suggest.ts');
-    for (const banned of BANNED) expect(code.includes(banned), banned).toBe(false);
-    expect(code.match(/fetch\(/g)).toHaveLength(1);
-    const urls = new Set((code.match(/https?:\/\/[A-Za-z0-9.-]+/g) ?? []));
-    expect([...urls]).toEqual(['https://generativelanguage.googleapis.com']);
   });
 
   it('the scan tab is the 0.2.0 page: it imports only scan, the rule list and the segment helper', () => {
@@ -176,13 +169,12 @@ describe('security headers (serve.json)', () => {
     }
   });
 
-  it('the scan and compare pages forbid all connections; only the suggest page allows one address', () => {
-    for (const page of ['index.html', 'compare.html']) {
+  it('all three pages forbid every connection, in the page and in the header file', () => {
+    for (const page of ['index.html', 'compare.html', 'suggest.html']) {
       expect(dirs(metaCsp(page)).get('connect-src'), page).toBe("connect-src 'none'");
       expect(dirs(headerCsp(page)).get('connect-src'), page).toBe("connect-src 'none'");
     }
-    expect(dirs(metaCsp('suggest.html')).get('connect-src')).toBe('connect-src https://generativelanguage.googleapis.com');
-    expect(dirs(headerCsp('suggest.html')).get('connect-src')).toBe('connect-src https://generativelanguage.googleapis.com');
+    expect(JSON.stringify(cfg)).not.toMatch(/googleapis|generativelanguage/);
   });
 
   it('each page loads only its own script, and every page has the same three tabs', () => {
@@ -197,17 +189,16 @@ describe('security headers (serve.json)', () => {
     }
   });
 
-  it('the suggest page says plainly that it sends text, what the free tier means, and what it adds and does not add', () => {
+  it('the prompt page sends nothing, has no key field, and says what it adds and does not add', () => {
     const h = readFileSync('demo/suggest.html', 'utf8');
-    expect(h).toMatch(/only page of the demo that can send text/i);
-    expect(h).toMatch(/improve Google products/);
-    expect(h).toMatch(/human reviewers/);
-    expect(h).toMatch(/What is different from pasting both texts into Gemini yourself/);
-    expect(h).toMatch(/What it does not add/);
+    expect(h).toMatch(/What leaves your device: nothing/);
+    expect(h).toMatch(/Why not just use Gemini, ChatGPT or Claude directly/);
+    expect(h).toMatch(/We do not claim better writing/);
+    expect(h).toMatch(/When to skip this/);
     expect(h).toMatch(/Not legal advice/);
-    expect(h).toMatch(/type="password"/);
-    expect(h).toMatch(/id="send" type="button" disabled/);
+    expect(h).not.toMatch(/type="password"|api key|id="key"|id="send"|googleapis|generativelanguage/i);
     expect(h).not.toMatch(/\b(?:compliant|guaranteed?|protected)\b/i);
+    expect(h).toMatch(/id="copy"/);
   });
 
   it('the demo build copies the pages and serve.json', () => {
@@ -251,48 +242,5 @@ describe('README compare section', () => {
 
   it('the README table does not start with the single-document results header, so that table stays unique', () => {
     expect(readme.split('\n').filter((l) => l.startsWith('| Check | Reported findings'))).toHaveLength(1);
-  });
-});
-
-describe('the suggest tab request (fake fetch, no network)', () => {
-  it('sends one POST to the Gemini address with the key only in the header, no cookies, no referrer', async () => {
-    const { requestSuggestion } = await import('../demo/call.js');
-    const { buildSuggestionRequest, geminiRequestBody } = await import('../src/index.js');
-    const req = buildSuggestionRequest('Pay within 30 days.', 'Pay within 14 days.');
-    const calls: Array<{ url: string; init: any }> = [];
-    const ok = async (url: string, init: any) => (calls.push({ url, init }), { ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text: 'Do this [N].' }] } }] }) });
-    const out = await requestSuggestion(ok as any, req, ' gemini-x ', '  KEY123  ', new AbortController().signal);
-    expect(out).toEqual({ status: 200, reply: { ok: true, text: 'Do this [N].' } });
-    expect(calls).toHaveLength(1);
-    expect(calls[0]?.url).toBe('https://generativelanguage.googleapis.com/v1beta/models/gemini-x:generateContent');
-    expect(calls[0]?.init.method).toBe('POST');
-    expect(calls[0]?.init.headers).toEqual({ 'content-type': 'application/json', 'x-goog-api-key': 'KEY123' });
-    expect(calls[0]?.init.credentials).toBe('omit');
-    expect(calls[0]?.init.referrerPolicy).toBe('no-referrer');
-    expect(JSON.parse(calls[0]?.init.body)).toEqual(JSON.parse(JSON.stringify(geminiRequestBody(req))));
-    expect(calls[0]?.url).not.toContain('KEY123');
-    expect(calls[0]?.init.body).not.toContain('KEY123');
-  });
-
-  it('turns the documented error body, a bad status and a non-JSON reply into errors, never into suggestions', async () => {
-    const { requestSuggestion } = await import('../demo/call.js');
-    const { buildSuggestionRequest } = await import('../src/index.js');
-    const req = buildSuggestionRequest('a', 'b');
-    const sig = new AbortController().signal;
-    const bad = async () => ({ ok: false, status: 400, json: async () => ({ error: { code: 400, message: 'API key not valid. Please pass a valid API key.' } }) });
-    expect((await requestSuggestion(bad as any, req, 'm', 'k', sig)).reply).toEqual({ ok: false, error: 'API key not valid. Please pass a valid API key.' });
-    const statusOnly = async () => ({ ok: false, status: 503, json: async () => ({ candidates: [{ content: { parts: [{ text: 'x' }] } }] }) });
-    expect((await requestSuggestion(statusOnly as any, req, 'm', 'k', sig)).reply).toEqual({ ok: false, error: 'Google answered with status 503.' });
-    const notJson = async () => ({ ok: true, status: 200, json: async () => { throw new Error('x'); } });
-    expect((await requestSuggestion(notJson as any, req, 'm', 'k', sig)).reply.ok).toBe(false);
-  });
-
-  it('refuses a model id that could change the address, before any request is made', async () => {
-    const { requestSuggestion } = await import('../demo/call.js');
-    const { buildSuggestionRequest } = await import('../src/index.js');
-    let called = 0;
-    const f = async () => (called++, { ok: true, status: 200, json: async () => ({}) });
-    await expect(requestSuggestion(f as any, buildSuggestionRequest('a', 'b'), '../evil?x=', 'k', new AbortController().signal)).rejects.toThrow(RangeError);
-    expect(called).toBe(0);
   });
 });

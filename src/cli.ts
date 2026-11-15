@@ -44,7 +44,7 @@ ${DISCLAIMER_SHORT}
 `;
 
 const SUGGEST_NOTICE =
-  'Nothing was sent anywhere. This is the text you could give to a model you choose, with your own key or account. Free model services may keep and read what you send, so use invented text if you are unsure. A model may be wrong; check any number it gives against your own documents.';
+  'Nothing was sent anywhere. This is the text you could paste into an assistant you choose. The terms of that service then apply, and free services may keep and read what you send, so use invented text if you are unsure. A model may be wrong; check any number it gives against your own documents.';
 
 class UsageError extends Error {}
 

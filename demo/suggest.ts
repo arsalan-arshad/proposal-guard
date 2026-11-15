@@ -1,19 +1,10 @@
-import {
-  DEFAULT_GEMINI_MODEL,
-  DISCLAIMER_SHORT,
-  GEMINI_ORIGIN,
-  buildSuggestionRequest,
-  geminiUrl,
-  numbersNotInTexts,
-} from '../src/index.js';
+import { DISCLAIMER_SHORT, buildSuggestionRequest, formatSuggestionPrompt, numbersNotInTexts } from '../src/index.js';
 import type { CompareFinding, SuggestionRequest } from '../src/index.js';
-import { requestSuggestion } from './call.js';
 
 /**
- * Tab 3. The fixed rules run on this page first. Only when the person clicks "Send to Gemini", with their own key and after
- * ticking the box, one request goes to Google's Gemini API. This is the only file in the demo that calls fetch; the page's
- * content-security-policy allows that one address and nothing else. Nothing is stored. Everything shown is written with
- * textContent, never as HTML. The key lives only in the input field and in the one request header.
+ * Tab 3. Builds a prompt on this page and shows it. It sends nothing anywhere: this page has no key field, makes no
+ * network request (its content-security policy forbids them) and stores nothing. The clipboard is written only when the
+ * person clicks "Copy the prompt". Everything shown is written with textContent, never as HTML.
  */
 
 const SAMPLE_BRIEF = [
@@ -49,23 +40,13 @@ function el(tag: string, className?: string, text?: string): HTMLElement {
 
 let prepared: SuggestionRequest | undefined;
 let preparedTexts: { brief: string; draft: string } | undefined;
-let inFlight: AbortController | undefined;
-
-function canSend(): boolean {
-  return prepared !== undefined && $<HTMLInputElement>('ack').checked && $<HTMLInputElement>('key').value.trim() !== '' && inFlight === undefined;
-}
-function refreshSend(): void {
-  $<HTMLButtonElement>('send').disabled = !canSend();
-}
 
 function invalidate(): void {
   prepared = undefined;
   preparedTexts = undefined;
   $('prepared').hidden = true;
-  $('answer').hidden = true;
-  $<HTMLInputElement>('ack').checked = false;
-  $('status').textContent = '';
-  refreshSend();
+  $('numbers-box').hidden = true;
+  $('copy-status').textContent = '';
 }
 
 function describe(f: CompareFinding): string {
@@ -104,85 +85,48 @@ function prepare(): void {
     prepared = req;
     preparedTexts = { brief, draft };
     renderFindings(req.findings);
-    $('sent-summary').textContent = `${req.textChars} characters of your two texts, plus the fixed instructions and the rule findings below, would go to ${GEMINI_ORIGIN}. The instructions are sent as a separate system instruction.`;
-    $('sent').textContent = `=== INSTRUCTIONS ===\n${req.systemInstruction}\n\n=== MESSAGE ===\n${req.userText}`;
-    $<HTMLInputElement>('model').value ||= DEFAULT_GEMINI_MODEL;
+    $('sent-summary').textContent = `${req.textChars} characters of your two texts plus the fixed instructions and the rule findings. Nothing has been sent anywhere.`;
+    $('sent').textContent = formatSuggestionPrompt(req);
     $('prepared').hidden = false;
-    refreshSend();
   } catch (e) {
-    err.textContent = e instanceof RangeError ? e.message : 'Could not prepare the request.';
+    err.textContent = e instanceof RangeError ? e.message : 'Could not prepare the prompt.';
   }
 }
 
-function showReply(text: string): void {
-  $('reply').textContent = text;
+function checkNumbers(): void {
+  if (!preparedTexts) return;
+  const reply = $<HTMLTextAreaElement>('reply').value;
   const list = $('numbers');
   list.replaceChildren();
-  const hits = preparedTexts ? numbersNotInTexts(preparedTexts.brief, preparedTexts.draft, text) : [];
   const seen = new Set<string>();
-  for (const h of hits) {
+  for (const h of numbersNotInTexts(preparedTexts.brief, preparedTexts.draft, reply)) {
     if (seen.has(h.text)) continue;
     seen.add(h.text);
     list.append(el('li', undefined, h.text));
   }
-  $('numbers-box').hidden = hits.length === 0;
-  $('answer').hidden = false;
-}
-
-async function send(): Promise<void> {
-  if (!prepared || !canSend()) return;
-  const status = $('status');
-  const err = $('error');
-  err.textContent = '';
-  try {
-    geminiUrl($<HTMLInputElement>('model').value.trim());
-  } catch (e) {
-    err.textContent = e instanceof RangeError ? e.message : 'Bad model id.';
-    return;
-  }
-  const ctrl = new AbortController();
-  inFlight = ctrl;
-  const timer = setTimeout(() => ctrl.abort(), 60_000);
-  refreshSend();
-  status.textContent = 'Sending to Google...';
-  $('answer').hidden = true;
-  try {
-    const { reply } = await requestSuggestion((u, i) => fetch(u, i), prepared, $<HTMLInputElement>('model').value, $<HTMLInputElement>('key').value, ctrl.signal);
-    if (reply.ok) {
-      showReply(reply.text);
-      status.textContent = 'Done. Nothing was stored.';
-    } else {
-      status.textContent = '';
-      err.textContent = reply.error;
-    }
-  } catch (e) {
-    status.textContent = '';
-    err.textContent = ctrl.signal.aborted ? 'No answer within 60 seconds; stopped.' : 'The request failed (no connection, or the browser blocked it).';
-  } finally {
-    clearTimeout(timer);
-    inFlight = undefined;
-    refreshSend();
-  }
+  $('numbers-none').hidden = seen.size > 0;
+  $('numbers-box').hidden = false;
 }
 
 $('prepare').addEventListener('click', prepare);
-$('send').addEventListener('click', () => void send());
-$('forget').addEventListener('click', () => {
-  $<HTMLInputElement>('key').value = '';
-  $<HTMLInputElement>('ack').checked = false;
-  refreshSend();
+$('copy').addEventListener('click', () => {
+  if (!prepared) return;
+  // The clipboard is written only when the person clicks.
+  void navigator.clipboard?.writeText(formatSuggestionPrompt(prepared)).then(
+    () => ($('copy-status').textContent = 'Copied. Paste it into the assistant you choose.'),
+    () => ($('copy-status').textContent = 'Copy failed; select the text above and copy it yourself.'),
+  );
 });
+$('check-numbers').addEventListener('click', checkNumbers);
 $('sample').addEventListener('click', () => {
   $<HTMLTextAreaElement>('brief').value = SAMPLE_BRIEF;
   $<HTMLTextAreaElement>('draft').value = SAMPLE_DRAFT;
   invalidate();
 });
 $('clear').addEventListener('click', () => {
-  for (const id of ['brief', 'draft', 'key']) (document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement).value = '';
+  for (const id of ['brief', 'draft', 'reply']) $<HTMLTextAreaElement>(id).value = '';
   $('error').textContent = '';
   invalidate();
 });
 for (const id of ['brief', 'draft']) $(id).addEventListener('input', invalidate);
-for (const id of ['key', 'ack']) $(id).addEventListener('input', refreshSend);
-$('ack').addEventListener('change', refreshSend);
 $('short-disclaimer').textContent = DISCLAIMER_SHORT;
